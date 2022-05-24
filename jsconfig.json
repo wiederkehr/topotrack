@@ -1,0 +1,33 @@
+{
+	"compilerOptions": {
+		"baseUrl": ".",
+		// Set alias for top-level folders in the src folder
+		"paths": {
+			"$actions/*": [
+				"src/actions/*"
+			],
+			"$components/*": [
+				"src/components/*"
+			],
+			"$data/*": [
+				"src/data/*"
+			],
+			"$functions/*": [
+				"src/functions/*"
+			],
+			"$stores/*": [
+				"src/stores/*"
+			],
+			"$styles/*": [
+				"src/styles/*"
+			],
+		}
+	},
+	"include": [
+		"src/**/*.js", 
+		"src/**/*.svelte"
+	],
+	"exclude": [
+		"tasks/*.js"
+	]
+}

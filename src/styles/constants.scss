@@ -1,0 +1,123 @@
+// Style Constants
+////////////////////////////////////////
+
+// Font Families
+////////////////////////////////////////
+$font-family-sans: 'Fira Sans', sans-serif;
+$font-family-mono: 'Fira Mono', sans-serif;
+$font-family-base: $font-family-sans;
+
+// Font Sizes (Base: 8px clamped at 12px)
+////////////////////////////////////////
+$font-size-1: 12px;
+$font-size-2: 16px;
+$font-size-3: 24px;
+$font-size-4: 32px;
+$font-size-5: 40px;
+$font-size-6: 48px;
+$font-size-base: $font-size-2;
+
+// Line Heights
+////////////////////////////////////////
+$line-height-wide: 1.75;
+$line-height-medium: 1.5;
+$line-height-narrow: 1.25;
+$line-height-base: $line-height-medium;
+
+// Z-Indeces
+////////////////////////////////////////
+$z-0: 0;
+$z-1: 10;
+$z-2: 100;
+$z-3: 1000;
+
+// Global Colors
+// Generated with colorbox.io
+// Steps: 10, Curve: Sine, Direction: EaseInOut
+// NOTE: Align with colors in constants.js; use style dictionary
+////////////////////////////////////////
+$color-white: #ffffff;
+$color-black: #000000;
+$color-mono-1: #f7f7f7;
+$color-mono-2: #e3e3e3;
+$color-mono-3: #c3c3c3;
+$color-mono-4: #979797;
+// ↕︎ 4.5:1 color contrast
+$color-mono-5: #676767;
+$color-mono-6: #3b3b3b;
+$color-mono-7: #1b1b1b;
+$color-mono-8: #080808;
+
+$color-blue-1: #0d66d0;
+$color-blue-2: #095aba;
+$color-red-1: #c9252d;
+$color-red-2: #bb121a;
+$color-green-1: #12805c;
+$color-green-2: #107154;
+
+// Alias Colors
+////////////////////////////////////////
+$color-accent: $color-blue-1;
+$color-positive: $color-green-1;
+$color-negative: $color-red-1;
+
+// Component Colors
+////////////////////////////////////////
+$color-component-focus-border: $color-blue-2;
+$color-component-focus-outline: rgba(13, 102, 208, 0.4);
+
+// Radius (Base: 2px)
+////////////////////////////////////////
+$radius-0: 0;
+$radius-1: 2px;
+$radius-2: 4px;
+$radius-3: 8px;
+$radius-4: 16px;
+
+// Shadows (Base: 2px distance, 4px blur)
+////////////////////////////////////////
+$shadow-0: none;
+$shadow-1: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-2: 0 4px 8px rgba(0, 0, 0, 0.1);
+$shadow-3: 0 8px 16px rgba(0, 0, 0, 0.1);
+$shadow-4: 0 12px 24px rgba(0, 0, 0, 0.1);
+
+// Spaces (Base: 8px)
+////////////////////////////////////////
+$space-0: 0;
+$space-1: 8px;
+$space-2: 16px;
+$space-3: 24px;
+$space-4: 32px;
+$space-5: 40px;
+$space-6: 48px;
+
+// Break Points
+////////////////////////////////////////
+// NOTE: Align these values with the JS values in /stores/mediaquery
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+
+$screen-sm: $breakpoint-sm;
+$screen-md: $breakpoint-md;
+$screen-lg: $breakpoint-lg;
+$screen-xl: $breakpoint-xl;
+
+$screen-sm-min: $screen-sm;
+$screen-md-min: $screen-md;
+$screen-lg-min: $screen-lg;
+$screen-xl-min: $screen-xl;
+
+$screen-xs-max: ($screen-sm-min - 1);
+$screen-sm-max: ($screen-md-min - 1);
+$screen-md-max: ($screen-lg-min - 1);
+$screen-lg-max: ($screen-xl-min - 1);
+
+// Media Queries
+////////////////////////////////////////
+$mq-min-sm: 'screen and (min-width: #{$screen-sm-min})';
+$mq-min-md: 'screen and (min-width: #{$screen-md-min})';
+$mq-min-lg: 'screen and (min-width: #{$screen-lg-min})';
+$mq-min-xl: 'screen and (min-width: #{$screen-xl-min})';

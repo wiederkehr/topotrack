@@ -1,0 +1,24 @@
+# https://github.com/prettier/prettier/blob/master/docs/options.md
+
+# Override
+arrowParens: 'avoid'
+singleQuote: true
+
+# Default
+bracketSameLine: false
+bracketSpacing: true
+embeddedLanguageFormatting: 'auto'
+endOfLine: 'lf'
+printWidth: 80
+proseWrap: 'preserve'
+quoteProps: 'as-needed'
+semi: true
+tabWidth: 2
+trailingComma: 'es5'
+useTabs: false
+
+# Svelte
+svelteSortOrder: 'options-scripts-styles-markup'
+svelteStrictMode: false
+svelteAllowShorthand: true
+svelteIndentScriptAndStyle: true

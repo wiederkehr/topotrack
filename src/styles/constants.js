@@ -1,0 +1,22 @@
+export const colors = {
+  white: '#ffffff',
+  black: '#000000',
+  mono_1: '#f7f7f7',
+  mono_2: '#e3e3e3',
+  mono_3: '#c3c3c3',
+  mono_4: '#979797',
+  // ↕︎ 4.5:1 color contrast
+  mono_5: '#676767',
+  mono_6: '#3b3b3b',
+  mono_7: '#1b1b1b',
+  mono_8: '#080808',
+  blue_light: '#0d66d0',
+  blue_dark: '#095aba',
+  red_light: '#c9252d',
+  red_dark: '#bb121a',
+  green_light: '#12805c',
+  green_dark: '#107154',
+  accent: '#0d66d0',
+  positive: '#12805c',
+  negative: '#c9252d',
+};
