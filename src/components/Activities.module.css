@@ -1,0 +1,22 @@
+.activitiesContainer {
+  position: relative;
+}
+
+.activitiesSelect {
+  all: unset;
+  background: #fff;
+  border: 2px solid #ddd;
+  border-radius: 0.2rem;
+  cursor: pointer;
+  box-sizing: border-box;
+  padding: 1rem;
+  width: 100%;
+}
+
+.activitiesSelectIcon {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  color: #bbb;
+}
