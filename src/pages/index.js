@@ -5,8 +5,8 @@ import Layout from "@/components/Layout";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Content from "@/components/Content";
-import Instruction from "@/components/Instruction";
-import Activities from "@/components/Activities";
+import Welcome from "@/components/Welcome";
+import Creator from "@/components/Creator";
 
 export default function Index() {
   const { data: session } = useSession();
@@ -16,7 +16,7 @@ export default function Index() {
         <title>Topotrack</title>
       </Head>
       <Header />
-      <Content>{session ? <Activities /> : <Instruction />}</Content>
+      <Content>{session ? <Creator /> : <Welcome />}</Content>
       <Footer />
     </Layout>
   );

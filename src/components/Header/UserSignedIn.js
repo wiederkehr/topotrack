@@ -1,7 +1,7 @@
 import { useSession, signOut } from "next-auth/react";
-import styles from "./User.module.css";
+import styles from "./UserSignedIn.module.css";
 
-export default function User() {
+export default function UserSignedIn() {
   const { data: session } = useSession();
   const picture = session.user.picture;
   return (

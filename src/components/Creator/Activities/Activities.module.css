@@ -8,6 +8,7 @@
   border: 2px solid #ddd;
   border-radius: 0.2rem;
   cursor: pointer;
+  font-weight: 600;
   box-sizing: border-box;
   padding: 1rem;
   width: 100%;
@@ -19,4 +20,5 @@
   right: 1rem;
   transform: translateY(-50%);
   color: #bbb;
+  pointer-events: none;
 }

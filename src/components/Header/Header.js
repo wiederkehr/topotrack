@@ -1,6 +1,6 @@
 import Container from "@/components/Container";
-import Logo from "@/components/Logo";
-import Connection from "@/components/Connection";
+import Logo from "./Logo";
+import User from "./User";
 import styles from "./Header.module.css";
 
 export default function Header() {
@@ -9,7 +9,7 @@ export default function Header() {
       <Container>
         <div className={styles.headerLayout}>
           <Logo />
-          <Connection />
+          <User />
         </div>
       </Container>
     </header>

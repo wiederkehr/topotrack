@@ -1,0 +1,36 @@
+.activity {
+  border-radius: 0.5rem;
+  padding: 2rem 2rem 3rem;
+  background-color: #fff;
+  border-radius: 0.25rem;
+  box-shadow:
+    0px 0px 4px rgba(0, 0, 0, 0.1),
+    0px 2px 8px rgba(0, 0, 0, 0.1),
+    0px 4px 16px rgba(0, 0, 0, 0.2);
+}
+.activityLoading {
+  border: 2px dashed #ddd;
+  border-radius: 0.5rem;
+  color: #999;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.activityError {
+  border: 2px solid #f33;
+  border-radius: 0.5rem;
+  color: #f33;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+.activityTitle {
+  margin-bottom: 1rem;
+}
+
+.activityContent {
+  border: 2px dashed #ddd;
+  border-radius: 0.5rem;
+  color: #999;
+  padding: 4rem 2rem;
+  text-align: center;
+}
