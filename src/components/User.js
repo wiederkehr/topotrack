@@ -4,7 +4,6 @@ import styles from "./User.module.css";
 export default function User() {
   const { data: session } = useSession();
   const picture = session.user.picture;
-  console.log(picture);
   return (
     <div className={styles.user}>
       <div className={styles.userProfile}>
@@ -13,7 +12,14 @@ export default function User() {
           style={{ backgroundImage: `url(${picture})` }}
         ></div>
       </div>
-      <div className={styles.userActions}>
+      <div className={styles.userMenu}>
+        <p className={styles.userInfo}>
+          <span className={styles.userNameLabel}>Signed in as:</span>
+          <span className={styles.userName}>{session.user.name}</span>
+        </p>
+        <a href={"https://strava.com"} className={styles.userAction}>
+          Go to Strava
+        </a>
         <button className={styles.userAction} onClick={() => signOut()}>
           Sign out
         </button>

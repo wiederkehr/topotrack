@@ -6,6 +6,8 @@ First, run the development server:
 npm run dev
 ```
 
+[ ] Add SWR and follow [tutorial](https://www.smashingmagazine.com/2020/06/introduction-swr-react-hooks-remote-data-fetching/)
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Dependncies
