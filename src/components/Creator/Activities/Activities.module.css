@@ -2,6 +2,13 @@
   position: relative;
 }
 
+.activitiesPlaceholder {
+  border: 2px solid #ddd;
+  border-radius: 0.2rem;
+  color: #999;
+  padding: 1rem;
+}
+
 .activitiesSelect {
   all: unset;
   background: #fff;
