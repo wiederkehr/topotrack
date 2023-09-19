@@ -1,13 +1,12 @@
-import DeckGL from "@deck.gl/react";
-import { LineLayer } from "@deck.gl/layers";
-import { Map } from "react-map-gl";
+import Map, { Source, Layer } from "react-map-gl";
 import { min, max, mean } from "d3";
 
 import styles from "./Map.module.css";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 
-const MAP_STYLE = "mapbox://styles/mapbox/outdoors-v12";
+const MAP_STYLE =
+  "mapbox://styles/benjaminwiederkehr/clmqpwgot003001pyaw2ic3xj";
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 export default function ActivityMap({ data }) {
@@ -22,28 +21,62 @@ export default function ActivityMap({ data }) {
     center: [mean(lats), mean(lngs)],
   };
 
-  const config = {
+  const mapConfig = {
     latitude: bounds.center[0],
     longitude: bounds.center[1],
     zoom: 12,
-    pitch: 0,
+    pitch: 60,
     bearing: 0,
   };
 
-  const lines = latlng.data.map((d, i) => ({
-    sourcePosition: [d[1], d[0]],
-    targetPosition:
-      i + 1 < latlng.data.length
-        ? [latlng.data[i + 1][1], latlng.data[i + 1][0]]
-        : [d[1], d[0]],
-  }));
+  const routeFeatures = {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        geometry: {
+          type: "LineString",
+          coordinates: latlng.data.map((d) => [d[1], d[0]]),
+        },
+      },
+    ],
+  };
 
   return (
     <div className={styles.map}>
-      <DeckGL initialViewState={config} controller={true}>
-        <LineLayer id="line-layer" data={lines} />
-        <Map mapboxAccessToken={MAPBOX_TOKEN} mapStyle={MAP_STYLE} />
-      </DeckGL>
+      <Map
+        mapStyle={MAP_STYLE}
+        mapboxAccessToken={MAPBOX_TOKEN}
+        initialViewState={mapConfig}
+        terrain={{ source: "terrain-source", exaggeration: 2 }}
+        fog={{
+          range: [0.8, 8],
+          color: "#dc9f9f",
+          "horizon-blend": 0.5,
+          "high-color": "#245cdf",
+          "space-color": "#000000",
+          "star-intensity": 0.15,
+        }}
+      >
+        <Source
+          id="terrain-source"
+          type="raster-dem"
+          url="mapbox://mapbox.mapbox-terrain-dem-v1"
+        ></Source>
+        <Source id="route-source" type="geojson" data={routeFeatures}>
+          <Layer
+            type="line"
+            layout={{
+              "line-join": "round",
+              "line-cap": "round",
+            }}
+            paint={{
+              "line-color": "#fff",
+              "line-width": 2,
+            }}
+          />
+        </Source>
+      </Map>
     </div>
   );
 }
