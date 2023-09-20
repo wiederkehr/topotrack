@@ -59,17 +59,6 @@ export default function ActivityMap({ data }) {
               "line-cap": "round",
             }}
             paint={{
-              "line-color": "#fff",
-              "line-width": 4,
-            }}
-          />
-          <Layer
-            type="line"
-            layout={{
-              "line-join": "round",
-              "line-cap": "round",
-            }}
-            paint={{
               "line-color": colors.accent,
               "line-width": 2,
             }}
