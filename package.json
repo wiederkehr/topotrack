@@ -13,6 +13,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@next/font": "^13.1.6",
+    "@turf/turf": "^6.5.0",
     "axios": "^1.5.0",
     "classnames": "^2.3.2",
     "d3": "^7.8.5",
@@ -24,6 +25,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-map-gl": "^7.1.6",
-    "swr": "^2.2.2"
+    "swr": "^2.2.2",
+    "use-animation-frame": "^0.1.5"
   }
 }
