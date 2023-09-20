@@ -1,6 +1,7 @@
 import Map, { Source, Layer } from "react-map-gl";
 import { min, max, mean } from "d3";
 
+import { colors } from "@/styles/constants";
 import styles from "./Map.module.css";
 
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -48,6 +49,7 @@ export default function ActivityMap({ data }) {
         mapStyle={MAP_STYLE}
         mapboxAccessToken={MAPBOX_TOKEN}
         initialViewState={mapConfig}
+        attributionControl={false}
       >
         <Source id="route-source" type="geojson" data={routeFeatures}>
           <Layer
@@ -58,6 +60,17 @@ export default function ActivityMap({ data }) {
             }}
             paint={{
               "line-color": "#fff",
+              "line-width": 4,
+            }}
+          />
+          <Layer
+            type="line"
+            layout={{
+              "line-join": "round",
+              "line-cap": "round",
+            }}
+            paint={{
+              "line-color": colors.accent,
               "line-width": 2,
             }}
           />
