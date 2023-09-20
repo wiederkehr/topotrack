@@ -6,7 +6,7 @@ import styles from "./Map.module.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 const MAP_STYLE =
-  "mapbox://styles/benjaminwiederkehr/clmqpwgot003001pyaw2ic3xj";
+  "mapbox://styles/benjaminwiederkehr/clmr134ih01y301rchfii6ey6";
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 export default function ActivityMap({ data }) {
@@ -58,11 +58,6 @@ export default function ActivityMap({ data }) {
           "star-intensity": 0.15,
         }}
       >
-        <Source
-          id="terrain-source"
-          type="raster-dem"
-          url="mapbox://mapbox.mapbox-terrain-dem-v1"
-        ></Source>
         <Source id="route-source" type="geojson" data={routeFeatures}>
           <Layer
             type="line"
