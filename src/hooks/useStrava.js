@@ -21,7 +21,7 @@ export const useStrava = (path) => {
 
   const url = baseUrl + path;
 
-  const { data, error } = useSWR({ url, args }, fetcher);
+  const { data, error, isLoading } = useSWR({ url, args }, fetcher);
 
-  return { data, error };
+  return { data, error, loading: isLoading };
 };
