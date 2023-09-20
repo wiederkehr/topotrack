@@ -3,12 +3,12 @@ import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
 import styles from "./Activities.module.css";
 
-export default function Activities({ activities, actity, onSelectActivity }) {
+export default function Activities({ activities, activity, onSelectActivity }) {
   return (
     <div className={styles.activitiesContainer}>
       <select
         defaultValue={""}
-        value={actity}
+        value={activity}
         onChange={(event) => onSelectActivity(event.target.value)}
         className={styles.activitiesSelect}
       >
