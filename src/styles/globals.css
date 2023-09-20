@@ -1,6 +1,6 @@
 :root {
   /* Add constants and variables */
-  --color-accent: #FC4C02;
+  --color-accent: #f55;
 }
 
 @media (prefers-color-scheme: dark) {

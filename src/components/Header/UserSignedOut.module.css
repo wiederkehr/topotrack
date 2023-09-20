@@ -1,6 +1,6 @@
 .action {
   all: unset;
-  background: #FC4C02;
+  background: var(--color-accent);
   border-radius: 0.2rem;
   box-sizing: border-box;
   color: #fff;
