@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useStrava } from "@/hooks/useStrava";
 import Activities, { ActivitiesPlaceholder } from "./Activities";
 import Activity, { ActivityPlaceholder } from "./Activity";
@@ -7,7 +7,6 @@ import styles from "./Creator.module.css";
 export default function Creator() {
   const [activity, setSelectedActivity] = useState();
   const { data, error, loading } = useStrava("athlete/activities");
-  console.log(loading);
 
   const findActivityById = (id) => {
     return data.find((activity) => activity.id.toString() === id.toString());

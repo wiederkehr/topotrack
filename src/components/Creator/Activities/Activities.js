@@ -7,7 +7,6 @@ export default function Activities({ activities, activity, onSelectActivity }) {
   return (
     <div className={styles.activitiesContainer}>
       <select
-        defaultValue={""}
         value={activity}
         onChange={(event) => onSelectActivity(event.target.value)}
         className={styles.activitiesSelect}
