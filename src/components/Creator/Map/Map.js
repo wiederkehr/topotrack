@@ -48,15 +48,6 @@ export default function ActivityMap({ data }) {
         mapStyle={MAP_STYLE}
         mapboxAccessToken={MAPBOX_TOKEN}
         initialViewState={mapConfig}
-        terrain={{ source: "terrain-source", exaggeration: 2 }}
-        fog={{
-          range: [0.8, 8],
-          color: "#dc9f9f",
-          "horizon-blend": 0.5,
-          "high-color": "#245cdf",
-          "space-color": "#000000",
-          "star-intensity": 0.15,
-        }}
       >
         <Source id="route-source" type="geojson" data={routeFeatures}>
           <Layer
