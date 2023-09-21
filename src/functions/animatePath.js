@@ -1,4 +1,4 @@
-import { computeCameraPosition } from "./computeCameraPosition";
+import computeCameraPosition from "@/functions/computeCameraPosition";
 
 const animatePath = async ({
   map,

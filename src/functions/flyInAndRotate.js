@@ -1,8 +1,10 @@
-import { computeCameraPosition } from "./computeCameraPosition";
+import { easeCubicOut } from "d3";
+import { MercatorCoordinate } from "mapbox-gl";
+import computeCameraPosition from "@/functions/computeCameraPosition";
 
 const flyInAndRotate = async ({
   map,
-  targetLngLat,
+  targetPosition,
   duration,
   startAltitude,
   endAltitude,
@@ -35,20 +37,20 @@ const flyInAndRotate = async ({
 
       currentAltitude =
         startAltitude +
-        (endAltitude - startAltitude) * d3.easeCubicOut(animationPhase);
+        (endAltitude - startAltitude) * easeCubicOut(animationPhase);
       // rotate the camera between startBearing and endBearing
       currentBearing =
         startBearing +
-        (endBearing - startBearing) * d3.easeCubicOut(animationPhase);
+        (endBearing - startBearing) * easeCubicOut(animationPhase);
 
       currentPitch =
-        startPitch + (endPitch - startPitch) * d3.easeCubicOut(animationPhase);
+        startPitch + (endPitch - startPitch) * easeCubicOut(animationPhase);
 
       // compute corrected camera ground position, so the start of the path is always in view
       var correctedPosition = computeCameraPosition(
         currentPitch,
         currentBearing,
-        targetLngLat,
+        targetPosition,
         currentAltitude
       );
 
@@ -57,7 +59,7 @@ const flyInAndRotate = async ({
       camera.setPitchBearing(currentPitch, currentBearing);
 
       // set the position and altitude of the camera
-      camera.position = mapboxgl.MercatorCoordinate.fromLngLat(
+      camera.position = MercatorCoordinate.fromLngLat(
         correctedPosition,
         currentAltitude
       );
