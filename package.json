@@ -25,7 +25,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-map-gl": "^7.1.6",
-    "swr": "^2.2.2",
-    "use-animation-frame": "^0.1.5"
+    "swr": "^2.2.2"
   }
 }
