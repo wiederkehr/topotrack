@@ -6,13 +6,13 @@ function lerp(start, end, amt) {
   return (1 - amt) * start + amt * end;
 }
 
-const computeCameraPosition = (
-  pitch,
-  bearing,
+const computeCameraPosition = ({
   targetPosition,
   altitude,
-  smooth = false
-) => {
+  bearing,
+  pitch,
+  smooth,
+}) => {
   var bearingInRadian = bearing / 57.29;
   var pitchInRadian = (90 - pitch) / 57.29;
 

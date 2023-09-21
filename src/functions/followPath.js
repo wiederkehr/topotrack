@@ -7,13 +7,17 @@ const followPath = async ({
   map,
   duration,
   path,
-  startBearing,
-  startAltitude,
-  startPitch,
+  altitude,
+  bearing,
+  pitch,
   onUpdate,
 }) => {
   return new Promise(async (resolve) => {
     let startTime;
+    let currentAltitude;
+    let currentBearing;
+    let currentPitch;
+
     const totalDistance = lineDistance(path);
 
     const frame = async (currentTime) => {
@@ -26,7 +30,6 @@ const followPath = async ({
 
       // Compute current distance
       const currentDistance = totalDistance * animationPhase;
-      console.log(currentDistance);
       // Compute current position along path
       const pointAlongPath = along(path, currentDistance);
       // Compute section to current position along path
@@ -41,24 +44,25 @@ const followPath = async ({
         lat: pointAlongPath.geometry.coordinates[1],
       };
       // Rotate camera bearing
-      const currentBearing = startBearing - animationPhase * 200.0;
+      currentBearing = bearing - animationPhase * 200.0;
+      currentAltitude = altitude;
+      currentPitch = pitch;
 
       // Compute corrected camera position, so the leading edge of the path is always in view
-      const correctedPosition = computeCameraPosition(
-        startPitch,
-        currentBearing,
-        targetPosition,
-        startAltitude,
-        true
-      );
-
+      const correctedPosition = computeCameraPosition({
+        targetPosition: targetPosition,
+        altitude: currentAltitude,
+        bearing: currentBearing,
+        pitch: currentPitch,
+        smooth: true,
+      });
       // Set corrected pitch and bearing of camera
       const camera = map.getFreeCameraOptions();
-      camera.setPitchBearing(startPitch, currentBearing);
+      camera.setPitchBearing(currentPitch, currentBearing);
       // Set corrected position and altitude of camera
       camera.position = MercatorCoordinate.fromLngLat(
         correctedPosition,
-        startAltitude
+        currentAltitude
       );
 
       onUpdate({
@@ -71,7 +75,11 @@ const followPath = async ({
 
       // End animation after duration and return current bearing, altitude, and pitch
       if (animationPhase === 1) {
-        resolve();
+        resolve({
+          altitude: currentAltitude,
+          bearing: currentBearing,
+          pitch: currentPitch,
+        });
         return;
       }
       window.requestAnimationFrame(frame);

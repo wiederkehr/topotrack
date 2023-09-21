@@ -7,18 +7,17 @@ const flyToPoint = async ({
   targetPosition,
   duration,
   startAltitude,
-  endAltitude,
+  stopAltitude,
   startBearing,
-  endBearing,
+  stopBearing,
   startPitch,
-  endPitch,
+  stopPitch,
 }) => {
   return new Promise(async (resolve) => {
     let startTime;
-
-    var currentAltitude;
-    var currentBearing;
-    var currentPitch;
+    let currentAltitude;
+    let currentBearing;
+    let currentPitch;
 
     const frame = async (currentTime) => {
       // Set start time
@@ -28,26 +27,26 @@ const flyToPoint = async ({
       // Fix animation to maximum 1
       if (animationPhase > 1) animationPhase = 1;
 
-      // Compute camera altitude between start to end
+      // Compute camera altitude between start to stop
       currentAltitude =
         startAltitude +
-        (endAltitude - startAltitude) * easeCubicOut(animationPhase);
-      // Compute camera bearing between start to end
+        (stopAltitude - startAltitude) * easeCubicOut(animationPhase);
+      // Compute camera bearing between start to stop
       currentBearing =
         startBearing +
-        (endBearing - startBearing) * easeCubicOut(animationPhase);
-      // Compute camera pitch between start to end
+        (stopBearing - startBearing) * easeCubicOut(animationPhase);
+      // Compute camera pitch between start to stop
       currentPitch =
-        startPitch + (endPitch - startPitch) * easeCubicOut(animationPhase);
+        startPitch + (stopPitch - startPitch) * easeCubicOut(animationPhase);
 
       // Compute corrected camera position, so the start of the path is always in view
-      const correctedPosition = computeCameraPosition(
-        currentPitch,
-        currentBearing,
-        targetPosition,
-        currentAltitude
-      );
-
+      const correctedPosition = computeCameraPosition({
+        targetPosition: targetPosition,
+        altitude: currentAltitude,
+        bearing: currentBearing,
+        pitch: currentPitch,
+        smooth: false,
+      });
       // Set corrected pitch and bearing of camera
       const camera = map.getFreeCameraOptions();
       camera.setPitchBearing(currentPitch, currentBearing);
@@ -63,8 +62,8 @@ const flyToPoint = async ({
       // End animation after duration and return current bearing, altitude, and pitch
       if (animationPhase === 1) {
         resolve({
-          bearing: currentBearing,
           altitude: currentAltitude,
+          bearing: currentBearing,
           pitch: currentPitch,
         });
         return;
