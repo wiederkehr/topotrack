@@ -41,7 +41,7 @@ export default function Map({ data }) {
   };
   // Animation
   const durationFly = 5000;
-  const durationFollow = 8000;
+  const durationFollow = 10000;
 
   const onMapLoad = useCallback(async () => {
     const afterFlyInPosition = await flyToPoint({
