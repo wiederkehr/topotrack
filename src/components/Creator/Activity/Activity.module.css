@@ -35,3 +35,13 @@
 
 .activityContent {
 }
+
+.activitySource {
+  color: #999;
+  text-align: right;
+  margin-top: 1rem;
+}
+
+.activitySourceLink:hover {
+  text-decoration: underline;
+}
