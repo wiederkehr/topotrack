@@ -1,6 +1,19 @@
 .footer {
   padding: 2rem 0;
 }
+
 .footerHeartIcon {
   color: var(--color-accent);
+}
+
+.footerGrid {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footerGridLeft {
+}
+
+.footerGridRight {
 }
