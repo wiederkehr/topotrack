@@ -1,12 +1,4 @@
 .action {
   all: unset;
-  background: var(--color-accent);
-  border-radius: 0.2rem;
-  box-sizing: border-box;
-  color: #fff;
-  display: block;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  text-align: center;
   cursor: pointer;
 }
