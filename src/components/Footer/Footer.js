@@ -17,7 +17,7 @@ export default function Footer() {
               className={styles.footerHeartIcon}
             />{" "}
             by{" "}
-            <Link href="https://benjaminwiederkehr.com">
+            <Link href="https://benjaminwiederkehr.com" target="_blank">
               {" "}
               Benjamin Wiederkehr
             </Link>
