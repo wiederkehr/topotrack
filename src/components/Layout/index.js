@@ -1,2 +1,4 @@
-import Layout from "./Layout";
-export default Layout;
+import Column from "./Column";
+import Row from "./Row";
+
+export { Column, Row };

@@ -2,13 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
-import Container from "@/components/Container";
+import { Row } from "@/components/Layout";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
   return (
     <footer className={styles.footer}>
-      <Container>
+      <Row>
         <div className={styles.footerGrid}>
           <div className={styles.footerGridLeft}>
             Made with{" "}
@@ -31,7 +31,7 @@ export default function Footer() {
             />
           </div>
         </div>
-      </Container>
+      </Row>
     </footer>
   );
 }

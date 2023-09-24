@@ -1,10 +1,10 @@
-import Container from "@/components/Container";
+import { Row } from "@/components/Layout";
 import styles from "./Content.module.css";
 
 export default function Content({ children }) {
   return (
     <main className={styles.content}>
-      <Container>{children}</Container>
+      <Row>{children}</Row>
     </main>
   );
 }

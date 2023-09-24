@@ -1,7 +1,8 @@
 import Link from "next/link";
 import classNames from "classnames";
 import { useStrava } from "@/hooks/useStrava";
-import Map from "../Map/Map";
+import Map from "@/components/Creator/Map";
+import Credits from "@/components/Creator/Credits";
 import styles from "./Activity.module.css";
 
 export default function Activity({ activity }) {
@@ -30,6 +31,7 @@ export default function Activity({ activity }) {
         <h2 className={styles.activityTitle}>{activity.name}</h2>
         <div className={styles.activityContent}>
           <Map data={data} />
+          <Credits />
         </div>
         <p className={styles.activitySource}>
           <Link

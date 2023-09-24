@@ -1,4 +1,4 @@
-import Container from "@/components/Container";
+import { Row } from "@/components/Layout";
 import Logo from "./Logo";
 import User from "./User";
 import styles from "./Header.module.css";
@@ -6,12 +6,12 @@ import styles from "./Header.module.css";
 export default function Header() {
   return (
     <header className={styles.header}>
-      <Container>
+      <Row>
         <div className={styles.headerLayout}>
           <Logo />
           <User />
         </div>
-      </Container>
+      </Row>
     </header>
   );
 }
