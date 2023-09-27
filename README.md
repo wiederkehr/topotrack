@@ -6,8 +6,6 @@ First, run the development server:
 npm run dev
 ```
 
-[ ] Add SWR and follow [tutorial](https://www.smashingmagazine.com/2020/06/introduction-swr-react-hooks-remote-data-fetching/)
-
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Dependncies
@@ -16,5 +14,5 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Deployment
 
-This application will be deployed on [Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
+This application will be deployed on [Vercel](https://vercel.com/new).
 More information about [Next.js Deployment](https://nextjs.org/docs/deployment).
