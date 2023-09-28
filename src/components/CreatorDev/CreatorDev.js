@@ -1,9 +1,43 @@
+import { useState } from "react";
+import { stringifyDimensions } from "@/functions/stringifyDimensions";
 import { ActivityDev } from "@/components/Creator/Activity";
+import Dimensions from "@/components/Creator/Dimensions";
 import styles from "@/components/Creator/Creator.module.css";
+import { ratios } from "@/components/Creator/settings";
 
 export default function CreatorDev() {
+  const [dimensions, setDimensions] = useState({
+    height: ratios[0].height,
+    width: ratios[0].width,
+    ratio: ratios[0].name,
+  });
+
+  console.log(dimensions);
+
+  const handleDimensionChange = (event) => {
+    const { name, value } = event.target;
+    setDimensions({ ...dimensions, [name]: value });
+  };
+
+  const handleRatioChange = (event) => {
+    const ratio = ratios.find((ratio) => ratio.name === event.target.value);
+    setDimensions({
+      ratio: ratio.name,
+      width: ratio.width ? ratio.width : dimensions.width,
+      height: ratio.height ? ratio.height : dimensions.height,
+    });
+  };
+
   return (
     <div className={styles.creator}>
+      <div className={styles.dimensions}>
+        <Dimensions
+          ratios={ratios}
+          dimensions={dimensions}
+          onRatioChange={handleRatioChange}
+          onDimensionChange={handleDimensionChange}
+        />
+      </div>
       <div className={styles.activity}>
         <ActivityDev activity={activity} activityData={activityData} />
       </div>
