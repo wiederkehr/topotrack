@@ -1,5 +1,7 @@
 .header {
-  padding: 2rem 0;
+  background: var(--color-surface);
+  border-bottom: var(--width-border) solid var(--color-divider);
+  padding: 1rem 0;
   z-index: 10;
 }
 
