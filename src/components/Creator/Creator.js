@@ -5,8 +5,8 @@ import Activity, { ActivityPlaceholder } from "./Activity";
 import styles from "./Creator.module.css";
 
 export default function Creator() {
-  const [activity, setSelectedActivity] = useState();
   const { data, error, loading } = useStrava("athlete/activities");
+  const [activity, setSelectedActivity] = useState();
 
   const findActivityById = (id) => {
     return data.find((activity) => activity.id.toString() === id.toString());
