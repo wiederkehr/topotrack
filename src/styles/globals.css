@@ -1,6 +1,23 @@
 :root {
   /* Add constants and variables */
+  --color-background: #f9f9f9;
+  --color-onBackground: #333;
+  --color-surface: #fff;
+  --color-onSurface: #333;
+  --color-interface: #fff;
+  --color-interface--hover: #f9f9f9;
+  --color-interface--focus: #f9f9f9;
+  --color-onInterface: #333;
+  --color-divider: #ebebeb;
+  --color-border: #ddd;
+  --color-border--hover: #bbb;
+  --color-border--focus: #999;
+  --color-primary: #00263e;
+  --color-onPrimary: #fff;
+  --color-secondary: #3f7397;
+  --color-onSecondary: #fff;
   --color-accent: #f55;
+  --width-border: 1px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,13 +34,31 @@
 
 html,
 body {
+  color: var(--color-onSurface);
   max-width: 100vw;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+button,
+input,
+select {
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+button:focus,
+input:focus,
+select:focus {
+  outline: none;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 2px;
 }
 
 @media (prefers-color-scheme: dark) {
