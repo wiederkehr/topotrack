@@ -1,5 +1,6 @@
 import { SessionProvider } from "next-auth/react";
 import { Inter } from "next/font/google";
+import "@radix-ui/themes/styles.css";
 import "@/styles/globals.css";
 
 const inter = Inter({ subsets: ["latin"] });

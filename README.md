@@ -3,16 +3,16 @@
 First, run the development server:
 
 ```bash
-npm run dev
+yarn dev
 ```
-
-[ ] Add SWR and follow [tutorial](https://www.smashingmagazine.com/2020/06/introduction-swr-react-hooks-remote-data-fetching/)
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Dependncies
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+- [React](https://react.dev/)
+- [Next](https://nextjs.org/)
+- [Radix](https://www.radix-ui.com/)
 
 ## Deployment
 
