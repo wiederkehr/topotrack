@@ -1,8 +1,8 @@
-import Activity from "./Activity";
+import Activity from "./activity";
 export default Activity;
 
-import ActivityPlaceholder from "./ActivityPlaceholder";
+import ActivityPlaceholder from "./activityPlaceholder";
 export { ActivityPlaceholder };
 
-import ActivityDev from "./ActivityDev";
+import ActivityDev from "./activityDev";
 export { ActivityDev };

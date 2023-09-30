@@ -1,2 +1,2 @@
-import Dimensions from "./Dimensions";
+import Dimensions from "./dimensions";
 export default Dimensions;

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import styles from "./Credits.module.css";
+import styles from "./credits.module.css";
 
 export default function Credits() {
   return (

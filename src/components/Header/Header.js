@@ -1,7 +1,7 @@
-import { Row } from "@/components/Layout";
-import Logo from "./Logo";
-import User from "./User";
-import styles from "./Header.module.css";
+import Row from "@/components/layout/row";
+import Logo from "./logo";
+import User from "./user";
+import styles from "./header.module.css";
 
 export default function Header({ dev }) {
   return (

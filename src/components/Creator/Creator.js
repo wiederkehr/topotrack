@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useStrava } from "@/hooks/useStrava";
-import Activities, { ActivitiesPlaceholder } from "./Activities";
-import Activity, { ActivityPlaceholder } from "./Activity";
-import styles from "./Creator.module.css";
+import Activities, { ActivitiesPlaceholder } from "./activities";
+import Activity, { ActivityPlaceholder } from "./activity";
+import styles from "./creator.module.css";
 
 export default function Creator() {
   const { data, error, loading } = useStrava("athlete/activities");

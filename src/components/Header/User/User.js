@@ -1,7 +1,7 @@
 import { useSession } from "next-auth/react";
-import UserSignedIn from "./UserSignedIn";
-import UserSignedOut from "./UserSignedOut";
-import UserDev from "./UserDev";
+import UserSignedIn from "./userSignedIn";
+import UserSignedOut from "./userSignedOut";
+import UserDev from "./userDev";
 
 export default function User({ dev }) {
   const { data: session } = useSession();

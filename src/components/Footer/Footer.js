@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
-import { Row } from "@/components/Layout";
-import styles from "./Footer.module.css";
+import Row from "@/components/layout/row";
+import styles from "./footer.module.css";
 
 export default function Footer() {
   return (

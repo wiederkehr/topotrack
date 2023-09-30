@@ -1,2 +1,2 @@
-import Welcome from "./Welcome";
+import Welcome from "./welcome";
 export default Welcome;

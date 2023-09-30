@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { signIn } from "next-auth/react";
-import styles from "./UserSignedOut.module.css";
+import styles from "./userSignedOut.module.css";
 
 export default function UserSignedOut() {
   return (

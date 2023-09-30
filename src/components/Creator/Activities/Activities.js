@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
-import styles from "./Activities.module.css";
+import styles from "./activities.module.css";
 
 export default function Activities({ activities, activity, onSelectActivity }) {
   return (

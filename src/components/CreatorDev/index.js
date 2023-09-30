@@ -1,2 +1,2 @@
-import CreatorDev from "./CreatorDev";
+import CreatorDev from "./creatorDev";
 export default CreatorDev;

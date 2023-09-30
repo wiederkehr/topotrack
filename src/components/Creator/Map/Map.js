@@ -4,9 +4,9 @@ import MapGL from "react-map-gl";
 import flyToPoint from "@/functions/flyToPoint";
 import followPath from "@/functions/followPath";
 import { colors } from "@/styles/constants";
-import Position from "./Position";
-import Route from "./Route";
-import styles from "./Map.module.css";
+import Position from "./position";
+import Route from "./route";
+import styles from "./map.module.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 const MAP_STYLE =

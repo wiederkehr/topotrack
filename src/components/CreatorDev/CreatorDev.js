@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { stringifyDimensions } from "@/functions/stringifyDimensions";
-import { ActivityDev } from "@/components/Creator/Activity";
-import Dimensions from "@/components/Creator/Dimensions";
-import styles from "@/components/Creator/Creator.module.css";
-import { ratios } from "@/components/Creator/settings";
+import { ActivityDev } from "@/components/creator/activity";
+import Dimensions from "@/components/creator/dimensions";
+import styles from "@/components/creator/creator.module.css";
+import { ratios } from "@/components/creator/settings";
 
 export default function CreatorDev() {
   const [dimensions, setDimensions] = useState({

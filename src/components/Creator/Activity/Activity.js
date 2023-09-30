@@ -1,9 +1,9 @@
 import Link from "next/link";
 import classNames from "classnames";
 import { useStrava } from "@/hooks/useStrava";
-import Map from "@/components/Creator/Map";
-import Credits from "@/components/Creator/Credits";
-import styles from "./Activity.module.css";
+import Map from "@/components/creator/map";
+import Credits from "@/components/creator/credits";
+import styles from "./activity.module.css";
 
 export default function Activity({ activity }) {
   const { data, error } = useStrava(

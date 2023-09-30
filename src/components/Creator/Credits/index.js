@@ -1,2 +1,2 @@
-import Credits from "./Credits";
+import Credits from "./credits";
 export default Credits;

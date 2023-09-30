@@ -1,13 +1,13 @@
 import Head from "next/head";
 import { useSession } from "next-auth/react";
 
-import { Column } from "@/components/Layout";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import Content from "@/components/Content";
-import Welcome from "@/components/Welcome";
-import Creator from "@/components/Creator";
-import CreatorDev from "@/components/CreatorDev";
+import Column from "@/components/layout/column";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
+import Content from "@/components/content";
+import Welcome from "@/components/welcome";
+import Creator from "@/components/creator";
+import CreatorDev from "@/components/creatorDev";
 
 const ENV = "DEV";
 const dev = ENV === "DEV";

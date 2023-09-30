@@ -1,4 +1,4 @@
-import styles from "./Dimensions.module.css";
+import styles from "./dimensions.module.css";
 
 export default function Dimensions({
   ratios,

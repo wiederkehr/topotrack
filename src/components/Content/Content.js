@@ -1,5 +1,5 @@
-import { Row } from "@/components/Layout";
-import styles from "./Content.module.css";
+import Row from "@/components/layout/row";
+import styles from "./content.module.css";
 
 export default function Content({ children }) {
   return (

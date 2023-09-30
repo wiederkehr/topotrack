@@ -1,5 +1,5 @@
-import Activities from "./Activities";
+import Activities from "./activities";
 export default Activities;
 
-import ActivitiesPlaceholder from "./ActivitiesPlaceholder";
+import ActivitiesPlaceholder from "./activitiesPlaceholder";
 export { ActivitiesPlaceholder };
