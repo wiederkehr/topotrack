@@ -1,5 +1,10 @@
+import { Heading } from "@radix-ui/themes";
 import styles from "./logo.module.css";
 
 export default function Logo() {
-  return <h1 className={styles.logo}>Topotrack</h1>;
+  return (
+    <Heading size="4" className={styles.logo}>
+      Topotrack
+    </Heading>
+  );
 }

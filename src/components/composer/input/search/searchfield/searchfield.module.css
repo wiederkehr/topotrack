@@ -1,0 +1,6 @@
+.searchfield {
+}
+
+.searchfieldInput:focus { 
+  box-shadow: none;
+}

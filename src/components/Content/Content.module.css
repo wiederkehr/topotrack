@@ -1,4 +1,4 @@
 .content {
-  background: var(--color-background);
+  background-color: var(--gray-2);
   flex: 1;
 }

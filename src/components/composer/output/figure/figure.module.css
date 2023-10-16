@@ -1,0 +1,60 @@
+.figure,
+.figurePlaceholder {
+  
+}
+
+.figurePlaceholder {
+  border: 2px solid #ddd;
+  box-shadow: none;
+  color: #999;
+  text-align: center;
+}
+
+.loading {
+  border: 2px dashed #ddd;
+  box-shadow: none;
+  color: #999;
+  text-align: center;
+}
+
+.error {
+  border: 2px solid #f33;
+  color: #f33;
+  text-align: center;
+}
+
+.figureTitle {
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.figureTitleSkeleton {
+  margin-bottom: 1rem;
+  background-color: var(--color-background-skeleton);
+  border-radius: var(--border-radius-skeleton);
+  width: 100%;
+  height: 1em;
+}
+
+.figureContent {
+  position: relative;
+  width: 100%;
+  height: 600px;
+}
+
+.figureContentSkeleton {
+  background-color: var(--color-background-skeleton);
+  border-radius: var(--border-radius-skeleton);
+  width: 100%;
+  height: 600px;
+}
+
+.figureSource {
+  color: #999;
+  text-align: right;
+  margin-top: 1rem;
+}
+
+.figureSourceLink:hover {
+  text-decoration: underline;
+}

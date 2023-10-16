@@ -1,4 +1,3 @@
-import { Theme } from "@radix-ui/themes";
 import { Html, Head, Main, NextScript } from "next/document";
 
 export default function Document() {
@@ -8,9 +7,7 @@ export default function Document() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <body>
-        <Theme>
-          <Main />
-        </Theme>
+        <Main />
         <NextScript />
       </body>
     </Html>

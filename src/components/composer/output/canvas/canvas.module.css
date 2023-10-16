@@ -1,0 +1,10 @@
+.canvas {
+  background: var(--color-panel-solid);
+  border-radius: var(--radius-6);
+  box-shadow: var(--shadow-5);
+  box-sizing: border-box;
+  margin: 0 auto;
+  max-width: 1080px;
+  padding: var(--space-default);
+  position: relative;
+}

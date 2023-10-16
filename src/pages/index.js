@@ -7,7 +7,7 @@ import Footer from "@/components/footer";
 import Content from "@/components/content";
 import Welcome from "@/components/welcome";
 import Creator from "@/components/creator";
-import CreatorDev from "@/components/creatorDev";
+import Composer from "@/components/composer";
 
 const ENV = "DEV";
 const dev = ENV === "DEV";
@@ -16,7 +16,7 @@ export default function Index() {
   const { data: session } = useSession();
   const renderContent = () => {
     if (dev) {
-      return <CreatorDev />;
+      return <Composer />;
     }
     if (session) {
       return <Creator />;

@@ -1,3 +1,5 @@
+import { blue } from "@radix-ui/colors";
+
 export const colors = {
-  accent: "#f55",
+  accent: blue.blue9,
 };

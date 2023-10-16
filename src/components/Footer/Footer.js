@@ -1,7 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import Row from "@/components/layout/row";
 import styles from "./footer.module.css";
 
@@ -11,16 +9,12 @@ export default function Footer() {
       <Row>
         <div className={styles.footerGrid}>
           <div className={styles.footerGridLeft}>
-            Made with{" "}
-            <FontAwesomeIcon
-              icon={faHeart}
-              className={styles.footerHeartIcon}
-            />{" "}
-            by{" "}
-            <Link href="https://benjaminwiederkehr.com" target="_blank">
-              {" "}
-              Benjamin Wiederkehr
-            </Link>
+            <div className={styles.copyright}>
+              {"© "}
+              <Link href="https://benjaminwiederkehr.com" target="_blank">
+                Benjamin Wiederkehr
+              </Link>
+            </div>
           </div>
           <div className={styles.footerGridRight}>
             <Image

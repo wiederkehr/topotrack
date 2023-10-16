@@ -1,20 +1,22 @@
 .footer {
-  background: var(--color-background);
-  padding: 2rem 0;
-}
-
-.footerHeartIcon {
-  color: var(--color-accent);
+  background-color: var(--color-panel-solid);
+  border-top: 1px solid var(--color-border-layout);
+  padding: var(--space-4) 0;
 }
 
 .footerGrid {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
 
-.footerGridLeft {
-}
-
-.footerGridRight {
+.copyright {
+  font-size: var(--font-size-default);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-1);
+  color: var(--gray-9);
 }

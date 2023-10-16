@@ -1,9 +1,8 @@
 import { SessionProvider } from "next-auth/react";
-import { Inter } from "next/font/google";
+import { ThemeProvider } from "next-themes";
+import { Theme } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
-import "@/styles/globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import "@/styles/index.css";
 
 export default function App({
   Component,
@@ -11,9 +10,18 @@ export default function App({
 }) {
   return (
     <SessionProvider session={session}>
-      <div className={inter.className}>
-        <Component {...pageProps} />
-      </div>
+      <ThemeProvider>
+        <Theme
+          accentColor="blue"
+          appearance="inherit"
+          grayColor="gray"
+          panelBackground="solid"
+          scaling="100%"
+          radius="medium"
+        >
+          <Component {...pageProps} />
+        </Theme>
+      </ThemeProvider>
     </SessionProvider>
   );
 }

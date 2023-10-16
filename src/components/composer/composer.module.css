@@ -1,0 +1,24 @@
+.composer {
+  display: flex;
+  flex-direction: column-reverse;
+  flex: 1;
+  align-items: stretch;
+  @media (min-width: 768px) {
+    flex-direction: row-reverse;
+  }
+}
+
+.composerInput {
+  border-top: 1px solid var(--color-border-layout);
+  flex: 1;
+  @media (min-width: 768px) {
+    border-top: none;
+    border-left: 1px solid var(--color-border-layout);
+    flex: 0 0 var(--width-composer-sidebar);
+  }
+}
+
+.composerOutput {
+  flex: 1;
+  padding: var(--space-default);
+}

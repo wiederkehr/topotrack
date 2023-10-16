@@ -1,0 +1,14 @@
+.recents {
+}
+
+.recentsList {
+  list-style: none;
+}
+
+.recentsListItem {
+  margin: 0 0 0.25rem 0;
+}
+
+.recentsListItem:last-of-type {
+  margin: 0;
+}

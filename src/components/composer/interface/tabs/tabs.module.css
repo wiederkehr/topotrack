@@ -1,0 +1,37 @@
+.tabsList {
+  display: flex;
+}
+
+.tabsTrigger {
+  background-color: var(--gray-3);
+  border: 1px solid transparent;
+  border-bottom-color: var(--color-border-layout);
+  border-top-width: 0;
+  color: var(--gray-9);
+  flex: 1;
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  user-select: none;
+  padding: var(--space-2);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.tabsTrigger:focus {
+  box-shadow: none;
+}
+
+.tabsTrigger:first-of-type {
+  border-left-width: 0;
+}
+.tabsTrigger:last-of-type {
+  border-right-width: 0;
+}
+
+.tabsTrigger[data-state='active'] {
+  color: var(--gray-12);
+  background-color: var(--gray-2);
+  border-color: var(--color-border-layout);
+  border-bottom-color: transparent;
+}

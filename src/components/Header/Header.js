@@ -1,3 +1,4 @@
+import { Flex } from "@radix-ui/themes";
 import Row from "@/components/layout/row";
 import Logo from "./logo";
 import User from "./user";
@@ -7,10 +8,10 @@ export default function Header({ dev }) {
   return (
     <header className={styles.header}>
       <Row>
-        <div className={styles.headerLayout}>
+        <Flex direction="row" justify="between" align="center">
           <Logo />
           <User dev={dev} />
-        </div>
+        </Flex>
       </Row>
     </header>
   );

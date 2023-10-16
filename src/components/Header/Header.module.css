@@ -1,12 +1,5 @@
 .header {
-  background: var(--color-surface);
-  border-bottom: var(--width-border) solid var(--color-divider);
-  padding: 1rem 0;
-  z-index: 10;
-}
-
-.headerLayout {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  background-color: var(--color-panel-solid);
+  border-bottom: 1px solid var(--color-border-layout);
+  padding: var(--space-4) 0;
 }
