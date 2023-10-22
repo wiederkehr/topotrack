@@ -1,4 +1,4 @@
-import Module from "@/components/composer/interface/module";
+import Module from "@/components/interface/module";
 import Searchfield from "./searchfield";
 import styles from "./search.module.css";
 

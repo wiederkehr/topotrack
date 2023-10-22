@@ -16,7 +16,6 @@ export default function App({
           appearance="inherit"
           grayColor="gray"
           panelBackground="solid"
-          scaling="100%"
           radius="medium"
         >
           <Component {...pageProps} />

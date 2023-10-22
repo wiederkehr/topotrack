@@ -1,6 +1,6 @@
 import { easeCubicOut } from "d3";
 import { MercatorCoordinate } from "mapbox-gl";
-import computeCameraPosition from "@/functions/computeCameraPosition";
+import computeCameraPosition from "@/functions/map.computeCameraPosition";
 
 const flyToPoint = async ({
   map,

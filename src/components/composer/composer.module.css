@@ -1,24 +1,26 @@
 .composer {
-  display: flex;
-  flex-direction: column-reverse;
-  flex: 1;
-  align-items: stretch;
   @media (min-width: 768px) {
-    flex-direction: row-reverse;
-  }
-}
-
-.composerInput {
-  border-top: 1px solid var(--color-border-layout);
-  flex: 1;
-  @media (min-width: 768px) {
-    border-top: none;
-    border-left: 1px solid var(--color-border-layout);
-    flex: 0 0 var(--width-composer-sidebar);
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    align-items: stretch;
   }
 }
 
 .composerOutput {
-  flex: 1;
-  padding: var(--space-default);
+  height: 100vw;
+  position: relative;
+  @media (min-width: 768px) {
+    height: auto;
+    flex: 1 1 auto;
+  }
+}
+
+.composerInput {
+  border-top: 1px solid var(--color-layout-border);
+  @media (min-width: 768px) {
+    border-top: none;
+    border-left: 1px solid var(--color-layout-border);
+    flex: 0 0 var(--width-composer-sidebar);
+  }
 }

@@ -1,4 +1,4 @@
-export const activityData = [
+export const mockActivityData = [
   {
     type: "latlng",
     data: [

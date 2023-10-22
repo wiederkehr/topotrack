@@ -1,6 +1,6 @@
 .module {
   padding: var(--space-default);
-  border-bottom: 1px solid var(--color-border-layout);
+  border-bottom: 1px solid var(--color-layout-border);
 }
 
 .module:last-of-type{

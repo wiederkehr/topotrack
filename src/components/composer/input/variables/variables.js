@@ -1,6 +1,6 @@
-import Module, { Submodule } from "@/components/composer/interface/module";
-import Label from "@/components/composer/interface/label";
-import Select from "@/components/composer/interface/select";
+import Module, { Submodule } from "@/components/interface/module";
+import Label from "@/components/interface/label";
+import Select from "@/components/interface/select";
 import styles from "./variables.module.css";
 
 export default function Variables({ variables, onVariableChange }) {

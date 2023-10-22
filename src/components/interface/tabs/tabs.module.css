@@ -5,7 +5,7 @@
 .tabsTrigger {
   background-color: var(--gray-3);
   border: 1px solid transparent;
-  border-bottom-color: var(--color-border-layout);
+  border-bottom-color: var(--color-layout-border);
   border-top-width: 0;
   color: var(--gray-9);
   flex: 1;
@@ -32,6 +32,6 @@
 .tabsTrigger[data-state='active'] {
   color: var(--gray-12);
   background-color: var(--gray-2);
-  border-color: var(--color-border-layout);
+  border-color: var(--color-layout-border);
   border-bottom-color: transparent;
 }

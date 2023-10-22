@@ -1,7 +1,7 @@
 import { lineDistance, along, lineSliceAlong } from "@turf/turf";
 import { MercatorCoordinate } from "mapbox-gl";
 import { max } from "d3";
-import computeCameraPosition from "@/functions/computeCameraPosition";
+import computeCameraPosition from "@/functions/map.computeCameraPosition";
 
 const followPath = async ({
   map,

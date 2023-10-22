@@ -7,19 +7,19 @@
   padding: var(--space-3);
   line-height: 1;
   gap: var(--space-1);
-  background-color: var(--color-background-control);
+  background-color: var(--color-control-background);
   color: var(--gray-12);
-  border: 1px solid var(--color-border-control);
+  border: 1px solid var(--color-control-border);
   width: 100%;
   box-sizing: border-box;
 }
 
 .selectTrigger:hover {
-  border-color: var(--color-border-control-hover);
+  border-color: var(--color-control-border-hover);
 }
 
 .selectTrigger:focus {
-  border-color: var(--color-border-control-focus);
+  border-color: var(--color-control-border-focus);
   box-shadow: none;
 }
 

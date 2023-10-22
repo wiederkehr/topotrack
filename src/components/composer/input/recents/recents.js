@@ -1,4 +1,4 @@
-import Module from "@/components/composer/interface/module";
+import Module from "@/components/interface/module";
 import Item from "./item";
 import styles from "./recents.module.css";
 
@@ -16,7 +16,7 @@ export default function Recents({
               id={activity.id}
               name={activity.name}
               date={activity.date}
-              active={activity.id === selectedActivity.id}
+              active={activity.id === selectedActivity?.id}
               onClick={onActivityChange}
             />
           </li>

@@ -1,12 +1,12 @@
-import Module, { Submodule } from "@/components/composer/interface/module";
-import Select from "@/components/composer/interface/select";
+import Module, { Submodule } from "@/components/interface/module";
+import Select from "@/components/interface/select";
 import Dimensionfields from "./dimensionfields";
-import styles from "./formats.module.css";
+import styles from "./format.module.css";
 
-export default function Formats({ format, formats, onFormatChange }) {
+export default function Format({ format, formats, onFormatChange }) {
   return (
     <Module label="Format">
-      <div className={styles.formats}>
+      <div className={styles.format}>
         <Submodule>
           <Select
             value={format.name}

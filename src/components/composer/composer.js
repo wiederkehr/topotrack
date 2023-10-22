@@ -1,36 +1,38 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 
-import { Tabs, Tab } from "./interface/tabs";
-import Canvas from "./output/canvas";
+import { formats, templates, assets } from "./settings";
 import Search from "./input/search";
 import Recents from "./input/recents";
-import Formats from "./input/formats";
-import Themes from "./input/themes";
+import Format from "./input/format";
+import Template from "./input/template";
 import Variables from "./input/variables";
 import Export from "./input/export";
-
-import { FigureDev } from "@/components/composer/output/figure";
-
-import { formats, themes, assets } from "./settings";
+import Canvas from "./output/canvas";
+import Figure, { FigureDev } from "./output/figure";
+import Scrollarea from "@/components/interface/scrollarea";
+import { Tabs, Tab } from "@/components/interface/tabs";
+import { toPng, toSvg, toMp4, formatFilename } from "@/functions/export";
 
 import styles from "@/components/composer/composer.module.css";
 
+// Mock Data
+import { mockActivities, mockActivity, mockActivityData } from "./data";
+
 export default function Composer() {
-  // Activity Selection Logic
+  // Activities
   // //////////////////////////////
-  const activities = [
-    { id: 1, date: "10.10.2023", name: "Wild Basin Loop" },
-    { id: 2, date: "11.10.2023", name: "Bear Lake Loop" },
-    { id: 3, date: "12.10.2023", name: "Hagues, Mummy Loop" },
-    { id: 4, date: "13.10.2023", name: "Longs Peak" },
-  ];
-  const [activity, setActivity] = useState(activities[0]);
+  const [activities, setActivities] = useState(mockActivities);
+  const [activityData, setActivityData] = useState(mockActivityData);
+
+  // Activity Selection
+  // //////////////////////////////
+  const [activity, setActivity] = useState(mockActivity);
   const handleActivityChange = (id) => {
     const activity = activities.find((activity) => activity.id === id);
     setActivity(activity);
   };
 
-  // Search Logic
+  // Search
   // //////////////////////////////
   const [searchTerm, setSearchTerm] = useState("");
   const handleSearchChange = (event) => {
@@ -38,7 +40,7 @@ export default function Composer() {
     setSearchTerm(value);
   };
 
-  // Format Logic
+  // Format
   // //////////////////////////////
   const [format, setFormat] = useState(formats[0]);
   const handleFormatChange = (value) => {
@@ -46,25 +48,25 @@ export default function Composer() {
     setFormat(format);
   };
 
-  // Theme Logic
+  // Template
   // //////////////////////////////
-  const [theme, setTheme] = useState(themes[0]);
-  const handleThemeChange = (value) => {
-    const theme = themes.find((theme) => theme.name === value);
-    setTheme(theme);
-    setVariables(setVariableValues(theme.variables));
+  const [template, setTemplate] = useState(templates[0]);
+  const handleTemplateChange = (value) => {
+    const template = templates.find((template) => template.name === value);
+    setTemplate(template);
+    setVariables(setVariablesDefaults(template.variables));
   };
 
-  // Variable Logic
+  // Variables
   // //////////////////////////////
-  const setVariableValues = (variables) =>
+  const setVariablesDefaults = (variables) =>
     variables.map((variable) => ({
       name: variable.name,
       options: variable.options,
       value: variable.options[0],
     }));
   const [variables, setVariables] = useState(
-    setVariableValues(themes[0].variables)
+    setVariablesDefaults(templates[0].variables)
   );
   const handleVariableChange = ({ name, value }) => {
     const index = variables.findIndex((variable) => variable.name === name);
@@ -75,19 +77,55 @@ export default function Composer() {
     }
   };
 
-  // Export Logic
+  // Export
   // //////////////////////////////
+  const figureRef = useRef(null);
   const [asset, setAsset] = useState(assets[0]);
   const handleAssetChange = (value) => {
     const asset = assets.find((asset) => asset.name === value);
     setAsset(asset);
   };
-  const handleAssetExport = (event) => {
-    console.log(event);
+  const handleAssetExport = () => {
+    const filename = formatFilename({
+      date: activity.start_date_local,
+      name: activity.name,
+      format: format.name,
+      type: asset.type,
+    });
+    switch (asset.type) {
+      case "png":
+        toPng({ node: figureRef.current, name: filename });
+        break;
+      case "svg":
+        toSvg({ node: figureRef.current, name: filename });
+        break;
+      case "mp4":
+        toMp4({ blob: null, name: filename });
+        break;
+      default:
+        break;
+    }
   };
 
   return (
     <div className={styles.composer}>
+      <div className={styles.composerOutput}>
+        <Scrollarea>
+          <Canvas format={format}>
+            <Figure
+              ref={figureRef}
+              activity={activity}
+              activityData={activityData}
+              template={template}
+            />
+            {/* <FigureDev
+            activity={activity}
+            template={template.name}
+            variables={variables.map(({ name, value }) => ({ name, value }))}
+          /> */}
+          </Canvas>
+        </Scrollarea>
+      </div>
       <div className={styles.composerInput}>
         <Tabs names={["Activity", "Design", "Export"]}>
           <Tab name="Activity">
@@ -102,15 +140,15 @@ export default function Composer() {
             />
           </Tab>
           <Tab name="Design">
-            <Formats
+            <Format
               format={format}
               formats={formats}
               onFormatChange={handleFormatChange}
             />
-            <Themes
-              theme={theme}
-              themes={themes}
-              onThemeChange={handleThemeChange}
+            <Template
+              template={template}
+              templates={templates}
+              onTemplateChange={handleTemplateChange}
             />
             <Variables
               variables={variables}
@@ -126,15 +164,6 @@ export default function Composer() {
             />
           </Tab>
         </Tabs>
-      </div>
-      <div className={styles.composerOutput}>
-        <Canvas format={format}>
-          <FigureDev
-            activity={activity}
-            theme={theme.name}
-            variables={variables.map(({ name, value }) => ({ name, value }))}
-          />
-        </Canvas>
       </div>
     </div>
   );

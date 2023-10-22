@@ -6,15 +6,15 @@
 .dimensionfield {
   flex: 1;
   display: flex;
-  background-color: var(--color-background-layout);
-  border: 1px solid var(--color-border-control);
+  background-color: var(--color-layout-background);
+  border: 1px solid var(--color-control-border);
   color: var(--gray-9);
   border-radius: var(--radius-2)
 }
 
 .dimensionfieldLabel {
   padding: var(--space-2) var(--space-3);
-  border-right: 1px solid var(--color-border-control);
+  border-right: 1px solid var(--color-control-border);
 }
 
 .dimensionfieldValue {

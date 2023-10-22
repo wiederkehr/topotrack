@@ -1,8 +1,8 @@
 import { useState, useRef, useCallback } from "react";
 import { bbox, lineString } from "@turf/turf";
 import MapGL from "react-map-gl";
-import flyToPoint from "@/functions/flyToPoint";
-import followPath from "@/functions/followPath";
+import flyToPoint from "@/functions/map.flyToPoint";
+import followPath from "@/functions/map.followPath";
 import { colors } from "@/styles/constants";
 import Position from "./position";
 import Route from "./route";

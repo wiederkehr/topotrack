@@ -1,7 +1,7 @@
-export const activity = {
+export const mockActivity = {
+  name: "Bear Lake Loop",
   resource_state: 2,
   athlete: { id: 19762644, resource_state: 1 },
-  name: "Bear Lake Corridor II: Flattop, Hallet, Otis",
   distance: 17977.3,
   moving_time: 14282,
   elapsed_time: 15692,
