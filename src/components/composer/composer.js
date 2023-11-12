@@ -1,36 +1,36 @@
 import { useState, useRef } from "react";
+import { useStrava } from "@/hooks/useStrava";
 
-import { formats, templates, assets } from "./settings";
-import Search from "./input/search";
-import Recents from "./input/recents";
-import Format from "./input/format";
-import Template from "./input/template";
-import Variables from "./input/variables";
-import Export from "./input/export";
-import Canvas from "./output/canvas";
-import Figure, { FigureDev } from "./output/figure";
-import Scrollarea from "@/components/interface/scrollarea";
-import { Tabs, Tab } from "@/components/interface/tabs";
+import Input from "@/components/composer.input/input";
+import Output from "@/components/composer.output/output";
+import templates from "@/components/composer.output/templates";
+import { formats, assets } from "./composer.settings";
 import { toPng, toSvg, toMp4, formatFilename } from "@/functions/export";
-
-import styles from "@/components/composer/composer.module.css";
-
-// Mock Data
-import { mockActivities, mockActivity, mockActivityData } from "./data";
+import { mockActivities, mockActivity, mockActivityData } from "@/data/mock";
+import styles from "./composer.module.css";
 
 export default function Composer() {
   // Activities
   // //////////////////////////////
   const [activities, setActivities] = useState(mockActivities);
-  const [activityData, setActivityData] = useState(mockActivityData);
 
-  // Activity Selection
+  // Activity
   // //////////////////////////////
   const [activity, setActivity] = useState(mockActivity);
   const handleActivityChange = (id) => {
     const activity = activities.find((activity) => activity.id === id);
     setActivity(activity);
   };
+
+  // Activity Data
+  // //////////////////////////////
+  const { activityData, activityError } = {
+    activityData: mockActivityData,
+    error: null,
+  };
+  // const { data, error } = useStrava(
+  //   `activities/${activity.id}/streams?keys=[time,distance,latlng,altitude]`
+  // );
 
   // Search
   // //////////////////////////////
@@ -109,62 +109,33 @@ export default function Composer() {
 
   return (
     <div className={styles.composer}>
-      <div className={styles.composerOutput}>
-        <Scrollarea>
-          <Canvas format={format}>
-            <Figure
-              ref={figureRef}
-              activity={activity}
-              activityData={activityData}
-              template={template}
-            />
-            {/* <FigureDev
-            activity={activity}
-            template={template.name}
-            variables={variables.map(({ name, value }) => ({ name, value }))}
-          /> */}
-          </Canvas>
-        </Scrollarea>
-      </div>
-      <div className={styles.composerInput}>
-        <Tabs names={["Activity", "Design", "Export"]}>
-          <Tab name="Activity">
-            <Search
-              searchTerm={searchTerm}
-              onSearchChange={handleSearchChange}
-            />
-            <Recents
-              selectedActivity={activity}
-              activities={activities}
-              onActivityChange={handleActivityChange}
-            />
-          </Tab>
-          <Tab name="Design">
-            <Format
-              format={format}
-              formats={formats}
-              onFormatChange={handleFormatChange}
-            />
-            <Template
-              template={template}
-              templates={templates}
-              onTemplateChange={handleTemplateChange}
-            />
-            <Variables
-              variables={variables}
-              onVariableChange={handleVariableChange}
-            />
-          </Tab>
-          <Tab name="Export">
-            <Export
-              asset={asset}
-              assets={assets}
-              onAssetChange={handleAssetChange}
-              onAssetExport={handleAssetExport}
-            />
-          </Tab>
-        </Tabs>
-      </div>
+      <Output
+        activity={activity}
+        activityData={activityData}
+        figureRef={figureRef}
+        format={format}
+        template={template}
+        variables={variables}
+      />
+      <Input
+        activities={activities}
+        activity={activity}
+        asset={asset}
+        assets={assets}
+        format={format}
+        formats={formats}
+        onActivityChange={handleActivityChange}
+        onAssetChange={handleAssetChange}
+        onAssetExport={handleAssetExport}
+        onFormatChange={handleFormatChange}
+        onSearchChange={handleSearchChange}
+        onTemplateChange={handleTemplateChange}
+        onVariableChange={handleVariableChange}
+        searchTerm={searchTerm}
+        template={template}
+        templates={templates}
+        variables={variables}
+      />
     </div>
   );
 }

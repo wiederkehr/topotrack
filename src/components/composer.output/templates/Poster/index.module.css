@@ -1,18 +1,4 @@
-.figure{
-  background-color: var(--gray-4);
-  height: 100%;
-  line-height: 1;
-}
-
-.figure > * {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-
-.figureForeground > * {
+.foreground>* {
   position: absolute;
 }
 
@@ -38,29 +24,16 @@
   bottom: var(--space-default);
 }
 
-.figureType {
+.type {
   display: block;
   font-size: var(--font-size-small);
   text-transform: uppercase;
 }
 
-.figureTypePrimary {
+.typePrimary {
   opacity: 1;
 }
 
-.figureTypeSecondary {
+.typeSecondary {
   opacity: 0.5;
-}
-
-.loading {
-  border: 2px dashed #ddd;
-  box-shadow: none;
-  color: #999;
-  text-align: center;
-}
-
-.error {
-  border: 2px solid #f33;
-  color: #f33;
-  text-align: center;
 }

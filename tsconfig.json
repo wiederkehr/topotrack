@@ -11,6 +11,7 @@
       "@/functions/*": ["functions/*"],
       "@/hooks/*": ["hooks/*"],
       "@/styles/*": ["styles/*"],
+      "@/data/*": ["data/*"],
     },
     "allowJs": true,
     "skipLibCheck": true,

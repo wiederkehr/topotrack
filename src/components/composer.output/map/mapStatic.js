@@ -2,7 +2,7 @@ import { useRef, useCallback } from "react";
 import { bbox, lineString } from "@turf/turf";
 import MapGL from "react-map-gl";
 import { colors } from "@/styles/constants";
-import Route from "./route";
+import Route from "./map.route";
 import styles from "./map.module.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 

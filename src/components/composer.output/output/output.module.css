@@ -1,0 +1,8 @@
+.output {
+  height: 100vw;
+  position: relative;
+  @media (min-width: 768px) {
+    height: auto;
+    flex: 1 1 auto;
+  }
+}
