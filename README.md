@@ -8,7 +8,7 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Dependncies
+## Dependencies
 
 - [React](https://react.dev/)
 - [Next](https://nextjs.org/)
