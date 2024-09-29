@@ -7,12 +7,7 @@ export default forwardRef(function Figure(
 ) {
   return (
     <div className={styles.figure} ref={ref}>
-      <template.Render
-        activity={activity}
-        activityData={activityData}
-        template={template}
-        variables={variables}
-      />
+      {template.render({ activity, activityData, variables })}
     </div>
   );
 });

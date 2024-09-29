@@ -1,34 +1,37 @@
 export const name = "Debug";
 
+const foregroundOptions = ["Dark Blue", "Dark Green", "Dark Purple"];
+const backgroundOptions = ["Light Blue", "Light Green", "Light Purple"];
+
 export const variables = [
   {
     label: "Foreground",
     name: "foreground",
     type: "color",
-    options: ["Dark Blue", "Dark Green", "Dark Purple"],
+    options: foregroundOptions,
   },
   {
     label: "Background",
     name: "background",
     type: "color",
-    options: ["Light Blue", "Light Green", "Light Purple"],
+    options: backgroundOptions,
   },
 ];
 
 export const presets = [
   {
-    name: "Template A.1",
-    foreground: "Dark Blue",
-    background: "Light Blue",
+    name: "Debug Preset 1",
+    foreground: foregroundOptions[0],
+    background: backgroundOptions[0],
   },
   {
-    name: "Template A.2",
-    foreground: "Dark Green",
-    background: "Light Green",
+    name: "Debug Preset 2",
+    foreground: foregroundOptions[1],
+    background: backgroundOptions[1],
   },
 ];
 
-export const Render = ({ activity, activityData, template, variables }) => {
+export const render = ({ activity, activityData, variables }) => {
   return (
     <div>
       <pre>{`Name: ${name}`}</pre>

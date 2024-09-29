@@ -4,6 +4,6 @@ export const variables = [];
 
 export const presets = [];
 
-export const Render = ({ activity, activityData, template, variables }) => {
+export const render = ({ activity, activityData, variables }) => {
   return null;
 };

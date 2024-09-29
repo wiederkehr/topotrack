@@ -19,6 +19,7 @@ export default function Composer() {
 
   // Activity
   // //////////////////////////////
+  // NOTE: This is a mock of the Strava API response.
   const [activity, setActivity] = useState(mockActivity);
   const handleActivityChange = (id) => {
     const activity = activities.find((activity) => activity.id === id);
@@ -27,6 +28,7 @@ export default function Composer() {
 
   // Activity Data
   // //////////////////////////////
+  // NOTE: This is a mock of the Strava API response.
   const { activityData, activityError } = {
     activityData: mockActivityData,
     error: null,
@@ -57,27 +59,44 @@ export default function Composer() {
   const handleTemplateChange = (value) => {
     const template = templates.find((template) => template.name === value);
     setTemplate(template);
-    setVariables(setVariablesDefaults(template.variables));
+    setPresets(template.presets);
+    setPreset(template.presets[0]);
+    setInputs(template.variables);
+    setVariables({ ...template.presets[0] });
   };
+
+  // Presets
+  // //////////////////////////////
+  const [presets, setPresets] = useState(template.presets);
+  const [preset, setPreset] = useState(presets[0]);
+  const handlePresetChange = (value) => {
+    const preset = presets.find((preset) => preset.name === value);
+    setPreset(preset);
+    setVariables({ ...preset });
+  };
+
+  // Inputs
+  // //////////////////////////////
+  const [inputs, setInputs] = useState(template.variables);
 
   // Variables
   // //////////////////////////////
-  const setVariablesDefaults = (variables) =>
-    variables.map((variable) => ({
-      name: variable.name,
-      options: variable.options,
-      value: variable.options[0],
-    }));
-  const [variables, setVariables] = useState(
-    setVariablesDefaults(templates[0].variables)
-  );
+  const [variables, setVariables] = useState({
+    ...template.variables.reduce(
+      (object, item) => ({
+        ...object,
+        [item["name"]]: preset[item["name"]],
+      }),
+      {}
+    ),
+  });
   const handleVariableChange = ({ name, value }) => {
-    const index = variables.findIndex((variable) => variable.name === name);
-    if (index !== -1) {
-      const changedVariables = [...variables];
-      changedVariables[index].value = value;
-      setVariables(changedVariables);
-    }
+    const newVariables = { ...variables, [name]: value };
+    const matchingPreset = presets.find((preset) =>
+      Object.keys(preset).every((key) => preset[key] === newVariables[key])
+    );
+    setPreset(matchingPreset ? matchingPreset : { name: "Custom" });
+    setVariables({ ...newVariables });
   };
 
   // Export
@@ -127,17 +146,21 @@ export default function Composer() {
         assets={assets}
         format={format}
         formats={formats}
+        searchTerm={searchTerm}
+        template={template}
+        templates={templates}
+        preset={preset}
+        presets={presets}
+        inputs={inputs}
+        variables={variables}
         onActivityChange={handleActivityChange}
         onAssetChange={handleAssetChange}
         onAssetExport={handleAssetExport}
         onFormatChange={handleFormatChange}
         onSearchChange={handleSearchChange}
         onTemplateChange={handleTemplateChange}
+        onPresetChange={handlePresetChange}
         onVariableChange={handleVariableChange}
-        searchTerm={searchTerm}
-        template={template}
-        templates={templates}
-        variables={variables}
       />
     </div>
   );

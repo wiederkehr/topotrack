@@ -3,37 +3,38 @@ import styles from "./index.module.css";
 
 export const name = "Poster";
 
+const themeOptions = ["Light", "Dark"];
+const accentOptions = ["Blue", "Green", "Purple", "White", "Red"];
+
 export const variables = [
   {
     label: "Theme",
     name: "theme",
-    options: ["Light", "Dark"],
+    options: themeOptions,
     type: "select",
   },
   {
     label: "Accent",
     name: "accent",
-    options: ["Blue", "Green", "Purple", "White", "Red"],
+    options: accentOptions,
     type: "color",
   },
 ];
 
 export const presets = [
   {
-    name: "Template B.1",
-    theme: "Light",
+    name: "Poster Preset 1",
+    theme: themeOptions[0],
     accent: "Blue",
-    animation: "Mild",
   },
   {
-    name: "Template B.2",
-    theme: "Dark",
-    accent: "Red",
-    animation: "Wild",
+    name: "Poster Preset 2",
+    theme: themeOptions[1],
+    accent: accentOptions[1],
   },
 ];
 
-export const Render = ({ activity, activityData, template, variables }) => {
+export const render = ({ activity, activityData, variables }) => {
   return (
     <>
       <div className={styles.background}>{/* <MapStatic data={data} /> */}</div>

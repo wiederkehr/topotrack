@@ -4,7 +4,8 @@ import Search from "./search";
 import Recents from "./recents";
 import Format from "./format";
 import Template from "./template";
-import Variables from "./variables";
+import Preset from "./preset";
+import Inputs from "./inputs";
 import Export from "./export";
 import { Tabs, Tab } from "@/components/interface/tabs";
 
@@ -21,10 +22,14 @@ export default function Input({
   onFormatChange,
   onSearchChange,
   onTemplateChange,
+  onPresetChange,
   onVariableChange,
   searchTerm,
   template,
   templates,
+  preset,
+  presets,
+  inputs,
   variables,
 }) {
   return (
@@ -49,7 +54,13 @@ export default function Input({
             templates={templates}
             onTemplateChange={onTemplateChange}
           />
-          <Variables
+          <Preset
+            preset={preset}
+            presets={presets}
+            onPresetChange={onPresetChange}
+          />
+          <Inputs
+            inputs={inputs}
             variables={variables}
             onVariableChange={onVariableChange}
           />

@@ -1,20 +1,19 @@
 import Module, { Submodule } from "@/components/interface/module";
 import Label from "@/components/interface/label";
 import Select from "@/components/interface/select";
-import styles from "./variables.module.css";
 
-export default function Variables({ variables, onVariableChange }) {
+export default function Inputs({ inputs, variables, onVariableChange }) {
   return (
     <Module label="Variables">
-      {variables.map((variable, index) => (
+      {inputs.map((input, index) => (
         <Submodule key={index}>
-          <Label>{variable.name}</Label>
+          <Label>{input.name}</Label>
           <Select
-            value={variable.value}
+            value={variables[input.name]}
             onValueChange={(value) => {
-              onVariableChange({ name: variable.name, value: value });
+              onVariableChange({ name: input.name, value: value });
             }}
-            options={variable.options}
+            options={input.options}
           />
         </Submodule>
       ))}
