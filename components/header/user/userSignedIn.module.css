@@ -1,0 +1,89 @@
+.user {
+  position: relative;
+}
+
+.userImage {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background-color: #ddd;
+  background-position: center;
+  background-size: cover;
+}
+
+.userMenu {
+  background-color: #fff;
+  border-radius: 0.25rem;
+  box-shadow:
+    0px 0px 4px rgba(0, 0, 0, 0.1),
+    0px 2px 8px rgba(0, 0, 0, 0.1),
+    0px 4px 16px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  right: 0%;
+  transform: translateX(0%);
+  visibility: hidden;
+  font-size: 0.875rem;
+}
+
+.userMenu::after {
+  content: "";
+  position: absolute;
+  top: 0%;
+  right: 2rem;
+  transform: translate(50%, -100%);
+  border-width: 0.5rem;
+  border-style: solid;
+  border-color: transparent;
+  border-bottom-color: #fff;
+  height: 0;
+  width: 0;
+}
+
+.user:hover .userMenu {
+  visibility: visible;
+}
+
+.userInfo {
+  border-bottom: 1px solid #eee;
+  font-weight: 400;
+  padding: 1rem;
+  line-height: 1.5;
+}
+
+.userNameLabel {
+  color: #999;
+  display: block;
+  white-space: nowrap;
+}
+
+.userName {
+  display: block;
+  white-space: nowrap;
+}
+
+.userAction {
+  all: unset;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  box-sizing: border-box;
+  display: block;
+  font-weight: 600;
+  padding: 1rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+.userAction:first-child {
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+}
+
+.userAction:last-child {
+  border-bottom-left-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+  border-bottom: none;
+}
+
+.userAction:hover {
+  color: var(--color-accent);
+}
