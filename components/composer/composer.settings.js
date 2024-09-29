@@ -4,39 +4,6 @@ export const formats = [
   { name: "Portrait", width: 1080, height: 1920 },
 ];
 
-export const templates = [
-  {
-    name: "Poster",
-    variables: [
-      {
-        name: "Foreground",
-        options: ["Dark Blue", "Dark Green", "Dark Purple"],
-      },
-      {
-        name: "Background",
-        options: ["Light Blue", "Light Green", "Light Purple"],
-      },
-    ],
-  },
-  {
-    name: "Map",
-    variables: [
-      {
-        name: "Theme",
-        options: ["Light", "Dark"],
-      },
-      {
-        name: "Background",
-        options: ["Dark Blue", "Dark Green", "Dark Purple"],
-      },
-      {
-        name: "Animation",
-        options: ["None", "Mild", "Wild"],
-      },
-    ],
-  },
-];
-
 export const assets = [
   { name: "Static PNG", type: "png" },
   { name: "Static SVG", type: "svg" },

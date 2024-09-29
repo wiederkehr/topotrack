@@ -1,4 +1,4 @@
-export const name = "Template B";
+export const name = "Animation";
 
 export const variables = [
   {

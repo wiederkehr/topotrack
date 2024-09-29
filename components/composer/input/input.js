@@ -1,11 +1,11 @@
 import styles from "./input.module.css";
 
-import Search from "@/components/composer.input/search";
-import Recents from "@/components/composer.input/recents";
-import Format from "@/components/composer.input/format";
-import Template from "@/components/composer.input/template";
-import Variables from "@/components/composer.input/variables";
-import Export from "@/components/composer.input/export";
+import Search from "./search";
+import Recents from "./recents";
+import Format from "./format";
+import Template from "./template";
+import Variables from "./variables";
+import Export from "./export";
 import { Tabs, Tab } from "@/components/interface/tabs";
 
 export default function Input({

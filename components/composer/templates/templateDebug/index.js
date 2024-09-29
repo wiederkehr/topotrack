@@ -1,4 +1,4 @@
-export const name = "Template A";
+export const name = "Debug";
 
 export const variables = [
   {

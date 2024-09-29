@@ -1,7 +1,7 @@
 import styles from "./output.module.css";
 
-import Canvas from "@/components/composer.output/canvas";
-import Figure from "@/components/composer.output/figure";
+import Canvas from "./canvas";
+import Figure from "./figure";
 import Scrollarea from "@/components/interface/scrollarea";
 
 export default function Output({

@@ -1,3 +1,6 @@
+import classNames from "classnames";
+import styles from "./index.module.css";
+
 export const name = "Poster";
 
 export const variables = [
@@ -30,8 +33,6 @@ export const presets = [
   },
 ];
 
-import styles from "./index.module.css";
-
 export const Render = ({ activity, activityData, template, variables }) => {
   return (
     <>
@@ -51,7 +52,7 @@ export const Render = ({ activity, activityData, template, variables }) => {
         </div>
         <div className={styles.bottomRight}>
           <FigureType level="primary">Distance</FigureType>
-          <FigureType level="primary">Elevation</FigureType>
+          <FigureType level="secondary">Elevation</FigureType>
         </div>
       </div>
     </>

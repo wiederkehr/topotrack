@@ -3,9 +3,9 @@
 import { useState, useRef } from "react";
 import { useStrava } from "@/hooks/useStrava";
 
-import Input from "@/components/composer.input/input";
-import Output from "@/components/composer.output/output";
-import templates from "@/components/composer.output/templates";
+import Input from "./input";
+import Output from "./output";
+import templates from "./templates";
 import { formats, assets } from "./composer.settings";
 import { toPng, toSvg, toMp4, formatFilename } from "@/functions/export";
 import { mockActivities, mockActivity, mockActivityData } from "@/data/mock";
@@ -14,6 +14,7 @@ import styles from "./composer.module.css";
 export default function Composer() {
   // Activities
   // //////////////////////////////
+  // NOTE: This is a mock of the Strava API response.
   const [activities, setActivities] = useState(mockActivities);
 
   // Activity

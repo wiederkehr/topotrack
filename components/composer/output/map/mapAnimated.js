@@ -1,11 +1,11 @@
 import { useState, useRef, useCallback } from "react";
 import { bbox, lineString } from "@turf/turf";
 import MapGL from "react-map-gl";
-import flyToPoint from "@/functions/map.flyToPoint";
-import followPath from "@/functions/map.followPath";
+import flyToPoint from "@/functions/map/flyToPoint";
+import followPath from "@/functions/map/followPath";
 import { colors } from "@/styles/constants";
-import Position from "./map.position";
-import Route from "./map.route";
+import Position from "./position";
+import Route from "./poute";
 import styles from "./map.module.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 
@@ -13,7 +13,7 @@ const MAP_STYLE =
   "mapbox://styles/benjaminwiederkehr/clmr134ih01y301rchfii6ey6";
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
-export default function Map({ data }) {
+export default function MapAnimated({ data }) {
   // Data
   const latlng = data.find((d) => d.type === "latlng").data;
   const lnglat = latlng.map((d) => [d[1], d[0]]);

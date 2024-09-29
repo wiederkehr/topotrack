@@ -1,7 +1,7 @@
 import { lineString } from "@turf/turf";
 import { Source, Layer } from "react-map-gl";
 
-export default function Route({ data, color }) {
+export default function MapRoute({ data, color }) {
   return (
     <Source type="geojson" data={lineString(data)}>
       <Layer
