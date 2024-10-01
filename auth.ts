@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import Strava from "next-auth/providers/strava";
 
+// Add access_token to the session type.
 declare module "next-auth" {
   interface Session {
     access_token: string;
@@ -8,7 +9,15 @@ declare module "next-auth" {
 }
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
-  providers: [Strava],
+  providers: [
+    Strava({
+      authorization: {
+        params: {
+          scope: "read,activity:read",
+        },
+      },
+    }),
+  ],
   callbacks: {
     jwt({ token, account }) {
       if (account) {

@@ -1,16 +1,18 @@
 import styles from "./input.module.css";
 
-import Search from "./search";
-import Recents from "./recents";
-import Format from "./format";
-import Template from "./template";
-import Preset from "./preset";
-import Inputs from "./inputs";
+import { Tab, Tabs } from "@/components/interface/tabs";
 import Export from "./export";
-import { Tabs, Tab } from "@/components/interface/tabs";
+import Format from "./format";
+import Inputs from "./inputs";
+import Preset from "./preset";
+import Recents from "./recents";
+import Search from "./search";
+import Template from "./template";
 
 export default function Input({
   activities,
+  activitiesError,
+  activitiesLoading,
   activity,
   asset,
   assets,
@@ -38,8 +40,10 @@ export default function Input({
         <Tab name="Activity">
           <Search searchTerm={searchTerm} onSearchChange={onSearchChange} />
           <Recents
-            selectedActivity={activity}
             activities={activities}
+            activitiesError={activitiesError}
+            activitiesLoading={activitiesLoading}
+            selectedActivity={activity}
             onActivityChange={onActivityChange}
           />
         </Tab>

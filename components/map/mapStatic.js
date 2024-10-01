@@ -1,16 +1,13 @@
 import { useRef, useCallback } from "react";
 import { bbox, lineString } from "@turf/turf";
 import MapGL from "react-map-gl";
-import { colors } from "@/styles/constants";
 import Route from "./route";
 import styles from "./map.module.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-const MAP_STYLE =
-  "mapbox://styles/benjaminwiederkehr/clmr134ih01y301rchfii6ey6";
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
-export default function MapStatic({ data }) {
+export default function MapStatic({ data, style, accent }) {
   // Data
   const latlng = data.find((d) => d.type === "latlng").data;
   const lnglat = latlng.map((d) => [d[1], d[0]]);
@@ -43,12 +40,12 @@ export default function MapStatic({ data }) {
       <MapGL
         ref={mapRef}
         onLoad={onMapLoad}
-        mapStyle={MAP_STYLE}
+        mapStyle={style}
         mapboxAccessToken={MAPBOX_TOKEN}
         initialViewState={mapConfig}
         attributionControl={false}
       >
-        <Route data={routeData} color={colors.accent} />
+        <Route data={routeData} color={accent} />
       </MapGL>
     </div>
   );

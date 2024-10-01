@@ -1,31 +1,35 @@
 import styles from "./output.module.css";
 
+import Callout from "@/components/interface/callout";
+import Scrollarea from "@/components/interface/scrollarea";
 import Canvas from "./canvas";
 import Figure from "./figure";
-import Scrollarea from "@/components/interface/scrollarea";
 
 export default function Output({
   activity,
   activityData,
-  activityError,
+  activityDataError,
+  activityDataLoading,
   figureRef,
   format,
   template,
   variables,
 }) {
-  if (activityError) return <div className={styles.error}>Error!</div>;
-  if (!activityData) return <div className={styles.loading}>Loading…</div>;
   return (
     <div className={styles.output}>
       <Scrollarea>
         <Canvas format={format}>
-          <Figure
-            activity={activity}
-            activityData={activityData}
-            ref={figureRef}
-            template={template}
-            variables={variables}
-          />
+          {activityDataLoading && <Callout>Loading activity data…</Callout>}
+          {activityDataError && <Callout>Error loading activity data.</Callout>}
+          {activity && activityData && (
+            <Figure
+              activity={activity}
+              activityData={activityData}
+              ref={figureRef}
+              template={template}
+              variables={variables}
+            />
+          )}
         </Canvas>
       </Scrollarea>
     </div>

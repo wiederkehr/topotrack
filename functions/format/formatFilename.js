@@ -2,7 +2,7 @@ import slugify from "voca/slugify";
 import kebabCase from "voca/kebab_case";
 import { format, parseISO } from "date-fns";
 
-export function formatFilename({ date, name, format, type }) {
+export default function formatFilename({ date, name, format, type }) {
   const application = "topotrack";
   const d = "-";
   const p = ".";

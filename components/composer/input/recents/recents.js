@@ -3,10 +3,13 @@ import Item from "./item";
 import styles from "./recents.module.css";
 
 export default function Recents({
-  selectedActivity,
   activities,
+  activitiesError,
+  activitiesLoading,
+  selectedActivity,
   onActivityChange,
 }) {
+  if (!activities) return null;
   return (
     <Module label="Recent">
       <ul className={styles.recentsList}>

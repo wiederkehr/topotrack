@@ -1,11 +1,10 @@
-import styles from "./welcome.module.css";
+import Callout from "@/components/interface/callout";
+import { Flex } from "@radix-ui/themes";
 
 export default function Welcome() {
   return (
-    <div className={styles.welcome}>
-      <p className={styles.welcomeText}>
-        Hey, please sign in with Strava to get started.
-      </p>
-    </div>
+    <Flex m="5" direction="column">
+      <Callout>Welcome, please sign in with Strava to get started.</Callout>
+    </Flex>
   );
 }

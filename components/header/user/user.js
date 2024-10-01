@@ -1,21 +1,34 @@
-import { auth } from "@/auth";
-import UserSignedIn from "./userSignedIn";
-import UserSignedOut from "./userSignedOut";
-import UserDev from "./userDev";
+import { signOut } from "@/auth";
+import styles from "./userSignedIn.module.css";
 
-export default async function User({ dev }) {
-  const session = await auth();
-  const user = session?.user;
-
-  const renderUser = () => {
-    if (dev) {
-      return <UserDev />;
-    }
-    if (user) {
-      return <UserSignedIn user={user} />;
-    } else {
-      return <UserSignedOut />;
-    }
-  };
-  return <div>{renderUser()}</div>;
+export default function User({ user }) {
+  return (
+    <div className={styles.user}>
+      <div className={styles.userProfile}>
+        <div
+          className={styles.userImage}
+          style={{ backgroundImage: `url(${user.image})` }}
+        ></div>
+      </div>
+      <div className={styles.userMenu}>
+        <p className={styles.userInfo}>
+          <span className={styles.userNameLabel}>Signed in as:</span>
+          <span className={styles.userName}>{user.name}</span>
+        </p>
+        <a href={"https://strava.com"} className={styles.userAction}>
+          Go to Strava
+        </a>
+        <form
+          action={async () => {
+            "use server";
+            await signOut();
+          }}
+        >
+          <button type="submit" className={styles.userAction}>
+            Sign out
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }

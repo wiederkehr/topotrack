@@ -5,15 +5,13 @@ import flyToPoint from "@/functions/map/flyToPoint";
 import followPath from "@/functions/map/followPath";
 import { colors } from "@/styles/constants";
 import Position from "./position";
-import Route from "./poute";
+import Route from "./route";
 import styles from "./map.module.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-const MAP_STYLE =
-  "mapbox://styles/benjaminwiederkehr/clmr134ih01y301rchfii6ey6";
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
-export default function MapAnimated({ data }) {
+export default function MapAnimated({ data, style, accent }) {
   // Data
   const latlng = data.find((d) => d.type === "latlng").data;
   const lnglat = latlng.map((d) => [d[1], d[0]]);
@@ -95,14 +93,14 @@ export default function MapAnimated({ data }) {
       <MapGL
         ref={mapRef}
         onLoad={onMapLoad}
-        mapStyle={MAP_STYLE}
+        mapStyle={style}
         mapboxAccessToken={MAPBOX_TOKEN}
         initialViewState={mapConfig}
         attributionControl={false}
       >
         <Route data={routeData} color="#fff" />
-        <Route data={progressData} color={colors.accent} />
-        <Position data={positionData} color={colors.accent} />
+        <Route data={progressData} color={accent} />
+        <Position data={positionData} color={accent} />
       </MapGL>
     </div>
   );

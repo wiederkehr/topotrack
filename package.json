@@ -34,10 +34,12 @@
     "voca": "^1.4.1"
   },
   "devDependencies": {
+    "@types/d3": "^7.4.3",
     "@types/node": "20.8.2",
     "@types/react": "18.2.24",
     "eslint": "^9.11.1",
     "eslint-config-next": "^14.2.13",
+    "eslint-config-prettier": "^9.1.0",
     "typescript": "5.2.2"
   }
 }

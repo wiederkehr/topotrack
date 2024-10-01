@@ -1,41 +1,64 @@
 "use client";
 
-import { useState, useRef } from "react";
 import { useStrava } from "@/hooks/useStrava";
+import { useEffect, useRef, useState } from "react";
 
+import { toMp4, toPng, toSvg } from "@/functions/export";
+import { formatFilename } from "@/functions/format";
+import styles from "./composer.module.css";
+import { assets, formats } from "./composer.settings";
 import Input from "./input";
 import Output from "./output";
 import templates from "./templates";
-import { formats, assets } from "./composer.settings";
-import { toPng, toSvg, toMp4, formatFilename } from "@/functions/export";
+
 import { mockActivities, mockActivity, mockActivityData } from "@/data/mock";
-import styles from "./composer.module.css";
 
 export default function Composer() {
   // Activities
   // //////////////////////////////
-  // NOTE: This is a mock of the Strava API response.
-  const [activities, setActivities] = useState(mockActivities);
+  // const [activities, setActivities] = useState(mockActivities);
+  const {
+    data: activities,
+    error: activitiesError,
+    loading: activitiesLoading,
+  } = useStrava("athlete/activities?per_page=10");
 
   // Activity
   // //////////////////////////////
-  // NOTE: This is a mock of the Strava API response.
-  const [activity, setActivity] = useState(mockActivity);
+  // const [activity, setActivity] = useState(mockActivity);
+  const [activity, setActivity] = useState(null);
+  useEffect(() => {
+    if (activities && activities?.length > 0) {
+      setActivity(activities[0]);
+    }
+  }, [activities]);
+  console.log("activity", activity);
+
   const handleActivityChange = (id) => {
     const activity = activities.find((activity) => activity.id === id);
     setActivity(activity);
   };
 
+  const selectActivityById = (id) => {
+    return activities.find(
+      (activity) => activity.id.toString() === id.toString()
+    );
+  };
+
   // Activity Data
   // //////////////////////////////
-  // NOTE: This is a mock of the Strava API response.
-  const { activityData, activityError } = {
-    activityData: mockActivityData,
-    error: null,
-  };
-  // const { data, error } = useStrava(
-  //   `activities/${activity.id}/streams?keys=[time,distance,latlng,altitude]`
-  // );
+  // const activityData = mockActivityData;
+  const {
+    data: activityData,
+    error: activityDataError,
+    loading: activityDataLoading,
+  } = useStrava(
+    `activities/${activity?.id}/streams?keys=[time,distance,latlng,altitude]`
+  );
+
+  console.log("activityData", activityData);
+  console.log("activityDataError", activityDataError);
+  console.log("activityDataLoading", activityDataLoading);
 
   // Search
   // //////////////////////////////
@@ -134,6 +157,8 @@ export default function Composer() {
       <Output
         activity={activity}
         activityData={activityData}
+        activityDataError={activityDataError}
+        activityDataLoading={activityDataLoading}
         figureRef={figureRef}
         format={format}
         template={template}
@@ -141,6 +166,8 @@ export default function Composer() {
       />
       <Input
         activities={activities}
+        activitiesError={activitiesError}
+        activitiesLoading={activitiesLoading}
         activity={activity}
         asset={asset}
         assets={assets}
