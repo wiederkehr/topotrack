@@ -1,9 +1,9 @@
-import { useRef, useCallback } from "react";
 import { bbox, lineString } from "@turf/turf";
-import MapGL from "react-map-gl";
-import Route from "./route";
-import styles from "./map.module.css";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { useCallback, useEffect, useRef } from "react";
+import MapGL from "react-map-gl";
+import styles from "./map.module.css";
+import Route from "./route";
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
@@ -34,6 +34,12 @@ export default function MapStatic({ data, style, accent }) {
       padding: 32,
     });
   }, [routeData, startBearing, startPitch]);
+
+  useEffect(() => {
+    if (mapRef.current) {
+      onMapLoad();
+    }
+  }, [data]);
 
   return (
     <div className={styles.map}>
