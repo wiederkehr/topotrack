@@ -6,7 +6,6 @@
   width: 100%;
   box-sizing: border-box;
   box-shadow: none;
-  line-height: 1;
 }
 
 .item:hover,
@@ -37,5 +36,5 @@
   display: block;
   font-size: var(--font-size-regular);
   font-weight: var(--font-weight-regular);
-  line-height: 1;
+  line-height: 1.25;
 }
