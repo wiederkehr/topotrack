@@ -39,6 +39,9 @@ export const presets = [
 ];
 
 export const render = ({ activity, activityData, variables, format }) => {
+  console.log("activity", activity);
+  console.log("activityData", activityData[0]?.data[0]);
+
   return (
     <>
       <Background data={activityData[0]?.data} format={format} />
@@ -63,6 +66,7 @@ const Background = ({ data, format }) => {
     [padding, padding],
     [innerWidth, innerHeight],
   ];
+
   const features = data.map((d) => ({
     type: "Feature",
     geometry: {
@@ -70,34 +74,27 @@ const Background = ({ data, format }) => {
       coordinates: [d[1], d[0]],
     },
   }));
+
   const projection = geoMercator().fitExtent(extent, {
     type: "FeatureCollection",
     features: features,
   });
 
-  const pathGenerator = geoPath().projection(projection);
-
-  const pathData = pathGenerator({
-    type: "FeatureCollection",
-    features: features,
-  });
-
-  const pathBounds = geoBounds({
+  const bounds = geoBounds({
     type: "FeatureCollection",
     features: features,
   });
 
   const lineGenerator = line()
-    .x((d) => projection([d[1], d[0]])[0])
-    .y((d) => projection([d[1], d[0]])[1])
+    .x((d) => projection(d)[0])
+    .y((d) => projection(d)[1])
     .curve(curveCatmullRom.alpha(0.5));
 
-  const lineData = lineGenerator(pathData);
+  const lineData = lineGenerator(features.map((d) => d.geometry.coordinates));
 
   const formatRatio = width / height;
   const pathRatio =
-    (pathBounds[1][0] - pathBounds[0][0]) /
-    (pathBounds[1][1] - pathBounds[0][1]);
+    (bounds[1][0] - bounds[0][0]) / (bounds[1][1] - bounds[0][1]);
   const shouldRotate = formatRatio > 1 && pathRatio < 1;
   const rotate = shouldRotate ? "90" : "0";
 

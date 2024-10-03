@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 
 import Providers from "@/app/providers";
 
-import "@radix-ui/themes/styles.css";
 import "@/styles/index.css";
+import "@radix-ui/themes/styles.css";
 
 export const metadata: Metadata = {
   title: "Topotrack",
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
         <Providers>{children}</Providers>
       </body>
