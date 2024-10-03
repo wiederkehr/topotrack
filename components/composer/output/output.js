@@ -25,6 +25,7 @@ export default function Output({
             <Figure
               activity={activity}
               activityData={activityData}
+              format={format}
               ref={figureRef}
               template={template}
               variables={variables}

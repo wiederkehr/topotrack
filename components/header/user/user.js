@@ -1,5 +1,5 @@
-import { signOut } from "@/auth";
-import styles from "./userSignedIn.module.css";
+import { signOutAction } from "@/app/actions";
+import styles from "./user.module.css";
 
 export default function User({ user }) {
   return (
@@ -18,12 +18,7 @@ export default function User({ user }) {
         <a href={"https://strava.com"} className={styles.userAction}>
           Go to Strava
         </a>
-        <form
-          action={async () => {
-            "use server";
-            await signOut();
-          }}
-        >
+        <form action={signOutAction}>
           <button type="submit" className={styles.userAction}>
             Sign out
           </button>

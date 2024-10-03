@@ -16,23 +16,27 @@ import { mockActivities, mockActivity, mockActivityData } from "@/data/mock";
 export default function Composer() {
   // Activities
   // //////////////////////////////
-  // const [activities, setActivities] = useState(mockActivities);
-  const {
-    data: activities,
-    error: activitiesError,
-    loading: activitiesLoading,
-  } = useStrava("athlete/activities?per_page=10");
+
+  const { activities, activitiesError, activitiesLoading } = {
+    activities: mockActivities,
+    activitiesError: null,
+    activitiesLoading: false,
+  };
+  // const {
+  //   data: activities,
+  //   error: activitiesError,
+  //   loading: activitiesLoading,
+  // } = useStrava("athlete/activities?per_page=10");
 
   // Activity
   // //////////////////////////////
-  // const [activity, setActivity] = useState(mockActivity);
-  const [activity, setActivity] = useState(null);
-  useEffect(() => {
-    if (activities && activities?.length > 0) {
-      setActivity(activities[0]);
-    }
-  }, [activities]);
-  console.log("activity", activity);
+  const [activity, setActivity] = useState(mockActivity);
+  // const [activity, setActivity] = useState(null);
+  // useEffect(() => {
+  //   if (activities && activities?.length > 0) {
+  //     setActivity(activities[0]);
+  //   }
+  // }, [activities]);
 
   const handleActivityChange = (id) => {
     const activity = activities.find((activity) => activity.id === id);
@@ -47,18 +51,18 @@ export default function Composer() {
 
   // Activity Data
   // //////////////////////////////
-  // const activityData = mockActivityData;
-  const {
-    data: activityData,
-    error: activityDataError,
-    loading: activityDataLoading,
-  } = useStrava(
-    `activities/${activity?.id}/streams?keys=[time,distance,latlng,altitude]`
-  );
-
-  console.log("activityData", activityData);
-  console.log("activityDataError", activityDataError);
-  console.log("activityDataLoading", activityDataLoading);
+  const { activityData, activityDataError, activityDataLoading } = {
+    activityData: mockActivityData,
+    activityDataError: null,
+    activityDataLoading: false,
+  };
+  // const {
+  //   data: activityData,
+  //   error: activityDataError,
+  //   loading: activityDataLoading,
+  // } = useStrava(
+  //   `activities/${activity?.id}/streams?keys=[time,distance,latlng,altitude]`
+  // );
 
   // Search
   // //////////////////////////////

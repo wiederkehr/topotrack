@@ -1,17 +1,14 @@
-import classNames from "classnames";
 import { formatMeters } from "@/functions/format";
 import { colors } from "@/styles/constants";
-import { MapStatic } from "@/components/map";
+import classNames from "classnames";
+import { geoBounds, geoMercator, geoPath } from "d3-geo";
+import { curveCatmullRom, line } from "d3-shape";
 import styles from "./index.module.css";
 
 export const name = "Poster";
 
 const themeOptions = ["Light", "Dark"];
 const accentOptions = ["Blue", "Green", "Purple", "White", "Red"];
-const mapsStyles = {
-  Light: "mapbox://styles/benjaminwiederkehr/clmzlvsu3023i01r81cc979q5",
-  Dark: "mapbox://styles/benjaminwiederkehr/cm1o1o9zc00mv01qt0689hvjp",
-};
 
 export const variables = [
   {
@@ -41,45 +38,113 @@ export const presets = [
   },
 ];
 
-export const render = ({ activity, activityData, variables }) => {
-  const name = activity?.name;
-  const type = activity?.type;
-  const distance = formatMeters(activity?.distance);
-  const elevation = formatMeters(activity?.total_elevation_gain);
-  const date = new Date(Date.parse(activity?.start_date_local));
+export const render = ({ activity, activityData, variables, format }) => {
+  return (
+    <>
+      <Background data={activityData[0]?.data} format={format} />
+      <Foreground
+        name={activity?.name}
+        type={activity?.type}
+        dateString={activity?.start_date_local}
+        distance={formatMeters(activity?.distance)}
+        elevation={activity?.total_elevation_gain}
+      />
+    </>
+  );
+};
+
+const Background = ({ data, format }) => {
+  const { height, width } = format;
+  const viewbox = `0 0 ${width} ${height}`;
+  const padding = 40;
+  const innerWidth = width - padding * 2;
+  const innerHeight = height - padding * 2;
+  const extent = [
+    [padding, padding],
+    [innerWidth, innerHeight],
+  ];
+  const features = data.map((d) => ({
+    type: "Feature",
+    geometry: {
+      type: "Point",
+      coordinates: [d[1], d[0]],
+    },
+  }));
+  const projection = geoMercator().fitExtent(extent, {
+    type: "FeatureCollection",
+    features: features,
+  });
+
+  const pathGenerator = geoPath().projection(projection);
+
+  const pathData = pathGenerator({
+    type: "FeatureCollection",
+    features: features,
+  });
+
+  const pathBounds = geoBounds({
+    type: "FeatureCollection",
+    features: features,
+  });
+
+  const lineGenerator = line()
+    .x((d) => projection([d[1], d[0]])[0])
+    .y((d) => projection([d[1], d[0]])[1])
+    .curve(curveCatmullRom.alpha(0.5));
+
+  const lineData = lineGenerator(pathData);
+
+  const formatRatio = width / height;
+  const pathRatio =
+    (pathBounds[1][0] - pathBounds[0][0]) /
+    (pathBounds[1][1] - pathBounds[0][1]);
+  const shouldRotate = formatRatio > 1 && pathRatio < 1;
+  const rotate = shouldRotate ? "90" : "0";
+
+  return (
+    <div className={styles.background}>
+      <svg viewBox={viewbox}>
+        <g transform={`rotate(${rotate})`}>
+          <path
+            d={lineData}
+            fill="none"
+            stroke="black"
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeMiterlimit="4"
+          />
+        </g>
+      </svg>
+    </div>
+  );
+};
+
+const Foreground = ({ name, type, dateString, distance, elevation }) => {
+  const date = new Date(Date.parse(dateString));
   const day = date.toLocaleDateString("en-us", {
     month: "long",
     day: "numeric",
   });
   const year = date.toLocaleDateString("en-us", { year: "numeric" });
   return (
-    <>
-      <div className={styles.background}>
-        <MapStatic
-          data={activityData}
-          style={mapsStyles[variables.theme]}
-          accent={colors.accent}
-        />
+    <div className={styles.foreground}>
+      <div className={styles.topLeft}>
+        <ForegroundType level="primary">{name}</ForegroundType>
+        <ForegroundType level="secondary">{type}</ForegroundType>
       </div>
-      <div className={styles.foreground}>
-        <div className={styles.topLeft}>
-          <FigureType level="primary">{name}</FigureType>
-          <FigureType level="secondary">{type}</FigureType>
-        </div>
-        <div className={styles.topRight}>
-          <FigureType level="primary">{day}</FigureType>
-          <FigureType level="secondary">{year}</FigureType>
-        </div>
-        <div className={styles.bottomRight}>
-          <FigureType level="primary">{distance}</FigureType>
-          <FigureType level="secondary">{elevation}</FigureType>
-        </div>
+      <div className={styles.topRight}>
+        <ForegroundType level="primary">{day}</ForegroundType>
+        <ForegroundType level="secondary">{year}</ForegroundType>
       </div>
-    </>
+      <div className={styles.bottomRight}>
+        <ForegroundType level="primary">{distance}</ForegroundType>
+        <ForegroundType level="secondary">{elevation}</ForegroundType>
+      </div>
+    </div>
   );
 };
 
-const FigureType = ({ children, level }) => {
+const ForegroundType = ({ children, level }) => {
   return (
     <span
       style={{ color: colors.accent }}

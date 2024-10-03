@@ -1,4 +1,5 @@
 import Module from "@/components/interface/module";
+import { formatDate } from "@/functions/format";
 import Item from "./item";
 import styles from "./recents.module.css";
 
@@ -18,7 +19,7 @@ export default function Recents({
             <Item
               id={activity.id}
               name={activity.name}
-              date={activity.date}
+              date={formatDate(activity.start_date_local)}
               active={activity.id === selectedActivity?.id}
               onClick={onActivityChange}
             />

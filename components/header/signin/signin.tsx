@@ -1,15 +1,10 @@
-import { signIn } from "@/auth";
+import { signInAction } from "@/app/actions";
 import Image from "next/image";
 import styles from "./signin.module.css";
 
 export default function SignIn() {
   return (
-    <form
-      action={async () => {
-        "use server";
-        await signIn("strava", { redirectTo: "/composer" });
-      }}
-    >
+    <form action={signInAction}>
       <button type="submit" className={styles.signinButton}>
         <Image
           src="/images/btn_strava_connectwith_orange.svg"

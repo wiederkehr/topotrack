@@ -38,7 +38,7 @@ export default function Input({
     <div className={styles.input}>
       <Tabs names={["Activity", "Design", "Export"]}>
         <Tab name="Activity">
-          <Search searchTerm={searchTerm} onSearchChange={onSearchChange} />
+          {/* <Search searchTerm={searchTerm} onSearchChange={onSearchChange} /> */}
           <Recents
             activities={activities}
             activitiesError={activitiesError}
