@@ -39,9 +39,6 @@ export const presets = [
 ];
 
 export const render = ({ activity, activityData, variables, format }) => {
-  console.log("activity", activity);
-  console.log("activityData", activityData[0]?.data[0]);
-
   return (
     <>
       <Background data={activityData[0]?.data} format={format} />

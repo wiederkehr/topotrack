@@ -11,17 +11,18 @@ import Input from "./input";
 import Output from "./output";
 import templates from "./templates";
 
-import { mockActivities, mockActivity, mockActivityData } from "@/data/mock";
+import { mockActivities, mockActivitiesData } from "@/data/mock";
 
 export default function Composer() {
   // Activities
   // //////////////////////////////
-
+  // NOTE: Mock Data
   const { activities, activitiesError, activitiesLoading } = {
     activities: mockActivities,
     activitiesError: null,
     activitiesLoading: false,
   };
+  // NOTE: Live Data
   // const {
   //   data: activities,
   //   error: activitiesError,
@@ -30,13 +31,12 @@ export default function Composer() {
 
   // Activity
   // //////////////////////////////
-  const [activity, setActivity] = useState(mockActivity);
-  // const [activity, setActivity] = useState(null);
-  // useEffect(() => {
-  //   if (activities && activities?.length > 0) {
-  //     setActivity(activities[0]);
-  //   }
-  // }, [activities]);
+  const [activity, setActivity] = useState(null);
+  useEffect(() => {
+    if (activities && activities?.length > 0) {
+      setActivity(activities[0]);
+    }
+  }, [activities]);
 
   const handleActivityChange = (id) => {
     const activity = activities.find((activity) => activity.id === id);
@@ -51,11 +51,19 @@ export default function Composer() {
 
   // Activity Data
   // //////////////////////////////
-  const { activityData, activityDataError, activityDataLoading } = {
-    activityData: mockActivityData,
-    activityDataError: null,
-    activityDataLoading: false,
-  };
+  // NOTE: Mock Data
+  const [activityData, setActivityData] = useState(null);
+  const activityDataError = null;
+  const activityDataLoading = false;
+  useEffect(() => {
+    if (activity) {
+      const activityData = mockActivitiesData.find(
+        (activityData) => activityData.id === activity.id
+      );
+      setActivityData(activityData.data);
+    }
+  }, [activity]);
+  // NOTE: Live Data
   // const {
   //   data: activityData,
   //   error: activityDataError,
