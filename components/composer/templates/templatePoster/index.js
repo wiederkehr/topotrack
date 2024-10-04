@@ -1,9 +1,6 @@
 import { formatMeters } from "@/functions/format";
-import { colors } from "@/styles/constants";
-import classNames from "classnames";
-import { geoBounds, geoMercator, geoPath } from "d3-geo";
-import { curveCatmullRom, line } from "d3-shape";
-import styles from "./index.module.css";
+import Background from "./background";
+import Foreground from "./foreground";
 
 export const name = "Poster";
 
@@ -39,116 +36,30 @@ export const presets = [
 ];
 
 export const render = ({ activity, activityData, variables, format }) => {
-  return (
-    <>
-      <Background data={activityData[0]?.data} format={format} />
-      <Foreground
-        name={activity?.name}
-        type={activity?.type}
-        dateString={activity?.start_date_local}
-        distance={formatMeters(activity?.distance)}
-        elevation={activity?.total_elevation_gain}
-      />
-    </>
-  );
-};
-
-const Background = ({ data, format }) => {
-  const { height, width } = format;
-  const viewbox = `0 0 ${width} ${height}`;
-  const padding = 40;
-  const innerWidth = width - padding * 2;
-  const innerHeight = height - padding * 2;
-  const extent = [
-    [padding, padding],
-    [innerWidth, innerHeight],
-  ];
-
-  const features = data.map((d) => ({
-    type: "Feature",
-    geometry: {
-      type: "Point",
-      coordinates: [d[1], d[0]],
-    },
-  }));
-
-  const projection = geoMercator().fitExtent(extent, {
-    type: "FeatureCollection",
-    features: features,
-  });
-
-  const bounds = geoBounds({
-    type: "FeatureCollection",
-    features: features,
-  });
-
-  const lineGenerator = line()
-    .x((d) => projection(d)[0])
-    .y((d) => projection(d)[1])
-    .curve(curveCatmullRom.alpha(0.5));
-
-  const lineData = lineGenerator(features.map((d) => d.geometry.coordinates));
-
-  const formatRatio = width / height;
-  const pathRatio =
-    (bounds[1][0] - bounds[0][0]) / (bounds[1][1] - bounds[0][1]);
-  const shouldRotate = formatRatio > 1 && pathRatio < 1;
-  const rotate = shouldRotate ? "90" : "0";
-
-  return (
-    <div className={styles.background}>
-      <svg viewBox={viewbox}>
-        <g transform={`rotate(${rotate})`}>
-          <path
-            d={lineData}
-            fill="none"
-            stroke="black"
-            strokeWidth="4"
-            strokeLinecap="round"
-            strokeMiterlimit="4"
-          />
-        </g>
-      </svg>
-    </div>
-  );
-};
-
-const Foreground = ({ name, type, dateString, distance, elevation }) => {
-  const date = new Date(Date.parse(dateString));
+  const data = activityData[0]?.data;
+  const date = new Date(Date.parse(activity?.start_date_local));
   const day = date.toLocaleDateString("en-us", {
     month: "long",
     day: "numeric",
   });
   const year = date.toLocaleDateString("en-us", { year: "numeric" });
+  const name = activity?.name;
+  const type = activity?.type;
+  const distance = formatMeters(activity?.distance);
+  const elevation = activity?.total_elevation_gain;
+  const { width, height } = format;
   return (
-    <div className={styles.foreground}>
-      <div className={styles.topLeft}>
-        <ForegroundType level="primary">{name}</ForegroundType>
-        <ForegroundType level="secondary">{type}</ForegroundType>
-      </div>
-      <div className={styles.topRight}>
-        <ForegroundType level="primary">{day}</ForegroundType>
-        <ForegroundType level="secondary">{year}</ForegroundType>
-      </div>
-      <div className={styles.bottomRight}>
-        <ForegroundType level="primary">{distance}</ForegroundType>
-        <ForegroundType level="secondary">{elevation}</ForegroundType>
-      </div>
-    </div>
-  );
-};
-
-const ForegroundType = ({ children, level }) => {
-  return (
-    <span
-      style={{ color: colors.accent }}
-      className={classNames(
-        styles.type,
-        level === "primary" ? styles.typePrimary : null,
-        level === "secondary" ? styles.typeSecondary : null
-      )}
-    >
-      {children}
-    </span>
+    <>
+      <Background data={data} width={width} height={height} />
+      <Foreground
+        name={name}
+        type={type}
+        day={day}
+        year={year}
+        width={width}
+        distance={distance}
+        elevation={elevation}
+      />
+    </>
   );
 };
