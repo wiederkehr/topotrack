@@ -1,6 +1,5 @@
-import slugify from "voca/slugify";
 import kebabCase from "voca/kebab_case";
-import { format, parseISO } from "date-fns";
+import slugify from "voca/slugify";
 
 export default function formatFilename({ date, name, format, type }) {
   const application = "topotrack";
@@ -21,7 +20,12 @@ export default function formatFilename({ date, name, format, type }) {
 }
 
 const formatDate = (date) => {
-  return format(parseISO(date), "yyMMdd");
+  const date = new Date(Date.parse(date));
+  return date.toLocaleDateString('en-US', {
+    year: '2-digit',
+    month: '2-digit',
+    day: '2-digit'
+  }).replace(/\//g, '');
 };
 
 const formatName = (name) => {
