@@ -10,6 +10,7 @@
   --color-control-border-active: var(--color-accent);
   --color-background-skeleton: var(--gray-3);
   /* Typography */
+  --default-font-family: var(--font-sans);
   --font-size-small: var(--font-size-1);
   --font-size-regular: var(--font-size-3);
   /* Radius */

@@ -26,6 +26,10 @@
   color: #999;
 }
 
+.colorLabel {
+  text-transform: uppercase;
+}
+
 .colorIcon {
   color: #999;
   width: 1rem;

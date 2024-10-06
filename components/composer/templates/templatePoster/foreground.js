@@ -1,3 +1,4 @@
+import { ArrowRightIcon, ArrowUpIcon } from "@radix-ui/react-icons";
 import { Box, Flex, Text } from "@radix-ui/themes";
 
 import styles from "./foreground.module.css";
@@ -43,8 +44,14 @@ const Foreground = ({
           <TypeSecondary>Country</TypeSecondary>
         </Box>
         <Box className={styles.typeRight} style={{ maxWidth: "66%" }}>
-          <TypePrimary>{distance}</TypePrimary>
-          <TypeSecondary>{elevation}</TypeSecondary>
+          <Flex justify={"end"}>
+            <TypePrimary>{distance}</TypePrimary>
+            <ArrowRightIcon height={fontSize} width={fontSize} />
+          </Flex>
+          <Flex justify={"end"}>
+            <TypePrimary>{elevation}</TypePrimary>
+            <ArrowUpIcon height={fontSize} width={fontSize} />
+          </Flex>
         </Box>
       </Flex>
     </Box>

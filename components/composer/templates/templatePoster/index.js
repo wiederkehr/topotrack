@@ -50,7 +50,6 @@ export const render = ({ activity, activityData, variables, format, size }) => {
   const distance = formatMeters(activity?.distance);
   const elevation = formatMeters(activity?.total_elevation_gain);
   const { background, foreground } = variables;
-  console.log(variables);
 
   const { width, height } = size;
   return (
