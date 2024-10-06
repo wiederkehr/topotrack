@@ -4,35 +4,33 @@
   height: 100%;
 }
 
-.foreground>* {
+.foreground>div {
   position: absolute;
+  justify-content: space-between;
+  left: 40px;
+  right: 40px;
 }
 
-.topLeft {
-  top: var(--space-default);
-  left: var(--space-default);
+.typeTop {
+  top: 40px;
 }
 
-.topRight {
+.typeBottom {
+  bottom: 40px;
+}
+
+.typeLeft {
+  text-align: left;
+}
+
+.typeRight {
   text-align: right;
-  top: var(--space-default);
-  right: var(--space-default);
 }
 
-.bottomLeft {
-  left: var(--space-default);
-  bottom: var(--space-default);
-}
-
-.bottomRight {
-  text-align: right;
-  right: var(--space-default);
-  bottom: var(--space-default);
-}
-
-.type {
+.typePrimary,
+.typeSecondary {
   display: block;
-  font-size: var(--font-size-small);
+  line-height: 1;
   text-transform: uppercase;
 }
 

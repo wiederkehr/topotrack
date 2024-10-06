@@ -1,13 +1,25 @@
 import { forwardRef } from "react";
+import ContainerDimensions from "react-container-dimensions";
+
 import styles from "./figure.module.css";
 
 export default forwardRef(function Figure(
   { activity, activityData, format, template, variables },
-  ref
+  ref,
 ) {
   return (
-    <div className={styles.figure} ref={ref}>
-      {template.render({ activity, activityData, variables, format })}
-    </div>
+    <ContainerDimensions>
+      {(size) => (
+        <div className={styles.figure} ref={ref}>
+          {template.render({
+            activity,
+            activityData,
+            variables,
+            format,
+            size,
+          })}
+        </div>
+      )}
+    </ContainerDimensions>
   );
 });

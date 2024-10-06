@@ -1,7 +1,9 @@
 import classNames from "classnames";
+
 import { formatMeters } from "@/functions/format";
 import { colors } from "@/styles/constants";
 import { MapAnimated } from "@/components/map";
+
 import styles from "./index.module.css";
 
 export const name = "Animation";
@@ -41,7 +43,7 @@ export const presets = [
   },
 ];
 
-export const render = ({ activity, activityData, variables }) => {
+export const render = ({ activity, activityData, variables, format, size }) => {
   const name = activity?.name;
   const type = activity?.type;
   const distance = formatMeters(activity?.distance);
@@ -86,7 +88,7 @@ const FigureType = ({ children, level }) => {
       className={classNames(
         styles.type,
         level === "primary" ? styles.typePrimary : null,
-        level === "secondary" ? styles.typeSecondary : null
+        level === "secondary" ? styles.typeSecondary : null,
       )}
     >
       {children}

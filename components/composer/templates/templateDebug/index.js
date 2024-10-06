@@ -31,7 +31,7 @@ export const presets = [
   },
 ];
 
-export const render = ({ activity, activityData, variables }) => {
+export const render = ({ activity, activityData, variables, format, size }) => {
   return (
     <div>
       <pre>{`Name: ${name}`}</pre>

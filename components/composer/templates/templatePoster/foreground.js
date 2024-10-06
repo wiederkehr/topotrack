@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import { Box, Flex, Text } from "@radix-ui/themes";
 
 import { colors } from "@/styles/constants";
 
@@ -14,37 +14,39 @@ const Foreground = ({
   width,
   height,
 }) => {
+  const fontSize = width / 40;
   return (
-    <div className={styles.foreground}>
-      <div className={styles.topLeft}>
-        <ForegroundType level="primary">{name}</ForegroundType>
-        <ForegroundType level="secondary">{type}</ForegroundType>
-      </div>
-      <div className={styles.topRight}>
-        <ForegroundType level="primary">{day}</ForegroundType>
-        <ForegroundType level="secondary">{year}</ForegroundType>
-      </div>
-      <div className={styles.bottomRight}>
-        <ForegroundType level="primary">{distance}</ForegroundType>
-        <ForegroundType level="secondary">{elevation}</ForegroundType>
-      </div>
-    </div>
+    <Box className={styles.foreground} style={{ fontSize: fontSize }}>
+      <Flex className={styles.typeTop}>
+        <Box className={styles.typeLeft}>
+          <TypePrimary>{name}</TypePrimary>
+          <TypeSecondary>{type}</TypeSecondary>
+        </Box>
+        <Box className={styles.typeRight}>
+          <TypePrimary>{day}</TypePrimary>
+          <TypeSecondary>{year}</TypeSecondary>
+        </Box>
+      </Flex>
+      <Flex className={styles.typeBottom}>
+        <Box className={styles.typeLeft}>
+          <TypePrimary>State</TypePrimary>
+          <TypeSecondary>Country</TypeSecondary>
+        </Box>
+        <Box className={styles.typeRight}>
+          <TypePrimary>{distance}</TypePrimary>
+          <TypeSecondary>{elevation}</TypeSecondary>
+        </Box>
+      </Flex>
+    </Box>
   );
 };
 
-const ForegroundType = ({ children, level }) => {
-  return (
-    <span
-      style={{ color: colors.accent }}
-      className={classNames(
-        styles.type,
-        level === "primary" ? styles.typePrimary : null,
-        level === "secondary" ? styles.typeSecondary : null,
-      )}
-    >
-      {children}
-    </span>
-  );
-};
+const TypePrimary = ({ children }) => (
+  <Text className={styles.typePrimary}>{children}</Text>
+);
+
+const TypeSecondary = ({ children }) => (
+  <Text className={styles.typeSecondary}>{children}</Text>
+);
 
 export default Foreground;

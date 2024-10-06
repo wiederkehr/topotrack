@@ -36,7 +36,7 @@ export const presets = [
   },
 ];
 
-export const render = ({ activity, activityData, variables, format }) => {
+export const render = ({ activity, activityData, variables, format, size }) => {
   const data = activityData[0]?.data;
   const date = new Date(Date.parse(activity?.start_date_local));
   const day = date.toLocaleDateString("en-us", {
@@ -48,7 +48,7 @@ export const render = ({ activity, activityData, variables, format }) => {
   const type = activity?.type;
   const distance = formatMeters(activity?.distance);
   const elevation = activity?.total_elevation_gain;
-  const { width, height } = format;
+  const { width, height } = size;
   return (
     <>
       <Background data={data} width={width} height={height} />
