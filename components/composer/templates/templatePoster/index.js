@@ -1,38 +1,39 @@
 import { formatMeters } from "@/functions/format";
+import { colors } from "@/styles/constants";
 
 import Background from "./background";
 import Foreground from "./foreground";
 
 export const name = "Poster";
 
-const themeOptions = ["Light", "Dark"];
-const accentOptions = ["Blue", "Green", "Purple", "White", "Red"];
-
 export const variables = [
   {
-    label: "Theme",
-    name: "theme",
-    options: themeOptions,
-    type: "select",
+    label: "Background",
+    name: "background",
+    type: "color",
   },
   {
-    label: "Accent",
-    name: "accent",
-    options: accentOptions,
+    label: "Foreground",
+    name: "foreground",
     type: "color",
   },
 ];
 
 export const presets = [
   {
-    name: "Poster Preset 1",
-    theme: themeOptions[0],
-    accent: "Blue",
+    name: "Indigo",
+    background: colors.dark.indigo,
+    foreground: colors.light.indigo,
   },
   {
-    name: "Poster Preset 2",
-    theme: themeOptions[1],
-    accent: accentOptions[1],
+    name: "Ruby",
+    background: colors.dark.ruby,
+    foreground: colors.light.ruby,
+  },
+  {
+    name: "Teal",
+    background: colors.dark.teal,
+    foreground: colors.light.teal,
   },
 ];
 
@@ -47,11 +48,20 @@ export const render = ({ activity, activityData, variables, format, size }) => {
   const name = activity?.name;
   const type = activity?.type;
   const distance = formatMeters(activity?.distance);
-  const elevation = activity?.total_elevation_gain;
+  const elevation = formatMeters(activity?.total_elevation_gain);
+  const { background, foreground } = variables;
+  console.log(variables);
+
   const { width, height } = size;
   return (
     <>
-      <Background data={data} width={width} height={height} />
+      <Background
+        data={data}
+        width={width}
+        height={height}
+        background={background}
+        foreground={foreground}
+      />
       <Foreground
         name={name}
         type={type}
@@ -59,6 +69,7 @@ export const render = ({ activity, activityData, variables, format, size }) => {
         year={year}
         height={height}
         width={width}
+        color={foreground}
         distance={distance}
         elevation={elevation}
       />

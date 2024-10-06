@@ -3,7 +3,7 @@ import { curveCatmullRom, line } from "d3-shape";
 
 import styles from "./background.module.css";
 
-const Background = ({ data, height, width }) => {
+const Background = ({ data, height, width, foreground, background }) => {
   // Features
   // //////////////////////////////
   const features = data.map((d) => ({
@@ -26,7 +26,8 @@ const Background = ({ data, height, width }) => {
 
   // Dimensions
   // //////////////////////////////
-  const padding = 40;
+  // 40px / 1080px
+  const padding = width * 0.037;
   const viewbox = `0 0 ${width} ${height}`;
   const innerWidth = width - padding * 2;
   const innerHeight = height - padding * 2;
@@ -68,7 +69,7 @@ const Background = ({ data, height, width }) => {
     .curve(curveCatmullRom.alpha(0.5));
 
   const lineData = lineGenerator(features.map((d) => d.geometry.coordinates));
-
+  const strokeWidth = width * 0.004;
   return (
     <div className={styles.background}>
       <svg viewBox={viewbox}>
@@ -78,37 +79,14 @@ const Background = ({ data, height, width }) => {
           y={0}
           width={width}
           height={height}
-          fill="rgba(255,0,0,0.1)"
+          fill={background}
         />
         <g id="background-translation-group" transform={translation}>
-          <rect
-            id="innner-width-and-height"
-            x={0}
-            y={0}
-            width={innerWidth}
-            height={innerHeight}
-            fill="none"
-            stroke="rgba(0,0,0,0.5)"
-            strokeWidth="0.5"
-            strokeDasharray="4"
-          />
-          <rect
-            id="path-width-and-height"
-            x={pathLeft}
-            y={pathTop}
-            width={pathWidth}
-            height={pathHeight}
-            rotation={rotation}
-            fill="none"
-            stroke="rgba(0,0,0,0.5)"
-            strokeWidth="0.5"
-            strokeDasharray="2"
-          />
           <path
             d={lineData}
             fill="none"
-            stroke="black"
-            strokeWidth="4"
+            stroke={foreground}
+            strokeWidth={strokeWidth}
             strokeLinecap="round"
             strokeMiterlimit="4"
           />
