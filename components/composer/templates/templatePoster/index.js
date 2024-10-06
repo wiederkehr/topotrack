@@ -1,4 +1,5 @@
 import { formatMeters } from "@/functions/format";
+
 import Background from "./background";
 import Foreground from "./foreground";
 
@@ -56,6 +57,7 @@ export const render = ({ activity, activityData, variables, format }) => {
         type={type}
         day={day}
         year={year}
+        height={height}
         width={width}
         distance={distance}
         elevation={elevation}

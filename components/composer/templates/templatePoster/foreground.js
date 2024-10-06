@@ -1,8 +1,19 @@
-import { colors } from "@/styles/constants";
 import classNames from "classnames";
+
+import { colors } from "@/styles/constants";
+
 import styles from "./foreground.module.css";
 
-const Foreground = ({ name, type, day, year, distance, elevation }) => {
+const Foreground = ({
+  name,
+  type,
+  day,
+  year,
+  distance,
+  elevation,
+  width,
+  height,
+}) => {
   return (
     <div className={styles.foreground}>
       <div className={styles.topLeft}>
@@ -28,7 +39,7 @@ const ForegroundType = ({ children, level }) => {
       className={classNames(
         styles.type,
         level === "primary" ? styles.typePrimary : null,
-        level === "secondary" ? styles.typeSecondary : null
+        level === "secondary" ? styles.typeSecondary : null,
       )}
     >
       {children}

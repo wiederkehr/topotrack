@@ -14,18 +14,20 @@ export default function formatFilename({ date, name, format, type }) {
     d,
     formatFormat(format),
     p,
-    type
+    type,
   );
   return filename;
 }
 
-const formatDate = (date) => {
-  const date = new Date(Date.parse(date));
-  return date.toLocaleDateString('en-US', {
-    year: '2-digit',
-    month: '2-digit',
-    day: '2-digit'
-  }).replace(/\//g, '');
+const formatDate = (dateString) => {
+  const date = new Date(Date.parse(dateString));
+  return date
+    .toLocaleDateString("en-US", {
+      year: "2-digit",
+      month: "2-digit",
+      day: "2-digit",
+    })
+    .replace(/\//g, "");
 };
 
 const formatName = (name) => {
