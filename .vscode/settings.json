@@ -1,6 +1,10 @@
+/**
+ * @see https://code.visualstudio.com/docs/getstarted/settings#_workspace-settings
+ */
 {
-  "editor.tabSize": 2,
-  "editor.detectIndentation": false,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  }
 }
