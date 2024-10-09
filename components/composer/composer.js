@@ -45,7 +45,7 @@ export default function Composer() {
 
   const selectActivityById = (id) => {
     return activities.find(
-      (activity) => activity.id.toString() === id.toString()
+      (activity) => activity.id.toString() === id.toString(),
     );
   };
 
@@ -58,7 +58,7 @@ export default function Composer() {
   useEffect(() => {
     if (activity) {
       const activityData = mockActivitiesData.find(
-        (activityData) => activityData.id === activity.id
+        (activityData) => activityData.id === activity.id,
       );
       setActivityData(activityData.data);
     }
@@ -122,13 +122,13 @@ export default function Composer() {
         ...object,
         [item["name"]]: preset[item["name"]],
       }),
-      {}
+      {},
     ),
   });
   const handleVariableChange = ({ name, value }) => {
     const newVariables = { ...variables, [name]: value };
     const matchingPreset = presets.find((preset) =>
-      Object.keys(preset).every((key) => preset[key] === newVariables[key])
+      Object.keys(preset).every((key) => preset[key] === newVariables[key]),
     );
     setPreset(matchingPreset ? matchingPreset : { name: "Custom" });
     setVariables({ ...newVariables });
