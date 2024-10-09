@@ -9,6 +9,7 @@
   },
   "eslint.rules.customizations": [
     {
+      /* Color Eslint Underlines Yellow */
       "rule": "*",
       "severity": "warn"
     }

@@ -1,16 +1,7 @@
 {
-  "name": "topotrack",
-  "version": "0.1.0",
-  "private": true,
   "author": {
     "name": "Benjamin Wiederkehr ",
     "url": "https://benjaminwiederkehr.com"
-  },
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
@@ -47,7 +38,7 @@
     "@types/react-color": "^3.0.12",
     "@typescript-eslint/eslint-plugin": "^8.8.1",
     "@typescript-eslint/parser": "^8.8.0",
-    "eslint": "^9.11.1",
+    "eslint": "^8.0.0",
     "eslint-config-next": "^14.2.13",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jsonc": "^2.16.0",
@@ -57,5 +48,14 @@
     "jsonc-eslint-parser": "^2.4.0",
     "prettier": "^3.3.3",
     "typescript": "5.2.2"
-  }
+  },
+  "name": "topotrack",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "lint": "next lint",
+    "start": "next start"
+  },
+  "version": "0.1.0"
 }

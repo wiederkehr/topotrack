@@ -15,17 +15,17 @@
       ],
       "files": ["**/*.{ts,tsx}"],
       "parserOptions": {
-        "tsconfigRootDir": "__dirname",
-        "project": ["./tsconfig.json"]
+        "project": ["./tsconfig.json"],
+        "tsconfigRootDir": "__dirname"
       }
     },
     {
+      "extends": ["plugin:jsonc/recommended-with-json"],
       "files": "*.json",
       "parser": "jsonc-eslint-parser",
       "rules": {
         "jsonc/sort-keys": "error"
-      },
-      "extends": ["plugin:jsonc/recommended-with-json"]
+      }
     }
   ],
   "parser": "@typescript-eslint/parser",
