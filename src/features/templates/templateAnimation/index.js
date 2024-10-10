@@ -1,6 +1,6 @@
 import classNames from "classnames";
 
-import { MapAnimated } from "@/components/map";
+import { MapAnimated } from "@/features/map";
 import { formatMeters } from "@/functions/format";
 import { colors } from "@/styles/constants";
 
