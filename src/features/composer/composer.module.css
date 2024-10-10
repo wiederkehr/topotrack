@@ -1,0 +1,8 @@
+.composer {
+  @media (min-width: 768px) {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    align-items: stretch;
+  }
+}

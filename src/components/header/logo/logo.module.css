@@ -1,0 +1,6 @@
+.logo {
+  font-size: var(--font-size-regular);
+  font-weight:var(--font-weight-bold);
+  line-height: 1;
+  text-transform: uppercase;
+}

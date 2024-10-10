@@ -1,0 +1,46 @@
+.foreground,
+.background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.foreground>* {
+  position: absolute;
+}
+
+.topLeft {
+  top: var(--space-default);
+  left: var(--space-default);
+}
+
+.topRight {
+  text-align: right;
+  top: var(--space-default);
+  right: var(--space-default);
+}
+
+.bottomLeft {
+  left: var(--space-default);
+  bottom: var(--space-default);
+}
+
+.bottomRight {
+  text-align: right;
+  right: var(--space-default);
+  bottom: var(--space-default);
+}
+
+.type {
+  display: block;
+  font-size: var(--font-size-small);
+  text-transform: uppercase;
+}
+
+.typePrimary {
+  opacity: 1;
+}
+
+.typeSecondary {
+  opacity: 0.5;
+}

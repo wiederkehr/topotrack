@@ -1,0 +1,6 @@
+.figure{
+  background-color: var(--gray-4);
+  height: 100%;
+  line-height: 1;
+  overflow: hidden;
+}

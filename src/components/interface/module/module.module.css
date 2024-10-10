@@ -1,0 +1,30 @@
+.module {
+  padding: var(--space-default);
+  border-bottom: 1px solid var(--color-layout-border);
+}
+
+.module:last-of-type{
+  border-bottom: none;
+}
+
+.moduleHeading {
+  color: var(--gray-9);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  text-transform: uppercase;
+  margin: 0 0 var(--space-2) 0;
+  user-select: none;
+}
+
+.moduleContent {
+  margin: var(--space-2) 0 0 0;
+}
+
+.submodule {
+  margin: 0 0 var(--space-4) 0;
+}
+
+.submodule:last-of-type {
+  margin-bottom: 0;
+}

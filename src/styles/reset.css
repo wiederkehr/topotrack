@@ -1,0 +1,36 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+fieldset,
+input,
+select {
+  all: unset;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+button:focus,
+fieldset:focus,
+input:focus,
+select:focus {
+  outline: none;
+  box-shadow: none;
+}

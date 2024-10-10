@@ -1,0 +1,23 @@
+.radix-themes {
+  /* Chromatics */
+  --color-accent: var(--blue-9);
+  --color-layout-background: var(--gray-2);
+  --color-layout-border: var(--gray-5);
+  --color-control-background: white;
+  --color-control-border: var(--gray-7);
+  --color-control-border-hover: var(--gray-8);
+  --color-control-border-focus: var(--gray-8);
+  --color-control-border-active: var(--color-accent);
+  --color-background-skeleton: var(--gray-3);
+  /* Typography */
+  --default-font-family: var(--font-sans);
+  --font-size-small: var(--font-size-1);
+  --font-size-regular: var(--font-size-3);
+  /* Radius */
+  --border-radius-skeleton: var(--radius-2);
+  /* Dimensions */
+  --space-default: var(--space-5);
+  --space-h-default: var(--space-5);
+  --space-v-default: var(--space-5);
+  --width-composer-sidebar: 20rem;
+}

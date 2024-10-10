@@ -1,35 +1,20 @@
-# Topotrack
-Topotrack is a tiny application to generate images and animations based on Strava activities.
-
-## Installation
-
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
-First, install the dependencies:
-
-```bash
-npm install
-```
-
 ## Development
 
 First, run the development server:
 
 ```bash
-npm run dev
+yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Support
+## Dependencies
 
-Please file all help requests and bug reports as issues on Github.
-
-## Contributing
-
-Please submit all contributions as pull requests on Github.
+- [React](https://react.dev/)
+- [Next](https://nextjs.org/)
+- [Radix](https://www.radix-ui.com/)
 
 ## Deployment
 
-This application will be deployed on [Vercel](https://vercel.com/new).
+This application will be deployed on [Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
 More information about [Next.js Deployment](https://nextjs.org/docs/deployment).
