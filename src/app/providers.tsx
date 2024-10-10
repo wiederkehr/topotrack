@@ -11,10 +11,13 @@ export interface ProvidersProps {
 export default function Providers({ children }: ProvidersProps) {
   return (
     <SessionProvider>
-      <ThemeProvider>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="dark"
+        themes={["light", "dark"]}
+      >
         <Theme
           accentColor="blue"
-          appearance="inherit"
           grayColor="gray"
           panelBackground="solid"
           radius="medium"
