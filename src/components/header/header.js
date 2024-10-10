@@ -1,5 +1,7 @@
-import Row from "@/components/layout/row";
 import { Flex } from "@radix-ui/themes";
+
+import Row from "@/components/layout/row";
+
 import styles from "./header.module.css";
 import Logo from "./logo";
 import SignIn from "./signin";

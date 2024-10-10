@@ -1,6 +1,7 @@
-import { lineDistance, along, lineSliceAlong } from "@turf/turf";
-import { MercatorCoordinate } from "mapbox-gl";
+import { along, lineDistance, lineSliceAlong } from "@turf/turf";
 import { max } from "d3";
+import { MercatorCoordinate } from "mapbox-gl";
+
 import computeCameraPosition from "@/functions/map/computeCameraPosition";
 
 const followPath = async ({
@@ -36,7 +37,7 @@ const followPath = async ({
       const lineAlongPath = lineSliceAlong(
         path,
         0,
-        max([0.001, currentDistance])
+        max([0.001, currentDistance]),
       );
       // Set position of progress point
       const targetPosition = {
@@ -62,7 +63,7 @@ const followPath = async ({
       // Set corrected position and altitude of camera
       camera.position = MercatorCoordinate.fromLngLat(
         correctedPosition,
-        currentAltitude
+        currentAltitude,
       );
 
       onUpdate({

@@ -1,9 +1,9 @@
-import styles from "./output.module.css";
-
 import Callout from "@/components/interface/callout";
 import Scrollarea from "@/components/interface/scrollarea";
+
 import Canvas from "./canvas";
 import Figure from "./figure";
+import styles from "./output.module.css";
 
 export default function Output({
   activity,

@@ -1,9 +1,10 @@
-import * as RS from "@radix-ui/react-select";
 import {
   CheckIcon,
   ChevronDownIcon,
   ChevronUpIcon,
 } from "@radix-ui/react-icons";
+import * as RS from "@radix-ui/react-select";
+
 import styles from "./select.module.css";
 
 export default function Select({ value, onValueChange, options }) {

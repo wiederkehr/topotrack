@@ -1,5 +1,6 @@
-import Callout from "@/components/interface/callout";
 import { Flex } from "@radix-ui/themes";
+
+import Callout from "@/components/interface/callout";
 
 export default function Welcome() {
   return (

@@ -1,8 +1,9 @@
+import "@/styles/index.css";
+
 import type { Metadata } from "next";
+
 import Providers from "@/app/providers";
 import { sans } from "@/fonts";
-
-import "@/styles/index.css";
 
 export const metadata: Metadata = {
   title: "Topotrack",

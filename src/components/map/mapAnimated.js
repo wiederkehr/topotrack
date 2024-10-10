@@ -1,13 +1,16 @@
-import { useState, useRef, useCallback } from "react";
+import "mapbox-gl/dist/mapbox-gl.css";
+
 import { bbox, lineString } from "@turf/turf";
+import { useCallback, useRef, useState } from "react";
 import MapGL from "react-map-gl";
+
 import flyToPoint from "@/functions/map/flyToPoint";
 import followPath from "@/functions/map/followPath";
 import { colors } from "@/styles/constants";
+
+import styles from "./map.module.css";
 import Position from "./position";
 import Route from "./route";
-import styles from "./map.module.css";
-import "mapbox-gl/dist/mapbox-gl.css";
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 

@@ -6,6 +6,6 @@ export default function geoToScreen(json_data, width, height, padding) {
       [padding, padding],
       [width - padding * 2, height - padding * 2],
     ],
-    json_data
+    json_data,
   );
 }

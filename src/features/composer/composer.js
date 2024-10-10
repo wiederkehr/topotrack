@@ -1,17 +1,17 @@
 "use client";
 
-import { useStrava } from "@/hooks/useStrava";
 import { useEffect, useRef, useState } from "react";
 
+import { mockActivities, mockActivitiesData } from "@/data/mock";
+import templates from "@/features/templates";
 import { toMp4, toPng, toSvg } from "@/functions/export";
 import { formatFilename } from "@/functions/format";
+import { useStrava } from "@/hooks/useStrava";
+
 import styles from "./composer.module.css";
 import { assets, formats } from "./composer.settings";
 import Input from "./input";
 import Output from "./output";
-import templates from "./templates";
-
-import { mockActivities, mockActivitiesData } from "@/data/mock";
 
 export default function Composer() {
   // Activities

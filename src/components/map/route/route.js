@@ -1,5 +1,5 @@
 import { lineString } from "@turf/turf";
-import { Source, Layer } from "react-map-gl";
+import { Layer, Source } from "react-map-gl";
 
 export default function MapRoute({ data, color }) {
   return (

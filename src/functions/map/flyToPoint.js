@@ -1,5 +1,6 @@
 import { easeCubicOut } from "d3";
 import { MercatorCoordinate } from "mapbox-gl";
+
 import computeCameraPosition from "@/functions/map/computeCameraPosition";
 
 const flyToPoint = async ({
@@ -53,7 +54,7 @@ const flyToPoint = async ({
       // Set corrected position and altitude of camera
       camera.position = MercatorCoordinate.fromLngLat(
         correctedPosition,
-        currentAltitude
+        currentAltitude,
       );
 
       // Set corrected camera options

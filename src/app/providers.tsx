@@ -1,8 +1,8 @@
 "use client";
 
+import { Theme } from "@radix-ui/themes";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
-import { Theme } from "@radix-ui/themes";
 
 export interface ProvidersProps {
   children: React.ReactNode;

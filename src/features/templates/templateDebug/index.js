@@ -1,9 +1,9 @@
-export const name = "Debug";
+const name = "Debug";
 
 const foregroundOptions = ["Dark Blue", "Dark Green", "Dark Purple"];
 const backgroundOptions = ["Light Blue", "Light Green", "Light Purple"];
 
-export const variables = [
+const variables = [
   {
     label: "Foreground",
     name: "foreground",
@@ -18,7 +18,7 @@ export const variables = [
   },
 ];
 
-export const presets = [
+const presets = [
   {
     name: "Debug Preset 1",
     foreground: foregroundOptions[0],
@@ -31,7 +31,7 @@ export const presets = [
   },
 ];
 
-export const render = ({ activity, activityData, variables, format, size }) => {
+const render = ({ activity, activityData, variables, format, size }) => {
   return (
     <div>
       <pre>{`Name: ${name}`}</pre>
@@ -41,4 +41,11 @@ export const render = ({ activity, activityData, variables, format, size }) => {
       </pre>
     </div>
   );
+};
+
+export default {
+  name,
+  variables,
+  presets,
+  render,
 };

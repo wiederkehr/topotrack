@@ -1,5 +1,6 @@
-import { TextField } from "@radix-ui/themes";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { TextField } from "@radix-ui/themes";
+
 import styles from "./searchfield.module.css";
 
 export default function Searchfield({ searchTerm, onSearchChange }) {

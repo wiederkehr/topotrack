@@ -1,8 +1,8 @@
-import styles from "./input.module.css";
-
 import { Tab, Tabs } from "@/components/interface/tabs";
+
 import Export from "./export";
 import Format from "./format";
+import styles from "./input.module.css";
 import Inputs from "./inputs";
 import Preset from "./preset";
 import Recents from "./recents";

@@ -1,12 +1,12 @@
 import classNames from "classnames";
 
+import { MapAnimated } from "@/components/map";
 import { formatMeters } from "@/functions/format";
 import { colors } from "@/styles/constants";
-import { MapAnimated } from "@/components/map";
 
 import styles from "./index.module.css";
 
-export const name = "Animation";
+const name = "Animation";
 
 const themeOptions = ["Light", "Dark"];
 const accentOptions = ["Blue", "Green", "Purple", "White", "Red"];
@@ -15,7 +15,7 @@ const mapsStyles = {
   Dark: "mapbox://styles/benjaminwiederkehr/cm1o1o9zc00mv01qt0689hvjp",
 };
 
-export const variables = [
+const variables = [
   {
     label: "Theme",
     name: "theme",
@@ -30,7 +30,7 @@ export const variables = [
   },
 ];
 
-export const presets = [
+const presets = [
   {
     name: "Animation Preset 1",
     theme: themeOptions[0],
@@ -43,7 +43,7 @@ export const presets = [
   },
 ];
 
-export const render = ({ activity, activityData, variables, format, size }) => {
+const render = ({ activity, activityData, variables, format, size }) => {
   const name = activity?.name;
   const type = activity?.type;
   const distance = formatMeters(activity?.distance);
@@ -94,4 +94,11 @@ const FigureType = ({ children, level }) => {
       {children}
     </span>
   );
+};
+
+export default {
+  name,
+  variables,
+  presets,
+  render,
 };

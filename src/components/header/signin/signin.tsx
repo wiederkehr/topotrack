@@ -1,5 +1,7 @@
-import { signInAction } from "@/app/actions";
 import Image from "next/image";
+
+import { signInAction } from "@/app/actions";
+
 import styles from "./signin.module.css";
 
 export default function SignIn() {

@@ -30,7 +30,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         session.access_token = token.access_token as string;
       }
       if (user) {
-        session.user.id = user.id as string;
+        session.user.id = user.id;
       }
       return session;
     },

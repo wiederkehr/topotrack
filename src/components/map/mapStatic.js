@@ -1,7 +1,9 @@
-import { bbox, lineString } from "@turf/turf";
 import "mapbox-gl/dist/mapbox-gl.css";
+
+import { bbox, lineString } from "@turf/turf";
 import { useCallback, useEffect, useRef } from "react";
 import MapGL from "react-map-gl";
+
 import styles from "./map.module.css";
 import Route from "./route";
 

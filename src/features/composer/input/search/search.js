@@ -1,4 +1,5 @@
 import Module from "@/components/interface/module";
+
 import Searchfield from "./searchfield";
 
 export default function Search({ searchTerm, onSearchChange }) {

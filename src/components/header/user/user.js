@@ -1,4 +1,5 @@
 import { signOutAction } from "@/app/actions";
+
 import styles from "./user.module.css";
 
 export default function User({ user }) {

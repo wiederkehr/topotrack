@@ -4,9 +4,9 @@ import { colors } from "@/styles/constants";
 import Background from "./background";
 import Foreground from "./foreground";
 
-export const name = "Poster";
+const name = "Poster";
 
-export const variables = [
+const variables = [
   {
     label: "Background",
     name: "background",
@@ -19,7 +19,7 @@ export const variables = [
   },
 ];
 
-export const presets = [
+const presets = [
   {
     name: "Indigo",
     background: colors.dark.indigo,
@@ -37,7 +37,7 @@ export const presets = [
   },
 ];
 
-export const render = ({ activity, activityData, variables, format, size }) => {
+const render = ({ activity, activityData, variables, format, size }) => {
   const data = activityData[0]?.data;
   const date = new Date(Date.parse(activity?.start_date_local));
   const day = date.toLocaleDateString("en-us", {
@@ -74,4 +74,11 @@ export const render = ({ activity, activityData, variables, format, size }) => {
       />
     </>
   );
+};
+
+export default {
+  name,
+  variables,
+  presets,
+  render,
 };

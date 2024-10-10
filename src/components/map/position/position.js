@@ -1,5 +1,5 @@
 import { point } from "@turf/turf";
-import { Source, Layer } from "react-map-gl";
+import { Layer, Source } from "react-map-gl";
 
 export default function MapPosition({ data, color }) {
   return (

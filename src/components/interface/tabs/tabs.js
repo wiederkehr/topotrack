@@ -1,4 +1,5 @@
-import { Root, List, Trigger } from "@radix-ui/react-tabs";
+import { List, Root, Trigger } from "@radix-ui/react-tabs";
+
 import styles from "./tabs.module.css";
 
 export default function Tabs({ names, children }) {

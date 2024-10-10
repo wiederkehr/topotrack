@@ -1,10 +1,11 @@
 import {
+  Corner,
   Root,
-  Viewport,
   Scrollbar,
   Thumb,
-  Corner,
+  Viewport,
 } from "@radix-ui/react-scroll-area";
+
 import styles from "./scrollarea.module.css";
 
 export default function Scrollarea({ children }) {
