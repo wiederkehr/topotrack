@@ -1,38 +1,43 @@
-import * as RP from "@radix-ui/react-popover";
-import { CustomPicker, SketchPicker } from "react-color";
+import { Box, Popover } from "@radix-ui/themes";
+import { SketchPicker } from "react-color";
 
 import { colors } from "@/styles/constants";
 
 import styles from "./color.module.css";
 
-const ColorPicker = CustomPicker(({ color, onChange }) => {
+export default function Color({ value, onValueChange }) {
   const presetColors = [
     ...Object.values(colors.dark),
     ...Object.values(colors.light),
   ];
   return (
-    <SketchPicker
-      color={color}
-      onChange={onChange}
-      presetColors={presetColors}
-      width="250px"
-    />
-  );
-});
-
-export default function Color({ value, onValueChange }) {
-  return (
-    <RP.Root>
-      <RP.Trigger className={styles.colorTrigger}>
-        <span className={styles.colorLabel}>{value}</span>
-        <i className={styles.colorIcon} style={{ backgroundColor: value }} />
-      </RP.Trigger>
-      <RP.Content className={styles.colorContent}>
-        <ColorPicker
+    <Popover.Root>
+      <Popover.Trigger className={styles.colorTrigger}>
+        <Box>
+          <span className={styles.colorLabel}>{value}</span>
+          <i className={styles.colorIcon} style={{ backgroundColor: value }} />
+        </Box>
+      </Popover.Trigger>
+      <Popover.Content className={styles.colorContent}>
+        <SketchPicker
+          className={styles.colorPicker}
+          styles={{
+            default: {
+              picker: {
+                border: "none",
+                backgroundColor: "transparent",
+                boxShadow: "none",
+                padding: "0",
+              },
+            },
+          }}
           color={value}
           onChange={(color) => onValueChange(color.hex)}
+          presetColors={presetColors}
+          width="240px"
+          disableAlpha={true}
         />
-      </RP.Content>
-    </RP.Root>
+      </Popover.Content>
+    </Popover.Root>
   );
 }

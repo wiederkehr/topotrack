@@ -1,0 +1,28 @@
+/**
+* SketchPicker from react-color
+* https://casesandberg.github.io/react-color/
+**/
+.sketch-picker input {
+  color: var(--gray-11) !important;
+  background-color: var(--color-control-background) !important;
+  color: var(--gray-12) !important;
+  border-radius: var(--radius-2);
+  border: 1px solid var(--color-control-border) !important;
+  box-shadow: none !important;
+}
+
+.sketch-picker label {
+  color: var(--gray-11) !important;
+}
+
+.sketch-picker .flexbox-fix:last-of-type {
+  border-top-color: var(--color-layout-border) !important;
+  gap: 4px !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.sketch-picker .flexbox-fix:last-of-type>div {
+  margin: 0 !important;
+}
