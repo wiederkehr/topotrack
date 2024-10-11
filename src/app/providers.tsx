@@ -20,6 +20,7 @@ export default function Providers({ children }: ProvidersProps) {
           accentColor="blue"
           grayColor="gray"
           panelBackground="solid"
+          scaling="100%"
           radius="medium"
         >
           {children}
