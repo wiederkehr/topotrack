@@ -1,9 +1,9 @@
 .radix-themes {
   /* Chromatics */
   --color-accent: var(--blue-9);
-  --color-layout-background: var(--gray-2);
+  --color-layout-background: var(--color-panel-solid);
   --color-layout-border: var(--gray-5);
-  --color-control-background: white;
+  --color-control-background: var(--color-panel-solid);
   --color-control-border: var(--gray-7);
   --color-control-border-hover: var(--gray-8);
   --color-control-border-focus: var(--gray-8);
