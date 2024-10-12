@@ -143,21 +143,23 @@ export default function Composer() {
     setAsset(asset);
   };
   const handleAssetExport = () => {
-    const filename = formatFilename({
+    const name = formatFilename({
       date: activity.start_date_local,
       name: activity.name,
       format: format.name,
       type: asset.type,
     });
+    console.log(format);
+
     switch (asset.type) {
       case "png":
-        toPng({ node: figureRef.current, name: filename });
+        toPng({ node: figureRef.current, name, format });
         break;
       case "svg":
-        toSvg({ node: figureRef.current, name: filename });
+        toSvg({ node: figureRef.current, name, format });
         break;
       case "mp4":
-        toMp4({ blob: null, name: filename });
+        toMp4({ blob: null, name: name, format });
         break;
       default:
         break;
