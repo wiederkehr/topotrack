@@ -1,5 +1,9 @@
-import styles from "./row.module.css";
+import { Box } from "@radix-ui/themes";
 
 export default function Row({ children }) {
-  return <div className={styles.row}>{children}</div>;
+  return (
+    <Box mx="auto" px="5">
+      {children}
+    </Box>
+  );
 }
