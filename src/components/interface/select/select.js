@@ -3,39 +3,49 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
 } from "@radix-ui/react-icons";
-import * as RS from "@radix-ui/react-select";
+import {
+  Content,
+  Icon,
+  Item,
+  ItemIndicator,
+  ItemText,
+  Root,
+  ScrollDownButton,
+  ScrollUpButton,
+  Trigger,
+  Value,
+  Viewport,
+} from "@radix-ui/react-select";
 
 import styles from "./select.module.css";
 
 export default function Select({ value, onValueChange, options }) {
   return (
-    <RS.Root value={value} onValueChange={onValueChange}>
-      <RS.Trigger className={styles.selectTrigger}>
-        <RS.Value>{value}</RS.Value>
-        <RS.Icon className={styles.selectIcon}>
+    <Root value={value} onValueChange={onValueChange}>
+      <Trigger className={styles.selectTrigger}>
+        <Value>{value}</Value>
+        <Icon className={styles.selectIcon}>
           <ChevronDownIcon />
-        </RS.Icon>
-      </RS.Trigger>
-      <RS.Content className={styles.selectContent}>
-        <RS.ScrollUpButton className={styles.selectScrollButton}>
+        </Icon>
+      </Trigger>
+      <Content className={styles.selectContent}>
+        <ScrollUpButton className={styles.selectScrollButton}>
           <ChevronUpIcon />
-        </RS.ScrollUpButton>
-        <RS.Viewport className={styles.selectViewport}>
+        </ScrollUpButton>
+        <Viewport className={styles.selectViewport}>
           {options.map((option, index) => (
-            <RS.Item className={styles.selectItem} value={option} key={index}>
-              <RS.ItemText className={styles.selectItemText}>
-                {option}
-              </RS.ItemText>
-              <RS.ItemIndicator className={styles.selectItemIndicator}>
+            <Item className={styles.selectItem} value={option} key={index}>
+              <ItemText className={styles.selectItemText}>{option}</ItemText>
+              <ItemIndicator className={styles.selectItemIndicator}>
                 <CheckIcon />
-              </RS.ItemIndicator>
-            </RS.Item>
+              </ItemIndicator>
+            </Item>
           ))}
-        </RS.Viewport>
-        <RS.ScrollDownButton className={styles.selectScrollButton}>
+        </Viewport>
+        <ScrollDownButton className={styles.selectScrollButton}>
           <ChevronDownIcon />
-        </RS.ScrollDownButton>
-      </RS.Content>
-    </RS.Root>
+        </ScrollDownButton>
+      </Content>
+    </Root>
   );
 }

@@ -1,13 +1,13 @@
 import { InfoCircledIcon } from "@radix-ui/react-icons";
-import { Callout as RC } from "@radix-ui/themes";
+import { Callout as RxCallout } from "@radix-ui/themes";
 
 export default function Callout({ children }) {
   return (
-    <RC.Root>
-      <RC.Icon>
+    <RxCallout.Root>
+      <RxCallout.Icon>
         <InfoCircledIcon />
-      </RC.Icon>
-      <RC.Text>{children}</RC.Text>
-    </RC.Root>
+      </RxCallout.Icon>
+      <RxCallout.Text>{children}</RxCallout.Text>
+    </RxCallout.Root>
   );
 }
