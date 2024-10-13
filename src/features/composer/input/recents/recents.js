@@ -1,8 +1,9 @@
+import { Flex } from "@radix-ui/themes";
+
 import Module from "@/components/interface/module";
 import { formatDate } from "@/functions/format";
 
-import Item from "./item";
-import styles from "./recents.module.css";
+import Recent from "./recent";
 
 export default function Recents({
   activities,
@@ -14,19 +15,17 @@ export default function Recents({
   if (!activities) return null;
   return (
     <Module label="Recent">
-      <ul className={styles.recentsList}>
+      <Flex direction="column" gap="2" align="stretch">
         {activities.map((activity, index) => (
-          <li className={styles.recentsListItem} key={index}>
-            <Item
-              id={activity.id}
-              name={activity.name}
-              date={formatDate(activity.start_date_local)}
-              active={activity.id === selectedActivity?.id}
-              onClick={onActivityChange}
-            />
-          </li>
+          <Recent
+            key={index}
+            name={activity.name}
+            date={formatDate(activity.start_date_local)}
+            active={activity.id === selectedActivity?.id}
+            onClick={() => onActivityChange(activity.id)}
+          />
         ))}
-      </ul>
+      </Flex>
     </Module>
   );
 }
