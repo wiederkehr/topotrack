@@ -175,6 +175,20 @@
     "@babel/helper-validator-identifier" "^7.25.7"
     to-fast-properties "^2.0.0"
 
+"@cutting/assert@0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@cutting/assert/-/assert-0.1.4.tgz#bd9fe858b3c573ec51959193f8cd960165527347"
+  integrity sha512-k1LE8tCMKllAkb7ipdwCeK9DJVZlXu1IKW4ROXnvclsxtDPLLgkBx0oFRrrZeJ6J6nIubVZjC+DK7ilMboK/5A==
+
+"@cutting/use-get-parent-size@^2.1.16":
+  version "2.1.16"
+  resolved "https://registry.yarnpkg.com/@cutting/use-get-parent-size/-/use-get-parent-size-2.1.16.tgz#ffd0f6177c43576fcfd8fec9514ec0747c4d93ef"
+  integrity sha512-vEhBqro7W0v93XRSgo72tQnejTkQgTVAR+Bmo/QGStWJcAX1bsjhxbw8EL0ApLISOEy65J0wTy4yITlzdGifkA==
+  dependencies:
+    "@cutting/assert" "0.1.4"
+    resize-observer-polyfill "^1.5.1"
+    use-debounce "^10.0.1"
+
 "@eslint-community/eslint-utils@^4.2.0", "@eslint-community/eslint-utils@^4.4.0":
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/@eslint-community/eslint-utils/-/eslint-utils-4.4.0.tgz#a23514e8fb9af1269d5f7788aa556798d61c6b59"
@@ -3036,11 +3050,6 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
 
-batch-processor@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/batch-processor/-/batch-processor-1.0.0.tgz#75c95c32b748e0850d10c2b168f6bdbe9891ace8"
-  integrity sha512-xoLQD8gmmR32MeuBHgH0Tzd5PuSZx71ZsbhVxOCRbgktZEPe4SQy7s9Z50uPp0F/f7iw2XmkHN2xkgbMfckMDA==
-
 brace-expansion@^1.1.7:
   version "1.1.11"
   resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.11.tgz#3c7fcbf529d87226f3d2f52b966ff5271eb441dd"
@@ -3230,6 +3239,11 @@ cross-spawn@^7.0.0, cross-spawn@^7.0.2:
     path-key "^3.1.0"
     shebang-command "^2.0.0"
     which "^2.0.1"
+
+css-mediaquery@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/css-mediaquery/-/css-mediaquery-0.1.2.tgz#6a2c37344928618631c54bd33cedd301da18bea0"
+  integrity sha512-COtn4EROW5dBGlE/4PiKnh6rZpAPxDeFLaEEwt4i10jpDMFt2EhQGS79QmmrO+iKCHv0PU/HrOWEhijFd1x99Q==
 
 csscolorparser@~1.0.3:
   version "1.0.3"
@@ -3678,13 +3692,6 @@ electron-to-chromium@^1.5.28:
   version "1.5.32"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.32.tgz#4a05ee78e29e240aabaf73a67ce9fe73f52e1bc7"
   integrity sha512-M+7ph0VGBQqqpTT2YrabjNKSQ2fEl9PVx6AK3N558gDH9NO8O6XN9SXXFWRo9u9PbEg/bWq+tjXQr+eXmxubCw==
-
-element-resize-detector@^1.1.10:
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/element-resize-detector/-/element-resize-detector-1.2.4.tgz#3e6c5982dd77508b5fa7e6d5c02170e26325c9b1"
-  integrity sha512-Fl5Ftk6WwXE0wqCgNoseKWndjzZlDCwuPTcoVZfCP9R3EHQF8qUtr3YUPNETegRBOKqQKPW3n4kiIWngGi8tKg==
-  dependencies:
-    batch-processor "1.0.0"
 
 emoji-regex@^8.0.0:
   version "8.0.0"
@@ -4522,6 +4529,11 @@ html-to-image@^1.11.11:
   resolved "https://registry.npmjs.org/html-to-image/-/html-to-image-1.11.11.tgz"
   integrity sha512-9gux8QhvjRO/erSnDPv28noDZcPZmYE7e1vFsBLKLlRlKDSqNJYebj6Qz1TGd5lsRV+X+xYyjCKjuZdABinWjA==
 
+hyphenate-style-name@^1.0.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.1.0.tgz#1797bf50369588b47b72ca6d5e65374607cf4436"
+  integrity sha512-WDC/ui2VVRrz3jOVi+XtjqkDjiVjTtFaAGiW37k6b+ohyQ5wYDOGkvCZa8+H0nx3gyvv0+BST9xuOgIyGQ00gw==
+
 iconv-lite@0.6:
   version "0.6.3"
   resolved "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.6.3.tgz"
@@ -4579,7 +4591,7 @@ internal-slot@^1.0.4, internal-slot@^1.0.7:
   resolved "https://registry.npmjs.org/internmap/-/internmap-2.0.3.tgz"
   integrity sha512-5Hh7Y1wQbvY5ooGgPbDaL5iYLAPzMTUrjMulskHLH6wnv/A+1q5rgEaiuqEjB+oxGXIVZs1FF+R/KPN3ZSQYYg==
 
-invariant@^2.2.2, invariant@^2.2.4:
+invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.npmjs.org/invariant/-/invariant-2.2.4.tgz"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
@@ -5010,6 +5022,13 @@ mapbox-gl@^2.15.0:
     tinyqueue "^2.0.3"
     vt-pbf "^3.1.3"
 
+matchmediaquery@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/matchmediaquery/-/matchmediaquery-0.4.2.tgz#22582bd4ae63ad9f54c53001bba80cbed0f7eafa"
+  integrity sha512-wrZpoT50ehYOudhDjt/YvUJc6eUzcdFPdmbizfgvswCKNHD1/OBOHYJpHie+HXpu6bSkEGieFMYk6VuutaiRfA==
+  dependencies:
+    css-mediaquery "^0.1.2"
+
 material-colors@^1.2.1:
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/material-colors/-/material-colors-1.2.6.tgz#6d1958871126992ceecc72f4bcc4d8f010865f46"
@@ -5368,7 +5387,7 @@ pretty-format@^3.8.0:
   resolved "https://registry.npmjs.org/pretty-format/-/pretty-format-3.8.0.tgz"
   integrity sha512-WuxUnVtlWL1OfZFQFuqvnvs6MiAGk9UNsBostyBOB0Is9wb5uRESevA6rnl/rkksXaGX3GzZhPup5d6Vp1nFew==
 
-prop-types@^15.5.10, prop-types@^15.5.8, prop-types@^15.8.1:
+prop-types@^15.5.10, prop-types@^15.6.1, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -5434,15 +5453,6 @@ react-color@^2.19.3:
     reactcss "^1.2.0"
     tinycolor2 "^1.4.1"
 
-react-container-dimensions@^1.4.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/react-container-dimensions/-/react-container-dimensions-1.4.1.tgz#73a8b497f09c6b55a18a79b18a57a8327138f343"
-  integrity sha512-f5WXYpsL0vAuT9hD6bSTqRYOJXFbU9JzjSZfscNT77PbdCUReLv2/aSvYBgkXyALtOBVdS/nwO5RVZgBxxWDnw==
-  dependencies:
-    element-resize-detector "^1.1.10"
-    invariant "^2.2.2"
-    prop-types "^15.5.8"
-
 react-dom@^18.3.1:
   version "18.3.1"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.3.1.tgz#c2265d79511b57d479b3dd3fdfa51536494c5cb4"
@@ -5502,6 +5512,16 @@ react-remove-scroll@2.6.0:
     use-callback-ref "^1.3.0"
     use-sidecar "^1.1.2"
 
+react-responsive@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/react-responsive/-/react-responsive-10.0.0.tgz#657c7a90823cd565f43aa5918bd8eb0cd2c91c91"
+  integrity sha512-N6/UiRLGQyGUqrarhBZmrSmHi2FXSD++N5VbSKsBBvWfG0ZV7asvUBluSv5lSzdMyEVjzZ6Y8DL4OHABiztDOg==
+  dependencies:
+    hyphenate-style-name "^1.0.0"
+    matchmediaquery "^0.4.2"
+    prop-types "^15.6.1"
+    shallow-equal "^3.1.0"
+
 react-style-singleton@^2.2.1:
   version "2.2.1"
   resolved "https://registry.npmjs.org/react-style-singleton/-/react-style-singleton-2.2.1.tgz"
@@ -5556,6 +5576,11 @@ regexp.prototype.flags@^1.5.1, regexp.prototype.flags@^1.5.2:
     define-properties "^1.2.1"
     es-errors "^1.3.0"
     set-function-name "^2.0.1"
+
+resize-observer-polyfill@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/resize-observer-polyfill/-/resize-observer-polyfill-1.5.1.tgz#0e9020dd3d21024458d4ebd27e23e40269810464"
+  integrity sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==
 
 resolve-from@^4.0.0:
   version "4.0.0"
@@ -5707,6 +5732,11 @@ set-value@^2.0.1:
     is-extendable "^0.1.1"
     is-plain-object "^2.0.3"
     split-string "^3.0.1"
+
+shallow-equal@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/shallow-equal/-/shallow-equal-3.1.0.tgz#e7a54bac629c7f248eff6c2f5b63122ba4320bec"
+  integrity sha512-pfVOw8QZIXpMbhBWvzBISicvToTiM5WBF1EeAUZDDSb5Dt29yl4AYbyywbJFSEsRUMr7gJaxqCdr4L3tQf9wVg==
 
 shebang-command@^2.0.0:
   version "2.0.0"
@@ -6160,6 +6190,11 @@ use-callback-ref@^1.3.0:
   integrity sha512-3FT9PRuRdbB9HfXhEq35u4oZkvpJ5kuYbpqhCfmiZyReuRgpnhDlbr2ZEnnuS0RrJAPn6l23xjFg9kpDM+Ms7w==
   dependencies:
     tslib "^2.0.0"
+
+use-debounce@^10.0.1:
+  version "10.0.4"
+  resolved "https://registry.yarnpkg.com/use-debounce/-/use-debounce-10.0.4.tgz#2135be498ad855416c4495cfd8e0e130bd33bb24"
+  integrity sha512-6Cf7Yr7Wk7Kdv77nnJMf6de4HuDE4dTxKij+RqE9rufDsI6zsbjyAxcH5y2ueJCQAnfgKbzXbZHYlkFwmBlWkw==
 
 use-sidecar@^1.1.2:
   version "1.1.2"

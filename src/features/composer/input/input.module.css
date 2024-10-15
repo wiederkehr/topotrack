@@ -1,5 +1,7 @@
 .input {
-  border-top: 1px solid var(--color-layout-border); 
+  border-top: 1px solid var(--color-layout-border);
+  position: relative;
+
   @media (min-width: 768px) {
     border-top: none;
     border-left: 1px solid var(--color-layout-border);

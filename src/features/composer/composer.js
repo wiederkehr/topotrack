@@ -18,7 +18,12 @@ export default function Composer() {
   // //////////////////////////////
   // NOTE: Mock Data
   const { activities, activitiesError, activitiesLoading } = {
-    activities: mockActivities,
+    activities: [
+      ...mockActivities,
+      ...mockActivities,
+      ...mockActivities,
+      ...mockActivities,
+    ],
     activitiesError: null,
     activitiesLoading: false,
   };
@@ -27,7 +32,7 @@ export default function Composer() {
   //   data: activities,
   //   error: activitiesError,
   //   loading: activitiesLoading,
-  // } = useStrava("athlete/activities?per_page=10");
+  // } = useStrava("athlete/activities?per_page=20");
 
   // Activity
   // //////////////////////////////
@@ -69,7 +74,7 @@ export default function Composer() {
   //   error: activityDataError,
   //   loading: activityDataLoading,
   // } = useStrava(
-  //   `activities/${activity?.id}/streams?keys=[time,distance,latlng,altitude]`
+  //   `activities/${activity?.id}/streams?keys=[time,distance,latlng,altitude]`,
   // );
 
   // Search
@@ -149,7 +154,6 @@ export default function Composer() {
       format: format.name,
       type: asset.type,
     });
-    console.log(format);
 
     switch (asset.type) {
       case "png":

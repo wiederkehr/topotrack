@@ -1,3 +1,14 @@
+.tabsRoot {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  @media (min-width: 768px) {
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
 .tabsList {
   display: flex;
 }
@@ -25,6 +36,7 @@
 .tabsTrigger:first-of-type {
   border-left-width: 0;
 }
+
 .tabsTrigger:last-of-type {
   border-right-width: 0;
 }

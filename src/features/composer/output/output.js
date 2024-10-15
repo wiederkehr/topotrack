@@ -1,3 +1,5 @@
+import { Box } from "@radix-ui/themes";
+
 import Callout from "@/components/interface/callout";
 import Scrollarea from "@/components/interface/scrollarea";
 
@@ -18,20 +20,24 @@ export default function Output({
   return (
     <div className={styles.output}>
       <Scrollarea>
-        <Canvas format={format}>
-          {activityDataLoading && <Callout>Loading activity data…</Callout>}
-          {activityDataError && <Callout>Error loading activity data.</Callout>}
-          {activity && activityData && (
-            <Figure
-              activity={activity}
-              activityData={activityData}
-              format={format}
-              ref={figureRef}
-              template={template}
-              variables={variables}
-            />
-          )}
-        </Canvas>
+        <Box p="var(--space-default)">
+          <Canvas format={format}>
+            {activityDataLoading && <Callout>Loading activity data…</Callout>}
+            {activityDataError && (
+              <Callout>Error loading activity data.</Callout>
+            )}
+            {activity && activityData && (
+              <Figure
+                activity={activity}
+                activityData={activityData}
+                format={format}
+                ref={figureRef}
+                template={template}
+                variables={variables}
+              />
+            )}
+          </Canvas>
+        </Box>
       </Scrollarea>
     </div>
   );

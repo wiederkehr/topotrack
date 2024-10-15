@@ -1,0 +1,17 @@
+.activityActive,
+.activityActive:focus,
+.activityActive:hover,
+.activityActive:active {
+  outline: auto var(--color-control-border-active);
+}
+
+.activityDate {
+  color: var(--gray-9);
+  display: block;
+  font-size: var(--font-size-small);
+  text-transform: uppercase;
+}
+
+.activityName {
+  display: block;
+}
