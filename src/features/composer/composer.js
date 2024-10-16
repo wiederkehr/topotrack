@@ -17,22 +17,18 @@ export default function Composer() {
   // Activities
   // //////////////////////////////
   // NOTE: Mock Data
-  const { activities, activitiesError, activitiesLoading } = {
-    activities: [
-      ...mockActivities,
-      ...mockActivities,
-      ...mockActivities,
-      ...mockActivities,
-    ],
-    activitiesError: null,
-    activitiesLoading: false,
-  };
+  // const { activities, activitiesError, activitiesLoading } = {
+  //   activities: mockActivities,
+  //   activitiesError: null,
+  //   activitiesLoading: false,
+  // };
+
   // NOTE: Live Data
-  // const {
-  //   data: activities,
-  //   error: activitiesError,
-  //   loading: activitiesLoading,
-  // } = useStrava("athlete/activities?per_page=20");
+  const {
+    data: activities,
+    error: activitiesError,
+    loading: activitiesLoading,
+  } = useStrava("athlete/activities?per_page=20");
 
   // Activity
   // //////////////////////////////
@@ -57,32 +53,43 @@ export default function Composer() {
   // Activity Data
   // //////////////////////////////
   // NOTE: Mock Data
-  const [activityData, setActivityData] = useState(null);
-  const activityDataError = null;
-  const activityDataLoading = false;
-  useEffect(() => {
-    if (activity) {
-      const activityData = mockActivitiesData.find(
-        (activityData) => activityData.id === activity.id,
-      );
-      setActivityData(activityData.data);
-    }
-  }, [activity]);
+  // const [activityData, setActivityData] = useState(null);
+  // const activityDataError = null;
+  // const activityDataLoading = false;
+  // useEffect(() => {
+  //   if (activity) {
+  //     const activityData = mockActivitiesData.find(
+  //       (activityData) => activityData.id === activity.id,
+  //     );
+  //     setActivityData(activityData.data);
+  //   }
+  // }, [activity]);
   // NOTE: Live Data
-  // const {
-  //   data: activityData,
-  //   error: activityDataError,
-  //   loading: activityDataLoading,
-  // } = useStrava(
-  //   `activities/${activity?.id}/streams?keys=[time,distance,latlng,altitude]`,
-  // );
+  const {
+    data: activityData,
+    error: activityDataError,
+    loading: activityDataLoading,
+  } = useStrava(
+    `activities/${activity?.id}/streams?keys=[time,distance,latlng,altitude]`,
+  );
 
   // Search
   // //////////////////////////////
+  const [searchedActivities, setSearchedActivities] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  // TODO: Fix the search functionality
+  // Use the useStrava hook to search for activities when the search term is longer than 3 characters.
+  // Currently, I get an error because hooks can’t be called from within handler functions.
+  // Please help me fix this issue.
   const handleSearchChange = (event) => {
     const { value } = event.target;
     setSearchTerm(value);
+    if (value.length > 3) {
+      const { data: searchedActivities } = useStrava(
+        `athlete/activities?per_page=20&search=${value}`,
+      );
+      setSearchedActivities(searchedActivities);
+    }
   };
 
   // Format

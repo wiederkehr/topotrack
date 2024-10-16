@@ -22,9 +22,11 @@ export default function Output({
       <Scrollarea>
         <Box p="var(--space-default)">
           <Canvas format={format}>
-            {activityDataLoading && <Callout>Loading activity data…</Callout>}
+            {activityDataLoading && (
+              <Callout m="5">Loading activity data…</Callout>
+            )}
             {activityDataError && (
-              <Callout>Error loading activity data.</Callout>
+              <Callout m="5">Error loading activity data.</Callout>
             )}
             {activity && activityData && (
               <Figure
