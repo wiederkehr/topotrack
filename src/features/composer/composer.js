@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { mockActivities, mockActivitiesData } from "@/data/mock";
 import templates from "@/features/templates";
 import { toMp4, toPng, toSvg } from "@/functions/export";
 import { formatFilename } from "@/functions/format";
@@ -14,81 +13,64 @@ import Input from "./input";
 import Output from "./output";
 
 export default function Composer() {
+  const [allActivities, setAllActivities] = useState([]);
+  const [visibleActivities, setVisibleActivities] = useState([]);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [activity, setActivity] = useState(null);
+
   // Activities
   // //////////////////////////////
-  // NOTE: Mock Data
-  // const { activities, activitiesError, activitiesLoading } = {
-  //   activities: mockActivities,
-  //   activitiesError: null,
-  //   activitiesLoading: false,
-  // };
-
-  // NOTE: Live Data
   const {
-    data: activities,
+    data: activitiesData,
     error: activitiesError,
     loading: activitiesLoading,
-  } = useStrava("athlete/activities?per_page=20");
+  } = useStrava("activities", { pageNumber });
+
+  useEffect(() => {
+    if (activitiesData) {
+      setAllActivities((prev) => [...prev, ...activitiesData]);
+      setVisibleActivities((prev) => [...prev, ...activitiesData]);
+    }
+  }, [activitiesData]);
+
+  const handleLoadMore = () => {
+    setPageNumber((prev) => prev + 1);
+  };
 
   // Activity
   // //////////////////////////////
-  const [activity, setActivity] = useState(null);
   useEffect(() => {
-    if (activities && activities?.length > 0) {
-      setActivity(activities[0]);
+    if (visibleActivities && visibleActivities?.length > 0) {
+      setActivity(visibleActivities[0]);
     }
-  }, [activities]);
+  }, [visibleActivities]);
 
   const handleActivityChange = (id) => {
-    const activity = activities.find((activity) => activity.id === id);
+    const activity = allActivities.find((activity) => activity.id === id);
     setActivity(activity);
-  };
-
-  const selectActivityById = (id) => {
-    return activities.find(
-      (activity) => activity.id.toString() === id.toString(),
-    );
   };
 
   // Activity Data
   // //////////////////////////////
-  // NOTE: Mock Data
-  // const [activityData, setActivityData] = useState(null);
-  // const activityDataError = null;
-  // const activityDataLoading = false;
-  // useEffect(() => {
-  //   if (activity) {
-  //     const activityData = mockActivitiesData.find(
-  //       (activityData) => activityData.id === activity.id,
-  //     );
-  //     setActivityData(activityData.data);
-  //   }
-  // }, [activity]);
-  // NOTE: Live Data
   const {
     data: activityData,
-    error: activityDataError,
-    loading: activityDataLoading,
-  } = useStrava(
-    `activities/${activity?.id}/streams?keys=[time,distance,latlng,altitude]`,
-  );
+    error: activityError,
+    loading: activityLoading,
+  } = useStrava("activity", { id: activity?.id });
 
   // Search
   // //////////////////////////////
-  const [searchedActivities, setSearchedActivities] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  // TODO: Fix the search functionality
-  // Use the useStrava hook to search for activities when the search term is longer than 3 characters.
-  // Currently, I get an error because hooks can’t be called from within handler functions.
-  // Please help me fix this issue.
   const handleSearchChange = (event) => {
     const { value } = event.target;
     setSearchTerm(value);
-    if (value.length > 3) {
-      const { data: searchedActivities } = useStrava(
-        `athlete/activities?per_page=20&search=${value}`,
+    if (value.length >= 3) {
+      const matchingActivities = allActivities.filter((activity) =>
+        activity.name.toLowerCase().includes(value.toLowerCase()),
       );
-      setSearchedActivities(searchedActivities);
+      setVisibleActivities(matchingActivities);
+    } else {
+      setVisibleActivities(allActivities);
     }
   };
 
@@ -182,18 +164,18 @@ export default function Composer() {
       <Output
         activity={activity}
         activityData={activityData}
-        activityDataError={activityDataError}
-        activityDataLoading={activityDataLoading}
+        activityError={activityError}
+        activityLoading={activityLoading}
         figureRef={figureRef}
         format={format}
         template={template}
         variables={variables}
       />
       <Input
-        activities={activities}
+        activity={activity}
+        activities={visibleActivities}
         activitiesError={activitiesError}
         activitiesLoading={activitiesLoading}
-        activity={activity}
         asset={asset}
         assets={assets}
         format={format}
@@ -213,6 +195,8 @@ export default function Composer() {
         onTemplateChange={handleTemplateChange}
         onPresetChange={handlePresetChange}
         onVariableChange={handleVariableChange}
+        onLoadMore={handleLoadMore}
+        disableLoadMore={activitiesLoading || searchTerm.length >= 3}
       />
     </div>
   );

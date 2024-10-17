@@ -10,8 +10,8 @@ import styles from "./output.module.css";
 export default function Output({
   activity,
   activityData,
-  activityDataError,
-  activityDataLoading,
+  activityError,
+  activityLoading,
   figureRef,
   format,
   template,
@@ -22,12 +22,8 @@ export default function Output({
       <Scrollarea>
         <Box p="var(--space-default)">
           <Canvas format={format}>
-            {activityDataLoading && (
-              <Callout m="5">Loading activity data…</Callout>
-            )}
-            {activityDataError && (
-              <Callout m="5">Error loading activity data.</Callout>
-            )}
+            {activityLoading && <Callout m="5">Loading activity…</Callout>}
+            {activityError && <Callout m="5">Error loading activity.</Callout>}
             {activity && activityData && (
               <Figure
                 activity={activity}

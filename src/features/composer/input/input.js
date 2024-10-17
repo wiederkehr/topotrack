@@ -1,3 +1,5 @@
+import InfiniteScroll from "react-infinite-scroll-component";
+
 import { Tab, Tabs } from "@/components/interface/tabs";
 
 import Activities from "./activities";
@@ -6,7 +8,6 @@ import Format from "./format";
 import styles from "./input.module.css";
 import Inputs from "./inputs";
 import Preset from "./preset";
-import Recents from "./recents";
 import Search from "./search";
 import Template from "./template";
 
@@ -27,6 +28,8 @@ export default function Input({
   onTemplateChange,
   onPresetChange,
   onVariableChange,
+  onLoadMore,
+  disableLoadMore,
   searchTerm,
   template,
   templates,
@@ -46,6 +49,8 @@ export default function Input({
             activitiesLoading={activitiesLoading}
             selectedActivity={activity}
             onActivityChange={onActivityChange}
+            onLoadMore={onLoadMore}
+            disableLoadMore={disableLoadMore}
           />
         </Tab>
         <Tab name="Design">
