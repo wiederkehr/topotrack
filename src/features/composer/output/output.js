@@ -1,6 +1,5 @@
 import { Box, Flex, Spinner } from "@radix-ui/themes";
 
-import Callout from "@/components/interface/callout";
 import Scrollarea from "@/components/interface/scrollarea";
 
 import Canvas from "./canvas";
