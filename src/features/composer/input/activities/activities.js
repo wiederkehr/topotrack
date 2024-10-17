@@ -1,6 +1,5 @@
 import { UpdateIcon } from "@radix-ui/react-icons";
-import { Button, Flex, Spinner } from "@radix-ui/themes";
-import { Skeleton } from "@radix-ui/themes";
+import { Button, Flex, Skeleton, Spinner } from "@radix-ui/themes";
 import { useEffect, useRef } from "react";
 
 import Callout from "@/components/interface/callout";

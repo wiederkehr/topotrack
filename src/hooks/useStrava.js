@@ -8,8 +8,8 @@ export const baseUrl = "https://www.strava.com/api/v3/";
 export const pageLimit = 20;
 
 const fetcher = async ({ url, token }) => {
-  // FIXME: For testing purposes, add a 2 second delay to the request
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  // FIXME: For testing purposes, add a 1 second delay to the request
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   const args = { headers: { Authorization: `Bearer ${token}` } };
   try {
     const response = await axios.get(url, args);

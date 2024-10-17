@@ -1,7 +1,3 @@
-import InfiniteScroll from "react-infinite-scroll-component";
-
-import { Tab, Tabs } from "@/components/interface/tabs";
-
 import Activities from "./activities";
 import Export from "./export";
 import Format from "./format";
@@ -9,6 +5,7 @@ import styles from "./input.module.css";
 import Inputs from "./inputs";
 import Preset from "./preset";
 import Search from "./search";
+import { Tab, Tabs } from "./tabs";
 import Template from "./template";
 
 export default function Input({

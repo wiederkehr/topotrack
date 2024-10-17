@@ -1,11 +1,9 @@
-/* 
-TODO: Make Scrollarea responsive 
-i.e. No scroll area for configurable breakpoints
-*/
 .scrollArea {
-  width: 100%;
-  height: 100%;
-  position: absolute;
+  @media (min-width: 768px) {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
 }
 
 .scrollAreaRoot {
