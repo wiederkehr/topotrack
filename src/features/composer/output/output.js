@@ -1,4 +1,4 @@
-import { Box } from "@radix-ui/themes";
+import { Box, Flex, Spinner } from "@radix-ui/themes";
 
 import Callout from "@/components/interface/callout";
 import Scrollarea from "@/components/interface/scrollarea";
@@ -17,14 +17,23 @@ export default function Output({
   template,
   variables,
 }) {
+  const isReady = activity && activityData?.length > 0;
   return (
     <div className={styles.output}>
       <Scrollarea>
         <Box p="var(--space-default)">
           <Canvas format={format}>
-            {activityLoading && <Callout m="5">Loading activity…</Callout>}
-            {activityError && <Callout m="5">Error loading activity.</Callout>}
-            {activity && activityData && (
+            {!isReady && (
+              <Flex
+                height="100%"
+                direction="column"
+                justify="center"
+                align="center"
+              >
+                <Spinner />
+              </Flex>
+            )}
+            {isReady && (
               <Figure
                 activity={activity}
                 activityData={activityData}
