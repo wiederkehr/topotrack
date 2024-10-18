@@ -10,6 +10,8 @@ const Foreground = ({
   year,
   distance,
   elevation,
+  state,
+  country,
   width,
   height,
   color,
@@ -40,8 +42,8 @@ const Foreground = ({
         style={{ left: padding, right: padding, bottom: padding }}
       >
         <Box className={styles.typeLeft} style={{ maxWidth: "66%" }}>
-          <TypePrimary>State</TypePrimary>
-          <TypeSecondary>Country</TypeSecondary>
+          <TypePrimary>{state}</TypePrimary>
+          <TypeSecondary>{country}</TypeSecondary>
         </Box>
         <Box className={styles.typeRight} style={{ maxWidth: "66%" }}>
           <Flex justify={"end"}>

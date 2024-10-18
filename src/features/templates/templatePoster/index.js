@@ -49,6 +49,8 @@ const render = ({ activity, activityData, variables, format, size }) => {
   const type = activity?.type;
   const distance = formatMeters(activity?.distance);
   const elevation = formatMeters(activity?.total_elevation_gain);
+  const state = activity?.address?.state;
+  const country = activity?.address?.country;
   const { background, foreground } = variables;
 
   const { width, height } = size;
@@ -71,6 +73,8 @@ const render = ({ activity, activityData, variables, format, size }) => {
         color={foreground}
         distance={distance}
         elevation={elevation}
+        state={state}
+        country={country}
       />
     </>
   );

@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 
 import templates from "@/features/templates";
 import { toMp4, toPng, toSvg } from "@/functions/export";
 import { formatFilename } from "@/functions/format";
+import { useGetAddress } from "@/hooks/useGetAddress";
 import { useStrava } from "@/hooks/useStrava";
 
 import styles from "./composer.module.css";
@@ -57,6 +58,22 @@ export default function Composer() {
     error: activityError,
     loading: activityLoading,
   } = useStrava("activity", { id: activity?.id });
+
+  // Activity Address Data
+  // //////////////////////////////
+  const lat = activity?.start_latlng?.[0];
+  const lon = activity?.start_latlng?.[1];
+  const {
+    data: activityAddress,
+    error: activityAddressError,
+    loading: activityAddressLoading,
+  } = useGetAddress(lat, lon);
+
+  useEffect(() => {
+    if (activityData && activityAddress) {
+      setActivity({ ...activity, address: activityAddress?.address });
+    }
+  }, [activityData, activityAddress]);
 
   // Search
   // //////////////////////////////
