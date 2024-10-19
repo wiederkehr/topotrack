@@ -11,7 +11,7 @@ import {
 } from "@/functions/destructure";
 import { colors } from "@/styles/constants";
 
-const name = "Poster";
+const name = "Visualization";
 
 const variables = [
   {
@@ -63,28 +63,7 @@ const Render = ({ activity, activityData, variables, format, size }) => {
       <Layer>
         <SVGContainer width={width} height={height}>
           <SVGBackground width={width} height={height} color={background} />
-          <SVGRoute
-            data={latlng}
-            height={height}
-            width={width}
-            color={accent}
-          />
         </SVGContainer>
-      </Layer>
-      <Layer>
-        <TypeGrid
-          name={name}
-          type={type}
-          day={day}
-          year={year}
-          distance={distance}
-          elevation={elevation}
-          state={state}
-          country={country}
-          accent={accent}
-          contrast={contrast}
-          width={width}
-        />
       </Layer>
     </>
   );

@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "@cutting/use-get-parent-size": "^2.1.16",
+    "@googlemaps/polyline-codec": "^1.0.28",
     "@radix-ui/colors": "^3.0.0",
     "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-icons": "^1.3.0",

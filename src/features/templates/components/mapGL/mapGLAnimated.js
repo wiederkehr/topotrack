@@ -1,12 +1,11 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import { bbox, lineString } from "@turf/turf";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import MapGL from "react-map-gl";
 
 import flyToPoint from "@/functions/map/flyToPoint";
 import followPath from "@/functions/map/followPath";
-import { colors } from "@/styles/constants";
 
 import styles from "./map.module.css";
 import Position from "./position";
@@ -14,11 +13,19 @@ import Route from "./route";
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
-export default function MapAnimated({ data, style, accent }) {
+export default function MapGLAnimated({
+  data,
+  style,
+  accent,
+  contrast,
+  format,
+}) {
   // Data
-  const latlng = data.find((d) => d.type === "latlng").data;
+  // //////////////////////////////
+  const latlng = data;
   const lnglat = latlng.map((d) => [d[1], d[0]]);
   // Features
+  // //////////////////////////////
   const routeData = lnglat;
   const [positionData, setPositionData] = useState(routeData[0]);
   const [progressData, setProgressData] = useState([
@@ -26,6 +33,7 @@ export default function MapAnimated({ data, style, accent }) {
     routeData[0],
   ]);
   // Map
+  // //////////////////////////////
   const startAltitude = 100000;
   const stopAltitude = 5000;
   const startBearing = -60;
@@ -41,9 +49,12 @@ export default function MapAnimated({ data, style, accent }) {
     zoom: 10,
   };
   // Animation
+  // //////////////////////////////
   const durationFly = 5000;
   const durationFollow = 10000;
 
+  // Fly To Point
+  // //////////////////////////////
   const onMapLoad = useCallback(async () => {
     const afterFlyInPosition = await flyToPoint({
       map: mapRef.current,
@@ -60,6 +71,8 @@ export default function MapAnimated({ data, style, accent }) {
       stopPitch: stopPitch,
     });
 
+    // Follow Path
+    // //////////////////////////////
     const afterFollowPosition = await followPath({
       map: mapRef.current,
       duration: durationFollow,
@@ -73,6 +86,8 @@ export default function MapAnimated({ data, style, accent }) {
       },
     });
 
+    // Fit Bounds
+    // //////////////////////////////
     mapRef.current.fitBounds(bbox(lineString(routeData)), {
       duration: 3000,
       bearing: startBearing,
@@ -91,6 +106,13 @@ export default function MapAnimated({ data, style, accent }) {
     stopPitch,
   ]);
 
+  // Update on Format Change
+  // //////////////////////////////
+  useEffect(() => {
+    if (mapRef.current) {
+    }
+  }, [format]);
+
   return (
     <div className={styles.map}>
       <MapGL
@@ -101,7 +123,7 @@ export default function MapAnimated({ data, style, accent }) {
         initialViewState={mapConfig}
         attributionControl={false}
       >
-        <Route data={routeData} color="#fff" />
+        <Route data={routeData} color={contrast} />
         <Route data={progressData} color={accent} />
         <Position data={positionData} color={accent} />
       </MapGL>

@@ -1,10 +1,11 @@
-.foreground {
-  position: absolute;
-  width: 100%;
-  height: 100%;
+.typePrimary,
+.typeSecondary {
+  display: block;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
-.foreground>div {
+.typeGrid>div {
   position: absolute;
   justify-content: space-between;
   left: 40px;
@@ -25,11 +26,4 @@
 
 .typeRight {
   text-align: right;
-}
-
-.typePrimary,
-.typeSecondary {
-  display: block;
-  line-height: 1;
-  text-transform: uppercase;
 }

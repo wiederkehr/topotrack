@@ -10,17 +10,19 @@ export default forwardRef(function Figure(
   const size = useParentSize(ref, { width: 0, height: 0 });
   const isReady =
     activity && activityData?.length > 0 && size?.width > 0 && size?.height > 0;
+  const { Render } = template;
 
   return (
     <div className={styles.figure} ref={ref}>
-      {isReady &&
-        template.render({
-          activity,
-          activityData,
-          variables,
-          format,
-          size,
-        })}
+      {isReady && (
+        <Render
+          activity={activity}
+          activityData={activityData}
+          variables={variables}
+          format={format}
+          size={size}
+        />
+      )}
     </div>
   );
 });

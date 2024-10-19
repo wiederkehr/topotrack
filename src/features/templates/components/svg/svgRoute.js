@@ -1,9 +1,7 @@
 import { geoBounds, geoMercator } from "d3-geo";
 import { curveCatmullRom, line } from "d3-shape";
 
-import styles from "./background.module.css";
-
-const Background = ({ data, height, width, foreground, background }) => {
+export default function SVGRoute({ data, height, width, color }) {
   // Features
   // //////////////////////////////
   const features = data.map((d) => ({
@@ -26,9 +24,8 @@ const Background = ({ data, height, width, foreground, background }) => {
 
   // Dimensions
   // //////////////////////////////
-  // 40px / 1080px
-  const padding = width * 0.037;
-  const viewbox = `0 0 ${width} ${height}`;
+  const factor = 40 / 1080;
+  const padding = width * factor;
   const innerWidth = width - padding * 2;
   const innerHeight = height - padding * 2;
   const innerRatio = innerWidth / innerHeight;
@@ -44,22 +41,12 @@ const Background = ({ data, height, width, foreground, background }) => {
   const angle = rotate ? -90 : 0;
 
   const translation = `translate(${padding}, ${padding})`;
-  const rotation = `rotate(${angle})`;
 
   // Projection
   // //////////////////////////////
   const projection = geoMercator()
     .angle(angle)
     .fitSize([innerWidth, innerHeight], featureCollection);
-
-  const pathLeftBottom = projection(bounds[0]);
-  const pathRightTop = projection(bounds[1]);
-  const pathLeft = pathLeftBottom[0];
-  const pathRight = pathRightTop[0];
-  const pathTop = rotate ? pathLeftBottom[1] : pathRightTop[1];
-  const pathBottom = rotate ? pathRightTop[1] : pathLeftBottom[1];
-  const pathWidth = pathRight - pathLeft;
-  const pathHeight = pathBottom - pathTop;
 
   // Line
   // //////////////////////////////
@@ -70,30 +57,17 @@ const Background = ({ data, height, width, foreground, background }) => {
 
   const lineData = lineGenerator(features.map((d) => d.geometry.coordinates));
   const strokeWidth = width * 0.004;
-  return (
-    <div className={styles.background}>
-      <svg viewBox={viewbox}>
-        <rect
-          id="full-width-and-height"
-          x={0}
-          y={0}
-          width={width}
-          height={height}
-          fill={background}
-        />
-        <g id="background-translation-group" transform={translation}>
-          <path
-            d={lineData}
-            fill="none"
-            stroke={foreground}
-            strokeWidth={strokeWidth}
-            strokeLinecap="round"
-            strokeMiterlimit="4"
-          />
-        </g>
-      </svg>
-    </div>
-  );
-};
 
-export default Background;
+  return (
+    <g id="route-translation-group" transform={translation}>
+      <path
+        d={lineData}
+        fill="none"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeMiterlimit="4"
+      />
+    </g>
+  );
+}

@@ -9,14 +9,17 @@ import Route from "./route";
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
-export default function MapStatic({ data, style, accent }) {
+export default function MapGLStatic({ data, style, accent, format }) {
   // Data
-  const latlng = data.find((d) => d.type === "latlng").data;
+  // //////////////////////////////
+  const latlng = data;
   const lnglat = latlng.map((d) => [d[1], d[0]]);
   // Features
+  // //////////////////////////////
   const routeData = lnglat;
   const positionData = routeData[0];
   // Map
+  // //////////////////////////////
   const startBearing = 0;
   const startPitch = 40;
   const mapRef = useRef();
@@ -28,6 +31,8 @@ export default function MapStatic({ data, style, accent }) {
     zoom: 12,
   };
 
+  // Fit Bounds
+  // //////////////////////////////
   const onMapLoad = useCallback(async () => {
     mapRef.current.fitBounds(bbox(lineString(routeData)), {
       duration: 300,
@@ -41,7 +46,7 @@ export default function MapStatic({ data, style, accent }) {
     if (mapRef.current) {
       onMapLoad();
     }
-  }, [data]);
+  }, [data, onMapLoad]);
 
   return (
     <div className={styles.map}>

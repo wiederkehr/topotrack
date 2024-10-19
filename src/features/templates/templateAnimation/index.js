@@ -1,15 +1,18 @@
-import classNames from "classnames";
-
-import { MapAnimated } from "@/features/map";
-import { formatMeters } from "@/functions/format";
+import { Layer } from "@/features/templates/components/layer";
+import {
+  MapGLAnimated,
+  MapGLStatic,
+} from "@/features/templates/components/mapGL";
+import { TypeGrid } from "@/features/templates/components/type";
+import {
+  destructureActivity,
+  destructureActivityData,
+} from "@/functions/destructure";
 import { colors } from "@/styles/constants";
-
-import styles from "./index.module.css";
 
 const name = "Animation";
 
-const themeOptions = ["Light", "Dark"];
-const accentOptions = ["Blue", "Green", "Purple", "White", "Red"];
+const mapOptions = ["Light", "Dark"];
 const mapsStyles = {
   Light: "mapbox://styles/benjaminwiederkehr/clmzlvsu3023i01r81cc979q5",
   Dark: "mapbox://styles/benjaminwiederkehr/cm1o1o9zc00mv01qt0689hvjp",
@@ -17,82 +20,77 @@ const mapsStyles = {
 
 const variables = [
   {
-    label: "Theme",
-    name: "theme",
-    options: themeOptions,
+    label: "Map",
+    name: "map",
+    options: mapOptions,
     type: "select",
   },
   {
     label: "Accent",
     name: "accent",
-    options: accentOptions,
+    type: "color",
+  },
+  {
+    label: "Contrast",
+    name: "contrast",
     type: "color",
   },
 ];
 
 const presets = [
   {
-    name: "Animation Preset 1",
-    theme: themeOptions[0],
-    accent: accentOptions[0],
+    name: "Indigo",
+    map: mapOptions[0],
+    accent: colors.light.indigo,
+    contrast: colors.contrast.light,
   },
   {
-    name: "Animation Preset 2",
-    theme: themeOptions[1],
-    accent: accentOptions[1],
+    name: "Ruby",
+    map: mapOptions[1],
+    accent: colors.light.ruby,
+    contrast: colors.contrast.dark,
+  },
+  {
+    name: "Teal",
+    map: mapOptions[1],
+    accent: colors.light.teal,
+    contrast: colors.contrast.dark,
   },
 ];
 
-const render = ({ activity, activityData, variables, format, size }) => {
-  const name = activity?.name;
-  const type = activity?.type;
-  const distance = formatMeters(activity?.distance);
-  const elevation = formatMeters(activity?.total_elevation_gain);
-  const date = new Date(Date.parse(activity?.start_date_local));
-  const day = date.toLocaleDateString("en-us", {
-    month: "long",
-    day: "numeric",
-  });
-  const year = date.toLocaleDateString("en-us", { year: "numeric" });
+const Render = ({ activity, activityData, variables, format, size }) => {
+  const { latlng } = destructureActivityData(activityData);
+  const { name, type, distance, elevation, state, country, day, year } =
+    destructureActivity(activity);
+  const { map, accent, contrast } = variables;
+  const { width } = size;
   return (
     <>
-      <div className={styles.background}>
-        <MapAnimated
-          data={activityData}
-          style={mapsStyles[variables.theme]}
-          accent={colors.accent}
+      <Layer>
+        <MapGLAnimated
+          data={latlng}
+          style={mapsStyles[map]}
+          accent={accent}
+          contrast={contrast}
+          format={format}
         />
-      </div>
-      <div className={styles.foreground}>
-        <div className={styles.topLeft}>
-          <FigureType level="primary">{name}</FigureType>
-          <FigureType level="secondary">{type}</FigureType>
-        </div>
-        <div className={styles.topRight}>
-          <FigureType level="primary">{day}</FigureType>
-          <FigureType level="secondary">{year}</FigureType>
-        </div>
-        <div className={styles.bottomRight}>
-          <FigureType level="primary">{distance}</FigureType>
-          <FigureType level="secondary">{elevation}</FigureType>
-        </div>
-      </div>
+      </Layer>
+      <Layer>
+        <TypeGrid
+          name={name}
+          type={type}
+          day={day}
+          year={year}
+          distance={distance}
+          elevation={elevation}
+          state={state}
+          country={country}
+          accent={accent}
+          contrast={contrast}
+          width={width}
+        />
+      </Layer>
     </>
-  );
-};
-
-const FigureType = ({ children, level }) => {
-  return (
-    <span
-      style={{ color: colors.accent }}
-      className={classNames(
-        styles.type,
-        level === "primary" ? styles.typePrimary : null,
-        level === "secondary" ? styles.typeSecondary : null,
-      )}
-    >
-      {children}
-    </span>
   );
 };
 
@@ -100,5 +98,5 @@ export default {
   name,
   variables,
   presets,
-  render,
+  Render,
 };

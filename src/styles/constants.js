@@ -3,6 +3,7 @@ import {
   crimson,
   cyan,
   grass,
+  gray,
   green,
   indigo,
   iris,
@@ -19,6 +20,10 @@ import {
 
 export const colors = {
   accent: blue.blue9,
+  contrast: {
+    light: gray.gray12,
+    dark: gray.gray1,
+  },
   light: {
     tomato: tomato.tomato9,
     red: red.red9,
@@ -36,6 +41,7 @@ export const colors = {
     jade: jade.jade9,
     green: green.green9,
     grass: grass.grass9,
+    gray: gray.gray9,
   },
   dark: {
     tomato: tomato.tomato12,
@@ -54,5 +60,6 @@ export const colors = {
     jade: jade.jade12,
     green: green.green12,
     grass: grass.grass12,
+    gray: gray.gray12,
   },
 };

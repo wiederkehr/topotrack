@@ -31,7 +31,7 @@ const presets = [
   },
 ];
 
-const render = ({ activity, activityData, variables, format, size }) => {
+const Render = ({ activity, activityData, variables, format, size }) => {
   return (
     <div>
       <pre>{`Name: ${name}`}</pre>
@@ -47,5 +47,5 @@ export default {
   name,
   variables,
   presets,
-  render,
+  Render,
 };
