@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import templates from "@/features/templates";
 import { toMp4, toPng, toSvg } from "@/functions/export";
@@ -10,6 +10,7 @@ import { useStrava } from "@/hooks/useStrava";
 
 import styles from "./composer.module.css";
 import { assets, formats } from "./composer.settings";
+import Error from "./error";
 import Input from "./input";
 import Output from "./output";
 
@@ -175,6 +176,10 @@ export default function Composer() {
         break;
     }
   };
+
+  if (activitiesError && activitiesError.response.status === 401) {
+    return <Error />;
+  }
 
   return (
     <div className={styles.composer}>

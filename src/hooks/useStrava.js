@@ -38,7 +38,6 @@ export const useStrava = (type, params) => {
   }
 
   const { data, error, isLoading: loading } = useSWR({ url, token }, fetcher);
-  console.log(data);
 
   return { data, error, loading };
 };

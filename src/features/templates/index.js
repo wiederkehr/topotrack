@@ -4,8 +4,8 @@ import templatePoster from "./templatePoster";
 import templateVisualization from "./templateVisualization";
 
 const templates = [
-  templateVisualization,
   templatePoster,
+  templateVisualization,
   templateAnimation,
   templateDebug,
 ];
