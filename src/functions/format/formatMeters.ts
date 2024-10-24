@@ -5,6 +5,8 @@ const formatter = Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0,
 });
 
-export default function formatMeters(number: number): string {
+function formatMeters(number: number): string {
   return formatter.format(number);
 }
+
+export { formatMeters };

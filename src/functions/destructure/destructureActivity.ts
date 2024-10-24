@@ -1,6 +1,29 @@
 import { formatMeters, formatMonthDay, formatYear } from "@/functions/format";
 
-export const destructureActivity = (activity) => {
+type Activity = {
+  address?: {
+    country?: string;
+    state?: string;
+  };
+  distance?: number;
+  name?: string;
+  start_date_local?: string;
+  total_elevation_gain?: number;
+  type?: string;
+};
+
+type DestructuredActivity = {
+  country: string;
+  day: string;
+  distance: string;
+  elevation: string;
+  name: string;
+  state: string;
+  type: string;
+  year: string;
+};
+
+function destructureActivity(activity: Activity): DestructuredActivity {
   const name = activity?.name || "No name";
   const type = activity?.type || "No type";
   const distance = activity?.distance
@@ -18,4 +41,6 @@ export const destructureActivity = (activity) => {
     ? formatYear(activity?.start_date_local)
     : "No date";
   return { name, type, distance, elevation, state, country, day, year };
-};
+}
+
+export { destructureActivity };

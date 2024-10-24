@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import styles from "./poweredBy.module.css";
 
-export default function PoweredBy() {
+function PoweredBy() {
   return (
     <Image
       src="/images/api_logo_pwrdBy_strava_horiz_gray.svg"
@@ -13,3 +13,5 @@ export default function PoweredBy() {
     />
   );
 }
+
+export default PoweredBy;

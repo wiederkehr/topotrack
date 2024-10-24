@@ -4,7 +4,7 @@ import { signInAction } from "@/app/actions";
 
 import styles from "./signin.module.css";
 
-export default function SignIn() {
+function SignIn() {
   return (
     <form action={signInAction}>
       <button type="submit" className={styles.signinButton}>
@@ -18,3 +18,5 @@ export default function SignIn() {
     </form>
   );
 }
+
+export default SignIn;

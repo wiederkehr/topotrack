@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import styles from "./copyrightBy.module.css";
 
-export default function Credits() {
+function Credits() {
   return (
     <div className={styles.copyrightBy}>
       <Text>
@@ -15,3 +15,5 @@ export default function Credits() {
     </div>
   );
 }
+
+export default Credits;
