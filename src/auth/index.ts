@@ -1,14 +1,10 @@
-import type { User } from "next-auth";
 import NextAuth from "next-auth";
 import Strava from "next-auth/providers/strava";
 
-// Add access_token to the Session type and id to User type.
+// Add access_token to the Session type.
 declare module "next-auth" {
   interface Session {
     access_token: string;
-    user: {
-      id: string;
-    } & User;
   }
 }
 
@@ -29,12 +25,9 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       }
       return token;
     },
-    session({ session, token, user }) {
+    session({ session, token }) {
       if (token) {
         session.access_token = token.access_token as string;
-      }
-      if (user) {
-        session.user.id = user.id;
       }
       return session;
     },
