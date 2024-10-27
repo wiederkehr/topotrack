@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useSession } from "next-auth/react";
 import useSWR from "swr";
 
 import { mockActivities, mockActivitiesData } from "@/data/mock";
@@ -24,13 +23,11 @@ const fetcher = async ({ url, token }: FetcherProps) => {
 
 type UseStravaProps = {
   params: { id?: number; pageNumber?: number; url?: string };
+  token: string;
   type: string;
 };
 
-export const useStrava = ({ type, params }: UseStravaProps) => {
-  const { data: session } = useSession();
-  const token = session?.access_token;
-
+export const useStrava = ({ type, token, params }: UseStravaProps) => {
   let url;
 
   switch (type) {

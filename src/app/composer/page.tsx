@@ -10,12 +10,14 @@ import Composer from "@/features/composer";
 export default async function Page() {
   const session = await auth();
   if (!session) redirect("/");
-  const user = session?.user;
+  const user = session?.user || null;
+  const token = session?.access_token || "";
+
   return (
     <Cell>
       <Header user={user} />
       <Content>
-        <Composer />
+        <Composer token={token} />
       </Content>
       <Footer />
     </Cell>

@@ -23,7 +23,11 @@ import Error from "./error";
 import Input from "./input";
 import Output from "./output";
 
-function Composer() {
+type ComposerProps = {
+  token: string;
+};
+
+function Composer({ token }: ComposerProps) {
   const [activity, setActivity] = useState<ActivityType | null>(null);
   const [allActivities, setAllActivities] = useState<ActivityType[]>([]);
   const [visibleActivities, setVisibleActivities] = useState<ActivityType[]>(
@@ -37,7 +41,7 @@ function Composer() {
     data: activitiesData,
     error: activitiesError,
     loading: activitiesLoading,
-  } = useStrava({ type: "activities", params: { pageNumber } });
+  } = useStrava({ type: "activities", token: token, params: { pageNumber } });
 
   useEffect(() => {
     if (activitiesData) {
@@ -69,7 +73,11 @@ function Composer() {
     data: activityData,
     error: activityError,
     loading: activityLoading,
-  } = useStrava({ type: "activity", params: { id: activity?.id } });
+  } = useStrava({
+    type: "activity",
+    token: token,
+    params: { id: activity?.id },
+  });
 
   // Activity Address Data
   // //////////////////////////////
