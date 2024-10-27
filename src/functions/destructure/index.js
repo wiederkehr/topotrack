@@ -1,3 +1,4 @@
 import { destructureActivity } from "./destructureActivity";
 import { destructureActivityData } from "./destructureActivityData";
-export { destructureActivity, destructureActivityData };
+import { destructureVariables } from "./destructureVariables";
+export { destructureActivity, destructureActivityData, destructureVariables };

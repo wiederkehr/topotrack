@@ -8,21 +8,10 @@ import { TypeGrid } from "@/features/templates/components/type";
 import {
   destructureActivity,
   destructureActivityData,
+  destructureVariables,
 } from "@/functions/destructure";
 import { colors } from "@/styles/constants";
 import { PresetType, RenderType, VariableType } from "@/types";
-
-// Types
-// //////////////////////////////
-type VariablesType = {
-  accent: string;
-  background: string;
-  contrast: string;
-};
-
-type RenderProps = RenderType & {
-  variables: VariablesType;
-};
 
 // Name
 // //////////////////////////////
@@ -79,11 +68,11 @@ function Render({
   variables,
   format,
   size,
-}: RenderProps) {
+}: RenderType) {
   const { latlng } = destructureActivityData(activityData);
   const { name, type, distance, elevation, state, country, day, year } =
     destructureActivity(activity);
-  const { background, accent, contrast } = variables;
+  const { background, accent, contrast } = destructureVariables(variables);
   const { width, height } = size;
   return (
     <>

@@ -1,15 +1,5 @@
+import { colors } from "@/styles/constants";
 import { PresetType, RenderType, VariableType } from "@/types";
-
-// Types
-// //////////////////////////////
-type VariablesType = {
-  background: string;
-  foreground: string;
-};
-
-type RenderProps = RenderType & {
-  variables: VariablesType;
-};
 
 // Name
 // //////////////////////////////
@@ -17,24 +7,16 @@ const name = "Debug";
 
 // Variables
 // //////////////////////////////
-const foregroundOptions: string[] = ["Dark Blue", "Dark Green", "Dark Purple"];
-const backgroundOptions: string[] = [
-  "Light Blue",
-  "Light Green",
-  "Light Purple",
-];
 const variables: VariableType[] = [
   {
     label: "Foreground",
     name: "foreground",
     type: "color",
-    options: foregroundOptions,
   },
   {
     label: "Background",
     name: "background",
     type: "color",
-    options: backgroundOptions,
   },
 ];
 
@@ -43,13 +25,13 @@ const variables: VariableType[] = [
 const presets: PresetType[] = [
   {
     name: "Debug Preset 1",
-    foreground: foregroundOptions[0]!,
-    background: backgroundOptions[0]!,
+    foreground: colors.light.indigo,
+    background: colors.dark.indigo,
   },
   {
     name: "Debug Preset 2",
-    foreground: foregroundOptions[1]!,
-    background: backgroundOptions[1]!,
+    foreground: colors.light.teal,
+    background: colors.dark.teal,
   },
 ];
 
@@ -59,7 +41,7 @@ function Render({
   variables,
   format,
   size,
-}: RenderProps) {
+}: RenderType) {
   return (
     <div>
       <pre>{`Name: ${name}`}</pre>

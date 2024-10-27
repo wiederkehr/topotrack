@@ -8,18 +8,6 @@ import {
 import { colors } from "@/styles/constants";
 import { PresetType, RenderType, VariableType } from "@/types";
 
-// Types
-// //////////////////////////////
-type VariablesType = {
-  accent: string;
-  contrast: string;
-  map: string;
-};
-
-type RenderProps = RenderType & {
-  variables: VariablesType;
-};
-
 // Name
 // //////////////////////////////
 const name = "Animation";
@@ -82,7 +70,7 @@ function Render({
   variables,
   format,
   size,
-}: RenderProps) {
+}: RenderType) {
   const { latlng } = destructureActivityData(activityData);
   const { name, type, distance, elevation, state, country, day, year } =
     destructureActivity(activity);

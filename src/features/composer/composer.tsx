@@ -185,7 +185,7 @@ function Composer() {
   // Export
   // //////////////////////////////
   const figureRef = useRef<HTMLDivElement>(null);
-  const [asset, setAsset] = useState(assets[0]!);
+  const [asset, setAsset] = useState<AssetType>(assets[0]!);
   const handleAssetChange = (value: string) => {
     const asset = assets.find((asset) => asset.name === value);
     setAsset(asset || assets[0]!);
