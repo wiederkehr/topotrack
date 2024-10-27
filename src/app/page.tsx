@@ -12,7 +12,7 @@ export default async function Page() {
   if (session) redirect("/composer");
   return (
     <Column>
-      <Header user={session?.user} />
+      <Header user={null} />
       <Content>
         <Home />
       </Content>

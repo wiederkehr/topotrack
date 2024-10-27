@@ -1,13 +1,10 @@
 import download from "downloadjs";
 import { toSvg as htmlToSvg } from "html-to-image";
 
-type Format = {
-  height?: number;
-  width?: number;
-};
+import type { FormatType } from "@/types";
 
 type ToSvgProps = {
-  format?: Format;
+  format?: FormatType;
   name: string;
   node: HTMLElement;
 };
@@ -18,7 +15,11 @@ async function toSvg({ node, name, format }: ToSvgProps): Promise<void> {
     canvasWidth: format?.width,
     canvasHeight: format?.height,
   });
-  return download(data, name, "image/svg+xml");
+  if (typeof data === "string") {
+    download(data, name, "image/svg+xml");
+  } else {
+    console.error("Failed to generate SVG data.");
+  }
 }
 
 export { toSvg };

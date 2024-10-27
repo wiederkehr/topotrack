@@ -2,6 +2,7 @@ import { easeCubicOut } from "d3";
 import { Map } from "mapbox-gl";
 
 import computeCameraPosition from "./computeCameraPosition";
+import type { PositionType } from "./types";
 
 type FlyToPointProps = {
   duration: number;
@@ -12,7 +13,7 @@ type FlyToPointProps = {
   stopAltitude: number;
   stopBearing: number;
   stopPitch: number;
-  targetPosition: { lat: number; lng: number };
+  targetPosition: PositionType;
 };
 
 function flyToPoint({
@@ -25,7 +26,11 @@ function flyToPoint({
   stopBearing,
   startPitch,
   stopPitch,
-}: FlyToPointProps): Promise<void> {
+}: FlyToPointProps): Promise<{
+  altitude: number;
+  bearing: number;
+  pitch: number;
+}> {
   return new Promise((resolve) => {
     let startTime: number | undefined;
     let currentAltitude: number;
@@ -66,7 +71,11 @@ function flyToPoint({
       if (progress < 1) {
         requestAnimationFrame(frame);
       } else {
-        resolve();
+        resolve({
+          altitude: currentAltitude,
+          bearing: currentBearing,
+          pitch: currentPitch,
+        });
       }
     }
 

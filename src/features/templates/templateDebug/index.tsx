@@ -1,16 +1,29 @@
-const name = "Debug";
+import { PresetType, RenderType, VariableType } from "@/types";
 
-const foregroundOptions = ["Dark Blue", "Dark Green", "Dark Purple"];
-const backgroundOptions = ["Light Blue", "Light Green", "Light Purple"];
-
-type Variable = {
-  label: string;
-  name: string;
-  options: string[];
-  type: string;
+// Types
+// //////////////////////////////
+type VariablesType = {
+  background: string;
+  foreground: string;
 };
 
-const variables: Variable[] = [
+type RenderProps = RenderType & {
+  variables: VariablesType;
+};
+
+// Name
+// //////////////////////////////
+const name = "Debug";
+
+// Variables
+// //////////////////////////////
+const foregroundOptions: string[] = ["Dark Blue", "Dark Green", "Dark Purple"];
+const backgroundOptions: string[] = [
+  "Light Blue",
+  "Light Green",
+  "Light Purple",
+];
+const variables: VariableType[] = [
   {
     label: "Foreground",
     name: "foreground",
@@ -25,32 +38,20 @@ const variables: Variable[] = [
   },
 ];
 
-type Preset = {
-  background: string;
-  foreground: string;
-  name: string;
-};
-
-const presets: Preset[] = [
+// Presets
+// //////////////////////////////
+const presets: PresetType[] = [
   {
     name: "Debug Preset 1",
-    foreground: foregroundOptions[0],
-    background: backgroundOptions[0],
+    foreground: foregroundOptions[0]!,
+    background: backgroundOptions[0]!,
   },
   {
     name: "Debug Preset 2",
-    foreground: foregroundOptions[1],
-    background: backgroundOptions[1],
+    foreground: foregroundOptions[1]!,
+    background: backgroundOptions[1]!,
   },
 ];
-
-type RenderProps = {
-  activity: any;
-  activityData: any;
-  format: string;
-  size: string;
-  variables: Variable[];
-};
 
 function Render({
   activity,

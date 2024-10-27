@@ -1,17 +1,14 @@
-type ActivityData = {
-  data: number[];
-  type: string;
-};
+import { ActivityDataType } from "@/types";
 
 type DestructuredActivityData = {
   altitude: number[];
   distance: number[];
-  latlng: number[][];
+  latlng: [];
   time: number[];
 };
 
 function destructureActivityData(
-  activityData: ActivityData[],
+  activityData: ActivityDataType[],
 ): DestructuredActivityData {
   const latlng = activityData?.find((d) => d.type === "latlng")?.data || [];
   const distance = activityData?.find((d) => d.type === "distance")?.data || [];

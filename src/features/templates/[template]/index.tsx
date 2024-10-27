@@ -1,14 +1,10 @@
-import { RenderBaseProps, VariableType } from "@/features/templates/types";
+import { PresetType, RenderType, VariableType } from "@/types";
 
 // Types
 // //////////////////////////////
 type VariablesType = {};
 
-type PresetType = VariablesType & {
-  name: string;
-};
-
-type RenderProps = RenderBaseProps & {
+type RenderProps = RenderType & {
   variables: VariablesType;
 };
 

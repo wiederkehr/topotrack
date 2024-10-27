@@ -1,14 +1,15 @@
-import { along, lineDistance } from "@turf/turf";
-import { Map } from "mapbox-gl";
+import { along, length } from "@turf/turf";
+import type { Map } from "mapbox-gl";
 
 import computeCameraPosition from "./computeCameraPosition";
+import type { PositionType } from "./types";
 
 type FollowPathProps = {
   altitude: number;
   bearing: number;
   duration: number;
   map: Map;
-  onUpdate?: (position: { lat: number; lng: number }) => void;
+  onUpdate?: (position: PositionType) => void;
   path: any;
   pitch: number;
 };
@@ -22,15 +23,15 @@ function followPath({
   pitch,
   onUpdate,
 }: FollowPathProps): Promise<void> {
-  return new Promise(async (resolve) => {
+  return new Promise((resolve) => {
     let startTime: number | undefined;
     let currentAltitude: number;
     let currentBearing: number;
     let currentPitch: number;
 
-    const totalDistance = lineDistance(path);
+    const totalDistance = length(path);
 
-    async function frame(currentTime: number) {
+    function frame(currentTime: number) {
       // Set start time
       if (!startTime) startTime = currentTime;
       // Calculate progress
@@ -46,8 +47,8 @@ function followPath({
       const alongPath = along(path, totalDistance * easedProgress);
       const cameraPosition = computeCameraPosition({
         targetPosition: {
-          lng: alongPath.geometry.coordinates[0],
-          lat: alongPath.geometry.coordinates[1],
+          lng: alongPath.geometry.coordinates[0] as number,
+          lat: alongPath.geometry.coordinates[1] as number,
         },
         altitude: currentAltitude,
         bearing: currentBearing,

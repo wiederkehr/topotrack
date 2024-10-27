@@ -5,12 +5,12 @@ import {
   SVGRoute,
 } from "@/features/templates/components/svg";
 import { TypeGrid } from "@/features/templates/components/type";
-import { RenderBaseProps, VariableType } from "@/features/templates/types";
 import {
   destructureActivity,
   destructureActivityData,
 } from "@/functions/destructure";
 import { colors } from "@/styles/constants";
+import { PresetType, RenderType, VariableType } from "@/types";
 
 // Types
 // //////////////////////////////
@@ -20,11 +20,7 @@ type VariablesType = {
   contrast: string;
 };
 
-type PresetType = VariablesType & {
-  name: string;
-};
-
-type RenderProps = RenderBaseProps & {
+type RenderProps = RenderType & {
   variables: VariablesType;
 };
 

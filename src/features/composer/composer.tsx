@@ -3,60 +3,33 @@
 import { useEffect, useRef, useState } from "react";
 
 import templates from "@/features/templates";
-import { toMp4, toPng, toSvg } from "@/functions/export";
+import { toPng, toSvg } from "@/functions/export";
 import { formatFilename } from "@/functions/format";
 import { useGetAddress } from "@/hooks/useGetAddress";
 import { useStrava } from "@/hooks/useStrava";
+import type {
+  ActivityDataType,
+  ActivityType,
+  AssetType,
+  FormatType,
+  PresetType,
+  TemplateType,
+  VariableType,
+} from "@/types";
 
 import styles from "./composer.module.css";
-import { assets, formats } from "./composer.settings";
+import { assets, defaultPreset, formats } from "./composer.settings";
 import Error from "./error";
 import Input from "./input";
 import Output from "./output";
 
-type ActivityType = {
-  id: string;
-  name: string;
-  start_date_local: string;
-  start_latlng?: [number, number];
-};
-
-type FormatType = {
-  height: number;
-  name: string;
-  width: number;
-};
-
-type TemplateType = {
-  Render: React.ComponentType<any>;
-  name: string;
-  presets: PresetType[];
-  variables: VariableType[];
-};
-
-type PresetType = {
-  [key: string]: any;
-  name: string;
-};
-
-type VariableType = {
-  name: string;
-  options?: string[];
-  type: "select" | "color";
-};
-
-type AssetType = {
-  name: string;
-  type: string;
-};
-
 function Composer() {
+  const [activity, setActivity] = useState<ActivityType | null>(null);
   const [allActivities, setAllActivities] = useState<ActivityType[]>([]);
   const [visibleActivities, setVisibleActivities] = useState<ActivityType[]>(
     [],
   );
-  const [pageNumber, setPageNumber] = useState(1);
-  const [activity, setActivity] = useState<ActivityType | null>(null);
+  const [pageNumber, setPageNumber] = useState<number>(1);
 
   // Activities
   // //////////////////////////////
@@ -64,7 +37,7 @@ function Composer() {
     data: activitiesData,
     error: activitiesError,
     loading: activitiesLoading,
-  } = useStrava("activities", { pageNumber });
+  } = useStrava({ type: "activities", params: { pageNumber } });
 
   useEffect(() => {
     if (activitiesData) {
@@ -81,11 +54,11 @@ function Composer() {
   // //////////////////////////////
   useEffect(() => {
     if (visibleActivities && visibleActivities.length > 0) {
-      setActivity(visibleActivities[0]);
+      setActivity(visibleActivities[0] || null);
     }
   }, [visibleActivities]);
 
-  const handleActivityChange = (id: string) => {
+  const handleActivityChange = (id: number) => {
     const activity = allActivities.find((activity) => activity.id === id);
     setActivity(activity || null);
   };
@@ -96,12 +69,12 @@ function Composer() {
     data: activityData,
     error: activityError,
     loading: activityLoading,
-  } = useStrava("activity", { id: activity?.id });
+  } = useStrava({ type: "activity", params: { id: activity?.id } });
 
   // Activity Address Data
   // //////////////////////////////
-  const lat = activity?.start_latlng?.[0];
-  const lon = activity?.start_latlng?.[1];
+  const lat = activity?.start_latlng?.[0] || null;
+  const lon = activity?.start_latlng?.[1] || null;
   const {
     data: activityAddress,
     error: activityAddressError,
@@ -118,9 +91,8 @@ function Composer() {
 
   // Search
   // //////////////////////////////
-  const [searchTerm, setSearchTerm] = useState("");
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const handleSearchChange = (value: string) => {
     setSearchTerm(value);
     if (value.length >= 3) {
       const matchingActivities = allActivities.filter((activity) =>
@@ -134,75 +106,89 @@ function Composer() {
 
   // Format
   // //////////////////////////////
-  const [format, setFormat] = useState<FormatType>(formats[0]);
+  const [format, setFormat] = useState<FormatType>(formats[0]!);
   const handleFormatChange = (value: string) => {
     const format = formats.find((format) => format.name === value);
-    setFormat(format || formats[0]);
+    setFormat(format ?? formats[0]!);
   };
 
   // Template
   // //////////////////////////////
-  const [template, setTemplate] = useState<TemplateType>(templates[0]);
+  const [template, setTemplate] = useState<TemplateType>(templates[0]!);
   const handleTemplateChange = (value: string) => {
     const template = templates.find((template) => template.name === value);
     if (template) {
+      const presets = template.presets;
+      const preset = template.presets[0];
       setTemplate(template);
-      setPresets(template.presets);
-      setPreset(template.presets[0]);
-      setInputs(template.variables);
-      setVariables({ ...template.presets[0] });
+      setPresets(presets);
+      if (preset) {
+        setPreset(preset);
+        setVariables(getVariables(template, preset));
+      }
     }
   };
 
   // Presets
   // //////////////////////////////
-  const [presets, setPresets] = useState<PresetType[]>(template.presets);
-  const [preset, setPreset] = useState<PresetType>(presets[0]);
+  const [presets, setPresets] = useState(template.presets);
+  const [preset, setPreset] = useState(presets[0] || defaultPreset);
   const handlePresetChange = (value: string) => {
-    const preset = presets.find((preset) => preset.name === value);
+    const preset = (presets ?? []).find((preset) => preset.name === value);
     if (preset) {
       setPreset(preset);
-      setVariables({ ...preset });
+      setVariables(getVariables(template, preset));
     }
   };
 
-  // Inputs
-  // //////////////////////////////
-  const [inputs, setInputs] = useState<VariableType[]>(template.variables);
+  const getVariables = (template: TemplateType, preset: PresetType) => {
+    const variables = template.variables.map((variable) => {
+      return {
+        ...variable,
+        value: preset[variable.name],
+      };
+    });
+    return variables;
+  };
 
   // Variables
   // //////////////////////////////
-  const [variables, setVariables] = useState<{ [key: string]: any }>({
-    ...template.variables.reduce(
-      (object, item) => ({
-        ...object,
-        [item.name]: preset[item.name],
-      }),
-      {},
-    ),
-  });
-  const handleVariableChange = ({
-    name,
-    value,
-  }: {
+  const [variables, setVariables] = useState(
+    template.variables.map((variable) => {
+      return {
+        ...variable,
+        value: preset ? preset[variable.name] : "",
+      };
+    }),
+  );
+  const handleVariableChange = (newVariable: {
     name: string;
     value: string;
   }) => {
-    const newVariables = { ...variables, [name]: value };
-    const matchingPreset = presets.find((preset) =>
-      Object.keys(preset).every((key) => preset[key] === newVariables[key]),
+    const newVariables = variables.map((oldVariable) =>
+      oldVariable.name === newVariable.name
+        ? { ...oldVariable, value: newVariable.value }
+        : oldVariable,
     );
-    setPreset(matchingPreset ? matchingPreset : { name: "Custom" });
-    setVariables({ ...newVariables });
+    const matchingPreset = presets.find((preset) => {
+      return Object.keys(preset).every((key) => {
+        return (
+          newVariables.find((variable) => variable.name === key)?.value ===
+          preset[key]
+        );
+      });
+    });
+    setPreset(matchingPreset || defaultPreset);
+    setVariables(newVariables);
   };
 
   // Export
   // //////////////////////////////
   const figureRef = useRef<HTMLDivElement>(null);
-  const [asset, setAsset] = useState<AssetType>(assets[0]);
+  const [asset, setAsset] = useState(assets[0]!);
   const handleAssetChange = (value: string) => {
     const asset = assets.find((asset) => asset.name === value);
-    setAsset(asset || assets[0]);
+    setAsset(asset || assets[0]!);
   };
   const handleAssetExport = () => {
     if (!activity) return;
@@ -210,19 +196,16 @@ function Composer() {
     const name = formatFilename({
       date: activity.start_date_local,
       name: activity.name,
-      format: format.name,
-      type: asset.type,
+      format: format?.name || "Custom",
+      type: asset?.type || "png",
     });
 
-    switch (asset.type) {
+    switch (asset?.type) {
       case "png":
-        toPng({ node: figureRef.current, name, format });
+        void toPng({ node: figureRef.current!, name, format });
         break;
       case "svg":
-        toSvg({ node: figureRef.current, name, format });
-        break;
-      case "mp4":
-        toMp4({ blob: null, name: name, format });
+        void toSvg({ node: figureRef.current!, name, format });
         break;
       default:
         break;
@@ -259,7 +242,6 @@ function Composer() {
         templates={templates}
         preset={preset}
         presets={presets}
-        inputs={inputs}
         variables={variables}
         onActivityChange={handleActivityChange}
         onAssetChange={handleAssetChange}

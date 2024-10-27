@@ -1,14 +1,11 @@
 import Button from "@/components/interface/button";
 import { Module, Submodule } from "@/components/interface/module";
 import Select from "@/components/interface/select";
-
-type Asset = {
-  name: string;
-};
+import { AssetType } from "@/types";
 
 type ExportProps = {
-  asset: Asset;
-  assets: Asset[];
+  asset: AssetType;
+  assets: AssetType[];
   onAssetChange: (value: string) => void;
   onAssetExport: () => void;
 };
@@ -31,4 +28,3 @@ function Export({ asset, assets, onAssetChange, onAssetExport }: ExportProps) {
 }
 
 export default Export;
-export type { Asset, ExportProps };

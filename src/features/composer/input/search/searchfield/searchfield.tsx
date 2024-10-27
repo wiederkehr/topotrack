@@ -4,7 +4,7 @@ import { TextField } from "@radix-ui/themes";
 import styles from "./searchfield.module.css";
 
 type SearchfieldProps = {
-  onSearchChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onSearchChange: (value: string) => void;
   searchTerm: string;
 };
 
@@ -15,7 +15,7 @@ function Searchfield({ searchTerm, onSearchChange }: SearchfieldProps) {
         size="3"
         className={styles.searchfieldRoot}
         value={searchTerm}
-        onChange={onSearchChange}
+        onChange={(event) => onSearchChange(event.target.value)}
         placeholder="Search activity…"
       >
         <TextField.Slot>

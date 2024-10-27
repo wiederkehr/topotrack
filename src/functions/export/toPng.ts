@@ -1,13 +1,10 @@
 import download from "downloadjs";
 import { toPng as htmlToPng } from "html-to-image";
 
-type Format = {
-  height?: number;
-  width?: number;
-};
+import type { FormatType } from "@/types";
 
 type ToPngProps = {
-  format?: Format;
+  format?: FormatType;
   name: string;
   node: HTMLElement;
 };
@@ -19,7 +16,11 @@ async function toPng({ node, name, format }: ToPngProps): Promise<void> {
     canvasWidth: format?.width,
     canvasHeight: format?.height,
   });
-  return download(data, name, "image/png");
+  if (typeof data === "string") {
+    download(data, name, "image/png");
+  } else {
+    console.error("Failed to generate PNG data.");
+  }
 }
 
 export { toPng };

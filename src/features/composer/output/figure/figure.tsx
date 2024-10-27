@@ -1,44 +1,49 @@
 import { useParentSize } from "@cutting/use-get-parent-size";
-import { forwardRef } from "react";
+import { forwardRef, Ref, RefObject } from "react";
+
+import type {
+  ActivityDataType,
+  ActivityType,
+  FormatType,
+  SizeType,
+  TemplateType,
+  VariableType,
+} from "@/types";
 
 import styles from "./figure.module.css";
 
 type FigureProps = {
-  activity: any;
-  activityData: any;
-  format: string;
-  template: {
-    Render: React.ComponentType<{
-      activity: any;
-      activityData: any;
-      format: string;
-      size: { height: number; width: number };
-      variables: any;
-    }>;
-  };
-  variables: any;
+  activity: ActivityType;
+  activityData: ActivityDataType;
+  format: FormatType;
+  template: TemplateType;
+  variables: VariableType[];
 };
 
 function Figure(
   { activity, activityData, format, template, variables }: FigureProps,
-  ref: React.Ref<HTMLDivElement>,
+  ref: Ref<HTMLDivElement>,
 ) {
-  const size = useParentSize(ref, { width: 0, height: 0 });
-  const isReady =
-    activity && activityData?.length > 0 && size?.width > 0 && size?.height > 0;
+  const refObject = ref as RefObject<Element>;
+  const initialSize: SizeType = { width: 0, height: 0 };
+  const { width, height } = useParentSize(refObject, {
+    initialValues: initialSize,
+  });
+  const size: SizeType = {
+    width: width || initialSize.width,
+    height: height || initialSize.height,
+  };
   const { Render } = template;
 
   return (
     <div className={styles.figure} ref={ref}>
-      {isReady && (
-        <Render
-          activity={activity}
-          activityData={activityData}
-          variables={variables}
-          format={format}
-          size={size}
-        />
-      )}
+      <Render
+        activity={activity}
+        activityData={activityData}
+        variables={variables}
+        format={format}
+        size={size}
+      />
     </div>
   );
 }

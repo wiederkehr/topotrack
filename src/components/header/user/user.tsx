@@ -13,38 +13,28 @@ import {
   Separator,
   Text,
 } from "@radix-ui/themes";
+import type { User as UserType } from "next-auth";
 import { useTheme } from "next-themes";
 
 import { signOutAction } from "@/app/actions";
+import { formatInitials } from "@/functions/format";
 
 import styles from "./user.module.css";
-
-// Define the type for the user prop
-type UserType = {
-  user: {
-    image: string;
-    name: string;
-  };
-};
 
 type UserProps = {
   user: UserType;
 };
-
-// Function that returns the initials of a user name
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .map((part) => part.charAt(0))
-    .join("");
-}
 
 function User({ user }: UserProps) {
   const { theme, setTheme } = useTheme();
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <Avatar src={user.image} fallback={getInitials(user.name)} size={"2"} />
+        <Avatar
+          src={user.image ?? undefined}
+          fallback={formatInitials(user.name ?? "")}
+          size={"2"}
+        />
       </Popover.Trigger>
       <Popover.Content width="300px">
         <Box>
@@ -90,7 +80,7 @@ function User({ user }: UserProps) {
           </Flex>
         </Flex>
         <Separator my="4" size="4" />
-        <form action={signOutAction}>
+        <form action={void signOutAction}>
           <Button type="submit" color="red" className={styles.userAction}>
             Sign out
           </Button>
@@ -101,4 +91,3 @@ function User({ user }: UserProps) {
 }
 
 export default User;
-export type { UserType };

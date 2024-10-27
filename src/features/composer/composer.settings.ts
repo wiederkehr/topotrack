@@ -1,24 +1,19 @@
-type Format = {
-  height: number;
-  name: string;
-  width: number;
-};
+import { AssetType, FormatType, PresetType } from "@/types";
 
-type Asset = {
-  name: string;
-  type: string;
-};
-
-const formats: Format[] = [
+const formats: FormatType[] = [
   { name: "Square", width: 1080, height: 1080 },
   { name: "Landscape", width: 1920, height: 1080 },
   { name: "Portrait", width: 1080, height: 1920 },
 ];
 
-const assets: Asset[] = [
+const assets: AssetType[] = [
   { name: "Static PNG", type: "png" },
   { name: "Static SVG", type: "svg" },
   { name: "Animated MP4", type: "mp4" },
 ];
 
-export { assets, formats };
+const defaultPreset: PresetType = {
+  name: "Custom",
+};
+
+export { assets, defaultPreset, formats };

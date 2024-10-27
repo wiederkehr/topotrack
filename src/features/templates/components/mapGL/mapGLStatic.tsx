@@ -1,6 +1,7 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import { bbox, lineString } from "@turf/turf";
+import { LngLatBoundsLike } from "mapbox-gl";
 import { useCallback, useEffect, useRef } from "react";
 import MapGL, { MapRef } from "react-map-gl";
 
@@ -31,8 +32,8 @@ function MapGLStatic({ data, style, accent, format }: MapGLStaticProps) {
   const startPitch = 40;
   const mapRef = useRef<MapRef>(null);
   const mapConfig = {
-    longitude: positionData[0],
-    latitude: positionData[1],
+    longitude: positionData ? positionData[0] : 0,
+    latitude: positionData ? positionData[1] : 0,
     bearing: startBearing,
     pitch: startPitch,
     zoom: 12,
@@ -43,7 +44,15 @@ function MapGLStatic({ data, style, accent, format }: MapGLStaticProps) {
   const onMapLoad = useCallback(async () => {
     if (!mapRef.current) return;
 
-    mapRef.current.fitBounds(bbox(lineString(routeData)), {
+    const routeLineString = lineString(routeData);
+    const routeBboxArray = bbox(routeLineString);
+    const routeBbox: LngLatBoundsLike = [
+      routeBboxArray[0],
+      routeBboxArray[1],
+      routeBboxArray[2],
+      routeBboxArray[3],
+    ];
+    mapRef.current.fitBounds(routeBbox, {
       duration: 300,
       bearing: startBearing,
       pitch: startPitch,
@@ -51,9 +60,11 @@ function MapGLStatic({ data, style, accent, format }: MapGLStaticProps) {
     });
   }, [routeData, startBearing, startPitch]);
 
+  // Update on onMapLoad Change
+  // //////////////////////////////
   useEffect(() => {
     if (mapRef.current) {
-      onMapLoad();
+      void onMapLoad();
     }
   }, [onMapLoad]);
 
@@ -61,7 +72,7 @@ function MapGLStatic({ data, style, accent, format }: MapGLStaticProps) {
     <div className={styles.map}>
       <MapGL
         ref={mapRef}
-        onLoad={onMapLoad}
+        onLoad={void onMapLoad}
         mapStyle={style}
         mapboxAccessToken={MAPBOX_TOKEN}
         initialViewState={mapConfig}
