@@ -1,5 +1,4 @@
 "use client";
-
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import {
   Avatar,
@@ -13,6 +12,7 @@ import {
   Separator,
   Text,
 } from "@radix-ui/themes";
+import Form from "next/form";
 import type { User as UserType } from "next-auth";
 import { useTheme } from "next-themes";
 
@@ -80,11 +80,11 @@ function User({ user }: UserProps) {
           </Flex>
         </Flex>
         <Separator my="4" size="4" />
-        <form action={void signOutAction}>
+        <Form action={signOutAction}>
           <Button type="submit" color="red" className={styles.userAction}>
             Sign out
           </Button>
-        </form>
+        </Form>
       </Popover.Content>
     </Popover.Root>
   );
