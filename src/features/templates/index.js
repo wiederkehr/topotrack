@@ -1,7 +1,7 @@
 import templateAnimation from "./templateAnimation";
 import templateDebug from "./templateDebug";
-import templatePoster from "./templatePoster";
+import templateStatic from "./templateStatic";
 
-const templates = [templatePoster, templateAnimation, templateDebug];
+const templates = [templateStatic, templateAnimation, templateDebug];
 
 export default templates;
