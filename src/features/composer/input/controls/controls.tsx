@@ -2,42 +2,36 @@ import Color from "@/components/interface/color";
 import Label from "@/components/interface/label";
 import { Module, Submodule } from "@/components/interface/module";
 import Select from "@/components/interface/select";
+import { VariableType } from "@/types";
 
-type InputType = {
-  name: string;
-  options?: string[];
-  type: "select" | "color";
-};
-
-type InputsProps = {
-  inputs: InputType[];
+type ControlsProps = {
   onVariableChange: (variable: { name: string; value: string }) => void;
-  variables: { [key: string]: string };
+  variables: VariableType[];
 };
 
-function Inputs({ inputs, variables, onVariableChange }: InputsProps) {
+function Controls({ variables, onVariableChange }: ControlsProps) {
   return (
     <Module label="Variables">
-      {inputs.map((input, index) => {
-        let component = null;
-        switch (input.type) {
+      {variables.map((variable, index) => {
+        let control;
+        switch (variable.type) {
           case "select":
-            component = (
+            control = (
               <Select
-                value={variables[input.name]}
+                value={variable.value ?? ""}
                 onValueChange={(value) => {
-                  onVariableChange({ name: input.name, value: value });
+                  onVariableChange({ name: variable.name, value: value });
                 }}
-                options={input.options || []}
+                options={variable.options || []}
               />
             );
             break;
           case "color":
-            component = (
+            control = (
               <Color
-                value={variables[input.name]}
+                value={variable.value ?? ""}
                 onValueChange={(value) => {
-                  onVariableChange({ name: input.name, value: value });
+                  onVariableChange({ name: variable.name, value: value });
                 }}
               />
             );
@@ -48,8 +42,8 @@ function Inputs({ inputs, variables, onVariableChange }: InputsProps) {
         }
         return (
           <Submodule key={index}>
-            <Label>{input.name}</Label>
-            {component}
+            <Label>{variable.label}</Label>
+            {control}
           </Submodule>
         );
       })}
@@ -57,5 +51,4 @@ function Inputs({ inputs, variables, onVariableChange }: InputsProps) {
   );
 }
 
-export default Inputs;
-export type { InputsProps, InputType };
+export default Controls;

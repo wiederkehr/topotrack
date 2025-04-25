@@ -1,14 +1,11 @@
 import { Module } from "@/components/interface/module";
 import Select from "@/components/interface/select";
+import { PresetType } from "@/types";
 
 type PresetProps = {
   onPresetChange: (value: string) => void;
-  preset: {
-    name: string;
-  };
-  presets: {
-    name: string;
-  }[];
+  preset: PresetType;
+  presets: PresetType[];
 };
 
 function Preset({ preset, presets, onPresetChange }: PresetProps) {
@@ -24,4 +21,3 @@ function Preset({ preset, presets, onPresetChange }: PresetProps) {
 }
 
 export default Preset;
-export type { PresetProps };

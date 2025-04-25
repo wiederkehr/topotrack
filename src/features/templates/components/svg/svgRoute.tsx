@@ -1,3 +1,5 @@
+import type { ExtendedFeatureCollection } from "d3-geo";
+import type { ExtendedFeature } from "d3-geo";
 import { geoBounds, geoMercator } from "d3-geo";
 import { curveCatmullRom, line } from "d3-shape";
 
@@ -11,14 +13,12 @@ type SVGRouteProps = {
 function SVGRoute({ data, height, width, color }: SVGRouteProps) {
   // Features
   // //////////////////////////////
-  const features = data.map((d) => ({
+  const features: ExtendedFeature[] = data.map((d) => ({
     type: "Feature",
-    geometry: {
-      type: "Point",
-      coordinates: [d[1], d[0]],
-    },
+    properties: null,
+    geometry: { type: "Point", coordinates: [d[1], d[0]] },
   }));
-  const featureCollection = {
+  const featureCollection: ExtendedFeatureCollection = {
     type: "FeatureCollection",
     features: features,
   };
@@ -27,7 +27,8 @@ function SVGRoute({ data, height, width, color }: SVGRouteProps) {
    * @see: https://d3js.org/d3-geo/math#geoBounds
    * @returns: [[left, bottom], [right, top]]
    **/
-  const bounds = geoBounds(featureCollection);
+  const bounds: [[number, number], [number, number]] =
+    geoBounds(featureCollection);
 
   // Dimensions
   // //////////////////////////////
@@ -43,27 +44,37 @@ function SVGRoute({ data, height, width, color }: SVGRouteProps) {
   // Rotation
   // //////////////////////////////
 
-  const rotate =
+  const shouldRotate =
     (innerRatio < 1 && boundsRatio > 1) || (innerRatio > 1 && boundsRatio < 1);
-  const angle = rotate ? -90 : 0;
-
   const translation = `translate(${padding}, ${padding})`;
 
   // Projection
   // //////////////////////////////
   const projection = geoMercator()
-    .angle(angle)
+    .angle(0)
     .fitSize([innerWidth, innerHeight], featureCollection);
 
   // Line
   // //////////////////////////////
   const lineGenerator = line<[number, number]>()
-    .x((d) => projection(d)[0])
-    .y((d) => projection(d)[1])
+    .x((d) => {
+      const projected = projection(d);
+      return projected ? projected[0] : 0;
+    })
+    .y((d) => {
+      const projected = projection(d);
+      return projected ? projected[1] : 0;
+    })
     .curve(curveCatmullRom.alpha(0.5));
 
   const lineData = lineGenerator(
-    features.map((d) => d.geometry.coordinates as [number, number]),
+    features
+      .map((d) =>
+        d.geometry && "coordinates" in d.geometry
+          ? d.geometry.coordinates
+          : null,
+      )
+      .filter((d): d is [number, number] => d !== null),
   );
   const strokeWidth = width * 0.004;
 

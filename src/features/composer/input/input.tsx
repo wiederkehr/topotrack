@@ -1,46 +1,21 @@
+import type {
+  ActivityType,
+  AssetType,
+  FormatType,
+  PresetType,
+  TemplateType,
+  VariableType,
+} from "@/types";
+
 import Activities from "./activities";
+import Controls from "./controls";
 import Export from "./export";
 import Format from "./format";
 import styles from "./input.module.css";
-import Inputs from "./inputs";
 import Preset from "./preset";
 import Search from "./search";
 import { Tab, Tabs } from "./tabs";
 import Template from "./template";
-
-type ActivityType = {
-  id: string;
-  name: string;
-  start_date_local: string;
-};
-
-type AssetType = {
-  name: string;
-};
-
-type FormatType = {
-  height: number;
-  name: string;
-  width: number;
-};
-
-type TemplateType = {
-  name: string;
-};
-
-type PresetType = {
-  name: string;
-};
-
-type InputType = {
-  name: string;
-  options?: string[];
-  type: "select" | "color";
-};
-
-type VariableType = {
-  [key: string]: string;
-};
 
 type InputProps = {
   activities: ActivityType[];
@@ -52,8 +27,7 @@ type InputProps = {
   disableLoadMore: boolean;
   format: FormatType;
   formats: FormatType[];
-  inputs: InputType[];
-  onActivityChange: (id: string) => void;
+  onActivityChange: (id: number) => void;
   onAssetChange: (value: string) => void;
   onAssetExport: () => void;
   onFormatChange: (value: string) => void;
@@ -67,7 +41,7 @@ type InputProps = {
   searchTerm: string;
   template: TemplateType;
   templates: TemplateType[];
-  variables: VariableType;
+  variables: VariableType[];
 };
 
 function Input({
@@ -94,7 +68,6 @@ function Input({
   templates,
   preset,
   presets,
-  inputs,
   variables,
 }: InputProps) {
   return (
@@ -128,11 +101,7 @@ function Input({
             presets={presets}
             onPresetChange={onPresetChange}
           />
-          <Inputs
-            inputs={inputs}
-            variables={variables}
-            onVariableChange={onVariableChange}
-          />
+          <Controls variables={variables} onVariableChange={onVariableChange} />
         </Tab>
         <Tab name="Export">
           <Export
@@ -148,13 +117,3 @@ function Input({
 }
 
 export default Input;
-export type {
-  ActivityType,
-  AssetType,
-  FormatType,
-  InputProps,
-  InputType,
-  PresetType,
-  TemplateType,
-  VariableType,
-};

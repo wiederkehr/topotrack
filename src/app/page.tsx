@@ -5,16 +5,16 @@ import Content from "@/components/content";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import Column from "@/components/layout/column";
-import Welcome from "@/components/welcome";
+import Home from "@/features/home";
 
 export default async function Page() {
   const session = await auth();
   if (session) redirect("/composer");
   return (
     <Column>
-      <Header user={session?.user} />
+      <Header user={null} />
       <Content>
-        <Welcome />
+        <Home />
       </Content>
       <Footer />
     </Column>

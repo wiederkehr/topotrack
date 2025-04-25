@@ -1,31 +1,27 @@
 import { Box, Flex, Spinner } from "@radix-ui/themes";
 
 import Scrollarea from "@/components/interface/scrollarea";
+import {
+  ActivityDataType,
+  ActivityType,
+  FormatType,
+  TemplateType,
+  VariableType,
+} from "@/types";
 
 import Canvas from "./canvas";
 import Figure from "./figure";
 import styles from "./output.module.css";
 
 type OutputProps = {
-  activity: any;
-  activityData: any;
-  activityError: boolean;
-  activityLoading: boolean;
+  activity: ActivityType | null;
+  activityData?: ActivityDataType;
+  activityError?: boolean;
+  activityLoading?: boolean;
   figureRef: React.Ref<HTMLDivElement>;
-  format: {
-    height: number;
-    width: number;
-  };
-  template: {
-    Render: React.ComponentType<{
-      activity: any;
-      activityData: any;
-      format: string;
-      size: { height: number; width: number };
-      variables: any;
-    }>;
-  };
-  variables: any;
+  format: FormatType;
+  template: TemplateType;
+  variables: VariableType[];
 };
 
 function Output({
@@ -38,7 +34,8 @@ function Output({
   template,
   variables,
 }: OutputProps) {
-  const isReady = activity && activityData?.length > 0;
+  const isReady =
+    activity && Array.isArray(activityData) && activityData.length > 0;
   return (
     <div className={styles.output}>
       <Scrollarea>

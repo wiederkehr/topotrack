@@ -5,21 +5,16 @@ import { useEffect, useRef } from "react";
 import Callout from "@/components/interface/callout";
 import { Module } from "@/components/interface/module";
 import { formatDate } from "@/functions/format";
+import type { ActivityType } from "@/types";
 
 import Activity from "./activity";
-
-type ActivityType = {
-  id: string;
-  name: string;
-  start_date_local: string;
-};
 
 type ActivitiesProps = {
   activities: ActivityType[];
   activitiesError: boolean;
   activitiesLoading: boolean;
   disableLoadMore: boolean;
-  onActivityChange: (id: string) => void;
+  onActivityChange: (id: number) => void;
   onLoadMore: () => void;
   selectedActivity: ActivityType | null;
 };
@@ -39,7 +34,7 @@ function Activities({
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       const target = entries[0];
-      if (target.isIntersecting && !disableLoadMore) {
+      if (target?.isIntersecting && !disableLoadMore) {
         onLoadMore();
       }
     });

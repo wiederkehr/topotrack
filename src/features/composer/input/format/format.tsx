@@ -4,11 +4,7 @@ import Select from "@/components/interface/select";
 import Dimensionfields from "./dimensionfields";
 
 type FormatProps = {
-  format: {
-    height: number;
-    name: string;
-    width: number;
-  };
+  format: { height: number; name: string; width: number };
   formats: { name: string }[];
   onFormatChange: (value: string) => void;
 };

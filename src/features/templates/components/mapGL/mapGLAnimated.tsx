@@ -1,8 +1,11 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import { bbox, lineString } from "@turf/turf";
+import { LngLatBoundsLike } from "mapbox-gl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import MapGL, { MapRef } from "react-map-gl";
+
+import type { FormatType } from "@/types";
 
 import flyToPoint from "./functions/flyToPoint";
 import followPath from "./functions/followPath";
@@ -16,7 +19,7 @@ type MapGLAnimatedProps = {
   accent: string;
   contrast: string;
   data: [number, number][];
-  format: string;
+  format: FormatType;
   style: string;
 };
 
@@ -34,10 +37,12 @@ function MapGLAnimated({
   // Features
   // //////////////////////////////
   const routeData = lnglat;
-  const [positionData, setPositionData] = useState(routeData[0]);
-  const [progressData, setProgressData] = useState([
-    routeData[0],
-    routeData[0],
+  const [positionData, setPositionData] = useState<[number, number]>(
+    routeData[0] || [0, 0],
+  );
+  const [progressData, setProgressData] = useState<[number, number][]>([
+    routeData[0] || [0, 0],
+    routeData[0] || [0, 0],
   ]);
   // Map
   // //////////////////////////////
@@ -49,8 +54,8 @@ function MapGLAnimated({
   const stopPitch = 50;
   const mapRef = useRef<MapRef>(null);
   const mapConfig = {
-    longitude: positionData[0],
-    latitude: positionData[1],
+    longitude: positionData ? positionData[0] : 0,
+    latitude: positionData ? positionData[1] : 0,
     bearing: startBearing,
     pitch: startPitch,
     zoom: 10,
@@ -68,8 +73,8 @@ function MapGLAnimated({
     const afterFlyInPosition = await flyToPoint({
       map: mapRef.current.getMap(),
       targetPosition: {
-        lng: positionData[0],
-        lat: positionData[1],
+        lng: positionData[0] || 0,
+        lat: positionData[1] || 0,
       },
       duration: durationFly,
       startAltitude: startAltitude,
@@ -82,22 +87,30 @@ function MapGLAnimated({
 
     // Follow Path
     // //////////////////////////////
-    const afterFollowPosition = await followPath({
+    await followPath({
       map: mapRef.current.getMap(),
       duration: durationFollow,
       path: lineString(routeData),
       altitude: afterFlyInPosition.altitude,
       bearing: afterFlyInPosition.bearing,
       pitch: afterFlyInPosition.pitch,
-      onUpdate: ({ pointData, lineData }) => {
-        setPositionData(pointData);
-        setProgressData(lineData);
+      onUpdate: (pointData) => {
+        setPositionData([pointData.lng, pointData.lat]);
+        setProgressData((prev) => [...prev, [pointData.lng, pointData.lat]]);
       },
     });
 
     // Fit Bounds
     // //////////////////////////////
-    mapRef.current.getMap().fitBounds(bbox(lineString(routeData)), {
+    const routeLineString = lineString(routeData);
+    const routeBboxArray = bbox(routeLineString);
+    const routeBbox: LngLatBoundsLike = [
+      routeBboxArray[0],
+      routeBboxArray[1],
+      routeBboxArray[2],
+      routeBboxArray[3],
+    ];
+    mapRef.current.getMap().fitBounds(routeBbox, {
       duration: 3000,
       bearing: startBearing,
       pitch: startPitch,
@@ -127,7 +140,7 @@ function MapGLAnimated({
     <div className={styles.map}>
       <MapGL
         ref={mapRef}
-        onLoad={onMapLoad}
+        onLoad={void onMapLoad()}
         mapStyle={style}
         mapboxAccessToken={MAPBOX_TOKEN}
         initialViewState={mapConfig}

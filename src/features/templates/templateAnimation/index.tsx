@@ -1,28 +1,12 @@
 import { Layer } from "@/features/templates/components/layer";
 import { MapGLAnimated } from "@/features/templates/components/mapGL";
 import { TypeGrid } from "@/features/templates/components/type";
-import { RenderBaseProps, VariableType } from "@/features/templates/types";
 import {
   destructureActivity,
   destructureActivityData,
 } from "@/functions/destructure";
 import { colors } from "@/styles/constants";
-
-// Types
-// //////////////////////////////
-type VariablesType = {
-  accent: string;
-  contrast: string;
-  map: string;
-};
-
-type PresetType = VariablesType & {
-  name: string;
-};
-
-type RenderProps = RenderBaseProps & {
-  variables: VariablesType;
-};
+import { PresetType, RenderType, VariableType } from "@/types";
 
 // Name
 // //////////////////////////////
@@ -86,11 +70,15 @@ function Render({
   variables,
   format,
   size,
-}: RenderProps) {
+}: RenderType) {
   const { latlng } = destructureActivityData(activityData);
   const { name, type, distance, elevation, state, country, day, year } =
     destructureActivity(activity);
-  const { map, accent, contrast } = variables;
+  const { map, accent, contrast } = variables as {
+    accent: string;
+    contrast: string;
+    map: keyof typeof mapsStyles;
+  };
   const { width } = size;
   return (
     <>

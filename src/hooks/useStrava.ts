@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useSession } from "next-auth/react";
 import useSWR from "swr";
 
 import { mockActivities, mockActivitiesData } from "@/data/mock";
@@ -7,7 +6,12 @@ import { mockActivities, mockActivitiesData } from "@/data/mock";
 export const baseUrl = "https://www.strava.com/api/v3/";
 export const pageLimit = 20;
 
-const fetcher = async ({ url, token }) => {
+type FetcherProps = {
+  token: string;
+  url: string;
+};
+
+const fetcher = async ({ url, token }: FetcherProps) => {
   const args = { headers: { Authorization: `Bearer ${token}` } };
   try {
     const response = await axios.get(url, args);
@@ -17,10 +21,13 @@ const fetcher = async ({ url, token }) => {
   }
 };
 
-export const useStrava = (type, params) => {
-  const { data: session } = useSession();
-  const token = session?.access_token;
+type UseStravaProps = {
+  params: { id?: number; pageNumber?: number; url?: string };
+  token: string;
+  type: string;
+};
 
+export const useStrava = ({ type, token, params }: UseStravaProps) => {
   let url;
 
   switch (type) {
@@ -37,12 +44,14 @@ export const useStrava = (type, params) => {
       throw new Error("Invalid type provided to useStrava hook");
   }
 
-  const { data, error, isLoading: loading } = useSWR({ url, token }, fetcher);
+  const fetcherWithToken = (url: string) =>
+    fetcher({ url, token: token || "" });
+  const { data, error, isLoading: loading } = useSWR(url, fetcherWithToken);
 
   return { data, error, loading };
 };
 
-export const useMockStrava = (type, params) => {
+export const useMockStrava = ({ type, params }: UseStravaProps) => {
   switch (type) {
     case "activities":
       return { data: mockActivities, error: null, loading: false };
