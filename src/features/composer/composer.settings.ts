@@ -1,6 +1,7 @@
 import { AssetType, FormatType, PresetType } from "@/types";
 
 const formats: FormatType[] = [
+  { name: "3:4", width: 1080, height: 1440 },
   { name: "Square", width: 1080, height: 1080 },
   { name: "Landscape", width: 1920, height: 1080 },
   { name: "Portrait", width: 1080, height: 1920 },
@@ -12,8 +13,6 @@ const assets: AssetType[] = [
   { name: "Animated MP4", type: "mp4" },
 ];
 
-const defaultPreset: PresetType = {
-  name: "Custom",
-};
+const defaultPreset: PresetType = { name: "Custom" };
 
 export { assets, defaultPreset, formats };
