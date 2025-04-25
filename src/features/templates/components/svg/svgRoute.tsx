@@ -16,10 +16,7 @@ function SVGRoute({ data, height, width, color }: SVGRouteProps) {
   const features: ExtendedFeature[] = data.map((d) => ({
     type: "Feature",
     properties: null,
-    geometry: {
-      type: "Point",
-      coordinates: [d[1], d[0]],
-    },
+    geometry: { type: "Point", coordinates: [d[1], d[0]] },
   }));
   const featureCollection: ExtendedFeatureCollection = {
     type: "FeatureCollection",
@@ -47,16 +44,14 @@ function SVGRoute({ data, height, width, color }: SVGRouteProps) {
   // Rotation
   // //////////////////////////////
 
-  const rotate =
+  const shouldRotate =
     (innerRatio < 1 && boundsRatio > 1) || (innerRatio > 1 && boundsRatio < 1);
-  const angle = rotate ? -90 : 0;
-
   const translation = `translate(${padding}, ${padding})`;
 
   // Projection
   // //////////////////////////////
   const projection = geoMercator()
-    .angle(angle)
+    .angle(0)
     .fitSize([innerWidth, innerHeight], featureCollection);
 
   // Line
