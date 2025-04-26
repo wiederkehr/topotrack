@@ -6,11 +6,8 @@ import { signInAction } from "@/app/actions";
 import styles from "./signin.module.css";
 
 function SignIn() {
-  const handleSignIn = async () => {
-    await signInAction();
-  };
   return (
-    <Form action={handleSignIn}>
+    <Form action={() => void signInAction()}>
       <button type="submit" className={styles.signinButton}>
         <Image
           src="/images/btn_strava_connectwith_orange.svg"
