@@ -74,13 +74,29 @@ export const useMockStrava = ({
 }: UseStravaProps): UseStravaReturn => {
   switch (type) {
     case "activities":
-      return { data: mockActivities, error: null, loading: false };
+      return {
+        data: mockActivities.map((activity) => ({
+          ...activity,
+          start_latlng: activity.start_latlng as [number, number],
+        })) as ActivityType[],
+        error: null,
+        loading: false,
+      };
     case "activity":
       const mockActivity = mockActivitiesData.find(
         (activityData) => activityData.id === params.id,
       );
       return {
-        data: mockActivity?.data || null,
+        data: mockActivity?.data
+          ? [
+              {
+                id: params.id || 0,
+                name: "Mock Activity",
+                start_date_local: new Date().toISOString(),
+                ...mockActivity.data,
+              } as ActivityType,
+            ]
+          : null,
         error: null,
         loading: false,
       };
