@@ -25,9 +25,9 @@ type UserProps = { user: UserType };
 
 function User({ user }: UserProps) {
   const { theme, setTheme } = useTheme();
-  const handleSignOut = () => {
-    void signOutAction(); // Call the async function but ignore its returned Promise
-  };
+  function handleSignOut() {
+    void signOutAction();
+  }
 
   return (
     <Popover.Root>

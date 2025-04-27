@@ -6,9 +6,10 @@ import { signInAction } from "@/app/actions";
 import styles from "./signin.module.css";
 
 function SignIn() {
-  const handleSignIn = () => {
-    void signInAction(); // Call the async function but ignore its returned Promise
-  };
+  function handleSignIn() {
+    void signInAction();
+  }
+
   return (
     <Form action={handleSignIn}>
       <button type="submit" className={styles.signinButton}>
