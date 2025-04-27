@@ -22,7 +22,7 @@
     "strict": true,
     "target": "es2022"
   },
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", ".next"],
   "include": [
     ".eslintrc.json",
     "next-env.d.ts",
