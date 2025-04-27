@@ -48,18 +48,19 @@
     "eslint-plugin-typescript-sort-keys": "^3.3.0",
     "jsonc-eslint-parser": "^2.4.0",
     "prettier": "^3.3.3",
-    "typescript": "5.2.2"
+    "typescript": "^5.8.3"
   },
   "name": "topotrack",
   "private": true,
-  "scripts": {
-    "build": "next build",
-    "dev": "next dev --turbopack",
-    "lint": "next lint",
-    "start": "next start"
-  },
-  "version": "0.1.0",
   "resolutions": {
     "@types/react": "npm:types-react@19.0.0-rc.1"
-  }
+  },
+  "scripts": {
+    "build": "tsc --noEmit && next build",
+    "dev": "next dev --turbopack",
+    "lint": "next lint",
+    "start": "next start",
+    "type-check": "tsc --noEmit"
+  },
+  "version": "0.1.0"
 }
