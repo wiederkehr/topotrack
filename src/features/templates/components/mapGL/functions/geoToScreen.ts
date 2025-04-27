@@ -1,13 +1,18 @@
-import { geoMercator } from "d3-geo";
+import { geoMercator, GeoProjection } from "d3-geo";
 
 type GeoToScreenProps = {
   height: number;
-  json_data: any;
+  json_data: GeoJSON.FeatureCollection;
   padding: number;
   width: number;
 };
 
-function geoToScreen({ json_data, width, height, padding }: GeoToScreenProps) {
+function geoToScreen({
+  json_data,
+  width,
+  height,
+  padding,
+}: GeoToScreenProps): GeoProjection {
   return geoMercator().fitExtent(
     [
       [padding, padding],

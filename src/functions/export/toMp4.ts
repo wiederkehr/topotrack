@@ -8,7 +8,7 @@ type ToMp4Props = {
   name: string;
 };
 
-async function toMp4({ blob, name, format }: ToMp4Props): Promise<void> {
+async function toMp4({ blob, name }: ToMp4Props): Promise<void> {
   await Promise.resolve();
   if (blob instanceof Blob) {
     download(blob, name, "video/mp4");

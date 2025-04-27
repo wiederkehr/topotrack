@@ -21,12 +21,14 @@ import { formatInitials } from "@/functions/format";
 
 import styles from "./user.module.css";
 
-type UserProps = {
-  user: UserType;
-};
+type UserProps = { user: UserType };
 
 function User({ user }: UserProps) {
   const { theme, setTheme } = useTheme();
+  const handleSignOut = () => {
+    void signOutAction(); // Call the async function but ignore its returned Promise
+  };
+
   return (
     <Popover.Root>
       <Popover.Trigger>
@@ -80,7 +82,7 @@ function User({ user }: UserProps) {
           </Flex>
         </Flex>
         <Separator my="4" size="4" />
-        <Form action={signOutAction}>
+        <Form action={handleSignOut}>
           <Button type="submit" color="red" className={styles.userAction}>
             Sign out
           </Button>

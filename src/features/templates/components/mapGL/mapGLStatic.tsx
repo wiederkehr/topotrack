@@ -17,7 +17,7 @@ type MapGLStaticProps = {
   style: string;
 };
 
-function MapGLStatic({ data, style, accent, format }: MapGLStaticProps) {
+function MapGLStatic({ data, style, accent }: MapGLStaticProps) {
   // Data
   // //////////////////////////////
   const latlng = data;
@@ -41,7 +41,7 @@ function MapGLStatic({ data, style, accent, format }: MapGLStaticProps) {
 
   // Fit Bounds
   // //////////////////////////////
-  const onMapLoad = useCallback(async () => {
+  const onMapLoad = useCallback(() => {
     if (!mapRef.current) return;
 
     const routeLineString = lineString(routeData);

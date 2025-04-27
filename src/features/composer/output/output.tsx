@@ -1,22 +1,17 @@
 import { Box, Flex, Spinner } from "@radix-ui/themes";
+import { AxiosError } from "axios";
 
 import Scrollarea from "@/components/interface/scrollarea";
-import {
-  ActivityDataType,
-  ActivityType,
-  FormatType,
-  TemplateType,
-  VariableType,
-} from "@/types";
+import { ActivityType, FormatType, TemplateType, VariableType } from "@/types";
 
 import Canvas from "./canvas";
 import Figure from "./figure";
 import styles from "./output.module.css";
 
 type OutputProps = {
-  activity: ActivityType | null;
-  activityData?: ActivityDataType;
-  activityError?: boolean;
+  activity: ActivityType | undefined;
+  activityData?: ActivityType[] | null;
+  activityError?: AxiosError | null;
   activityLoading?: boolean;
   figureRef: React.Ref<HTMLDivElement>;
   format: FormatType;
@@ -27,8 +22,6 @@ type OutputProps = {
 function Output({
   activity,
   activityData,
-  activityError,
-  activityLoading,
   figureRef,
   format,
   template,

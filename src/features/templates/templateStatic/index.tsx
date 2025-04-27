@@ -134,13 +134,7 @@ const presets: PresetType[] = [
 
 // Render
 // //////////////////////////////
-function Render({
-  activity,
-  activityData,
-  variables,
-  format,
-  size,
-}: RenderType) {
+function Render({ activity, activityData, variables, size }: RenderType) {
   const { latlng } = destructureActivityData(activityData);
   const { name, type, distance, elevation, state, country, day, year } =
     destructureActivity(activity);
