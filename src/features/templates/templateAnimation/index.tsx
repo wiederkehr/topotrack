@@ -4,6 +4,7 @@ import { TypeGrid } from "@/features/templates/components/type";
 import {
   destructureActivity,
   destructureActivityData,
+  destructureVariables,
 } from "@/functions/destructure";
 import { colors } from "@/styles/constants";
 import { PresetType, RenderType, VariableType } from "@/types";
@@ -74,20 +75,22 @@ function Render({
   const { latlng } = destructureActivityData(activityData);
   const { name, type, distance, elevation, state, country, day, year } =
     destructureActivity(activity);
-  const { map, accent, contrast } = variables as {
-    accent: string;
-    contrast: string;
-    map: keyof typeof mapsStyles;
-  };
+  const { map, accent, contrast } = destructureVariables(variables);
+  // const { map, accent, contrast } = variables as {
+  //   accent: string;
+  //   contrast: string;
+  //   map: keyof typeof mapsStyles;
+  // };
   const { width } = size;
+  const mapStyle = mapsStyles[map as keyof typeof mapsStyles];
   return (
     <>
       <Layer>
         <MapGLAnimated
           data={latlng}
-          style={mapsStyles[map]}
-          accent={accent}
-          contrast={contrast}
+          style={mapStyle}
+          accent={accent ?? "#FFF"}
+          contrast={contrast ?? "#FFF"}
           format={format}
         />
       </Layer>
@@ -101,8 +104,8 @@ function Render({
           elevation={elevation}
           state={state}
           country={country}
-          accent={accent}
-          contrast={contrast}
+          accent={accent ?? "#FFF"}
+          contrast={contrast ?? "#FFF"}
           width={width}
         />
       </Layer>
