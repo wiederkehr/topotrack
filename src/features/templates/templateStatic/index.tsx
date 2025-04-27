@@ -144,12 +144,16 @@ function Render({ activity, activityData, variables, size }: RenderType) {
     <>
       <Layer>
         <SVGContainer width={width} height={height}>
-          <SVGBackground width={width} height={height} color={background} />
+          <SVGBackground
+            width={width}
+            height={height}
+            color={background ?? "#000"}
+          />
           <SVGRoute
             data={latlng}
             height={height}
             width={width}
-            color={accent}
+            color={accent ?? "#FFF"}
           />
         </SVGContainer>
       </Layer>
@@ -163,8 +167,8 @@ function Render({ activity, activityData, variables, size }: RenderType) {
           elevation={elevation}
           state={state}
           country={country}
-          accent={accent}
-          contrast={contrast}
+          accent={accent ?? "#FFF"}
+          contrast={contrast ?? "#FFF"}
           width={width}
         />
       </Layer>
