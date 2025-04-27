@@ -31,7 +31,7 @@ export type RenderType = {
   activityData: ActivityDataType[];
   format: FormatType;
   size: SizeType;
-  variables: { [key: string]: string };
+  variables: VariableType[];
 };
 
 export type SizeType = {
