@@ -44,6 +44,7 @@ function SVGRoute({ data, height, width, color }: SVGRouteProps) {
   // Rotation
   // //////////////////////////////
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const shouldRotate =
     (innerRatio < 1 && boundsRatio > 1) || (innerRatio > 1 && boundsRatio < 1);
   const translation = `translate(${padding}, ${padding})`;

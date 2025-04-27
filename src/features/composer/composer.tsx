@@ -8,13 +8,11 @@ import { formatFilename } from "@/functions/format";
 import { useGetAddress } from "@/hooks/useGetAddress";
 import { useStrava } from "@/hooks/useStrava";
 import type {
-  ActivityDataType,
   ActivityType,
   AssetType,
   FormatType,
   PresetType,
   TemplateType,
-  VariableType,
 } from "@/types";
 
 import styles from "./composer.module.css";
@@ -28,7 +26,7 @@ type ComposerProps = {
 };
 
 function Composer({ token }: ComposerProps) {
-  const [activity, setActivity] = useState<ActivityType | null>(null);
+  const [activity, setActivity] = useState<ActivityType | undefined>(undefined);
   const [allActivities, setAllActivities] = useState<ActivityType[]>([]);
   const [visibleActivities, setVisibleActivities] = useState<ActivityType[]>(
     [],
@@ -41,10 +39,14 @@ function Composer({ token }: ComposerProps) {
     data: activitiesData,
     error: activitiesError,
     loading: activitiesLoading,
-  } = useStrava({ type: "activities", token: token, params: { pageNumber } });
+  } = useStrava({
+    type: "activities",
+    token: token,
+    params: { pageNumber },
+  });
 
   useEffect(() => {
-    if (activitiesData) {
+    if (activitiesData && Array.isArray(activitiesData)) {
       setAllActivities((prev) => [...prev, ...activitiesData]);
       setVisibleActivities((prev) => [...prev, ...activitiesData]);
     }
@@ -58,13 +60,13 @@ function Composer({ token }: ComposerProps) {
   // //////////////////////////////
   useEffect(() => {
     if (visibleActivities && visibleActivities.length > 0) {
-      setActivity(visibleActivities[0] || null);
+      setActivity(visibleActivities[0] || undefined);
     }
   }, [visibleActivities]);
 
   const handleActivityChange = (id: number) => {
     const activity = allActivities.find((activity) => activity.id === id);
-    setActivity(activity || null);
+    setActivity(activity || undefined);
   };
 
   // Activity Data
@@ -83,16 +85,12 @@ function Composer({ token }: ComposerProps) {
   // //////////////////////////////
   const lat = activity?.start_latlng?.[0] || null;
   const lon = activity?.start_latlng?.[1] || null;
-  const {
-    data: activityAddress,
-    error: activityAddressError,
-    loading: activityAddressLoading,
-  } = useGetAddress(lat, lon);
+  const { data: activityAddress } = useGetAddress(lat, lon);
 
   useEffect(() => {
     if (activityData && activityAddress) {
       setActivity((prev) =>
-        prev ? { ...prev, address: activityAddress?.address } : null,
+        prev ? { ...prev, address: activityAddress?.address } : undefined,
       );
     }
   }, [activityData, activityAddress]);
@@ -139,8 +137,8 @@ function Composer({ token }: ComposerProps) {
 
   // Presets
   // //////////////////////////////
-  const [presets, setPresets] = useState(template.presets);
-  const [preset, setPreset] = useState(presets[0] || defaultPreset);
+  const [presets, setPresets] = useState<PresetType[]>(template.presets);
+  const [preset, setPreset] = useState<PresetType>(presets[0] || defaultPreset);
   const handlePresetChange = (value: string) => {
     const preset = (presets ?? []).find((preset) => preset.name === value);
     if (preset) {
@@ -220,7 +218,7 @@ function Composer({ token }: ComposerProps) {
     }
   };
 
-  if (activitiesError && activitiesError.response.status === 401) {
+  if (activitiesError && activitiesError.response?.status === 401) {
     return <Error />;
   }
 

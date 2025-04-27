@@ -6,8 +6,11 @@ import { signInAction } from "@/app/actions";
 import styles from "./signin.module.css";
 
 function SignIn() {
+  const handleSignIn = () => {
+    void signInAction(); // Call the async function but ignore its returned Promise
+  };
   return (
-    <Form action={() => void signInAction()}>
+    <Form action={handleSignIn}>
       <button type="submit" className={styles.signinButton}>
         <Image
           src="/images/btn_strava_connectwith_orange.svg"

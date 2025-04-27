@@ -1,5 +1,6 @@
 import { UpdateIcon } from "@radix-ui/react-icons";
 import { Button, Flex, Skeleton, Spinner } from "@radix-ui/themes";
+import { AxiosError } from "axios";
 import { useEffect, useRef } from "react";
 
 import Callout from "@/components/interface/callout";
@@ -11,12 +12,12 @@ import Activity from "./activity";
 
 type ActivitiesProps = {
   activities: ActivityType[];
-  activitiesError: boolean;
+  activitiesError: AxiosError | null;
   activitiesLoading: boolean;
   disableLoadMore: boolean;
   onActivityChange: (id: number) => void;
   onLoadMore: () => void;
-  selectedActivity: ActivityType | null;
+  selectedActivity: ActivityType | undefined;
 };
 
 function Activities({
@@ -29,7 +30,6 @@ function Activities({
   disableLoadMore,
 }: ActivitiesProps) {
   const loaderRef = useRef<HTMLButtonElement>(null);
-  if (!activities) return null;
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -39,13 +39,14 @@ function Activities({
       }
     });
 
-    if (loaderRef.current) {
-      observer.observe(loaderRef.current);
+    const currentLoaderRef = loaderRef.current;
+    if (currentLoaderRef) {
+      observer.observe(currentLoaderRef);
     }
 
     return () => {
-      if (loaderRef.current) {
-        observer.unobserve(loaderRef.current);
+      if (currentLoaderRef) {
+        observer.unobserve(currentLoaderRef);
       }
     };
   }, [onLoadMore, disableLoadMore]);

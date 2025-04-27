@@ -10,7 +10,7 @@ type FollowPathProps = {
   duration: number;
   map: Map;
   onUpdate?: (position: PositionType) => void;
-  path: any;
+  path: GeoJSON.Feature<GeoJSON.LineString>;
   pitch: number;
 };
 
@@ -29,11 +29,13 @@ function followPath({
     let currentBearing: number;
     let currentPitch: number;
 
+    // Calculate the total distance of the path
     const totalDistance = length(path);
 
     function frame(currentTime: number) {
       // Set start time
       if (!startTime) startTime = currentTime;
+
       // Calculate progress
       const progress = (currentTime - startTime) / duration;
       const easedProgress = Math.min(progress, 1);
@@ -43,7 +45,7 @@ function followPath({
       currentBearing = bearing;
       currentPitch = pitch;
 
-      // Compute new camera position
+      // Compute new camera position along the path
       const alongPath = along(path, totalDistance * easedProgress);
       const cameraPosition = computeCameraPosition({
         targetPosition: {

@@ -1,3 +1,5 @@
+import { AxiosError } from "axios";
+
 import type {
   ActivityType,
   AssetType,
@@ -19,9 +21,9 @@ import Template from "./template";
 
 type InputProps = {
   activities: ActivityType[];
-  activitiesError: boolean;
+  activitiesError: AxiosError | null;
   activitiesLoading: boolean;
-  activity: ActivityType | null;
+  activity: ActivityType | undefined;
   asset: AssetType;
   assets: AssetType[];
   disableLoadMore: boolean;

@@ -1,3 +1,10 @@
+// Skip all tsx linting rules
+/* eslint-disable import/no-anonymous-default-export */
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+
 import { colors } from "@/styles/constants";
 import { PresetType, RenderType, VariableType } from "@/types";
 
