@@ -2,7 +2,6 @@ import { useParentSize } from "@cutting/use-get-parent-size";
 import { forwardRef, Ref, RefObject } from "react";
 
 import type {
-  ActivityDataType,
   ActivityType,
   FormatType,
   SizeType,
@@ -14,7 +13,7 @@ import styles from "./figure.module.css";
 
 type FigureProps = {
   activity: ActivityType;
-  activityData: ActivityDataType;
+  activityData: ActivityType[] | null;
   format: FormatType;
   template: TemplateType;
   variables: VariableType[];
