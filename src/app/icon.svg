@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon</title>
+    <g id="icon" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="position-pin">
+            <rect id="Rectangle" fill="#191919" fill-rule="nonzero" x="0" y="0" width="32" height="32" rx="7"></rect>
+            <g id="Group" transform="translate(7.6, 7)" stroke="#FFFFFF" stroke-width="1.2">
+                <path d="M14.4,5.727 C14.4,9.2616 8.4,15.5778 8.4,15.5778 C8.4,15.5778 2.4,9.2622 2.4,5.727 C2.4,2.103 5.5008,0 8.4,0 C11.2992,0 14.4,2.103 14.4,5.727 Z" id="Path"></path>
+                <circle id="Oval" cx="8.4" cy="6" r="1.8"></circle>
+                <path d="M3.6,13.6302 C1.4238,14.064 0,14.7846 0,15.6 C0,16.9254 3.7608,18 8.4,18 C13.0392,18 16.8,16.9254 16.8,15.6 C16.8,14.7846 15.3762,14.064 13.2,13.6302" id="Path" stroke-linecap="round"></path>
+            </g>
+        </g>
+    </g>
+</svg>
