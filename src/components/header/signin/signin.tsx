@@ -1,3 +1,4 @@
+"use client";
 import Form from "next/form";
 import Image from "next/image";
 
@@ -6,10 +7,9 @@ import { signInAction } from "@/app/actions";
 import styles from "./signin.module.css";
 
 function SignIn() {
-  function handleSignIn() {
+  const handleSignIn = () => {
     void signInAction();
-  }
-
+  };
   return (
     <Form action={handleSignIn}>
       <button type="submit" className={styles.signinButton}>

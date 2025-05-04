@@ -25,9 +25,9 @@ type UserProps = { user: UserType };
 
 function User({ user }: UserProps) {
   const { theme, setTheme } = useTheme();
-  function handleSignOut() {
+  const handleSignOut = () => {
     void signOutAction();
-  }
+  };
 
   return (
     <Popover.Root>
