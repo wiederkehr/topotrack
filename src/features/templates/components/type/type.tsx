@@ -2,6 +2,8 @@ import { ArrowRightIcon, ArrowUpIcon } from "@radix-ui/react-icons";
 import { Box, Flex, Text } from "@radix-ui/themes";
 import { CSSProperties, ReactNode } from "react";
 
+import { FormatType } from "@/types";
+
 import styles from "./type.module.css";
 
 type TypePrimaryProps = {
@@ -37,6 +39,7 @@ type TypeGridProps = {
   day: string;
   distance: string;
   elevation: string;
+  format: FormatType;
   name: string;
   state: string;
   type: string;
@@ -54,18 +57,29 @@ function TypeGrid({
   state,
   country,
   width,
+  format,
   contrast,
   accent,
 }: TypeGridProps) {
-  const factor = 40 / 1080;
-  const fontSize = width * factor;
-  const padding = width * factor;
+  const factor = width / format.width;
+  const defaultFontSize = 40;
+  const fontSize = defaultFontSize * factor;
+  const defaultPadding = 40;
+  const storyVerticalPadding = 250;
+  const padding = {
+    top: format.name === "Story" ? storyVerticalPadding : defaultPadding,
+    bottom: format.name === "Story" ? storyVerticalPadding : defaultPadding,
+    left: defaultPadding,
+    right: defaultPadding,
+  };
+  const bottom = padding.bottom * factor;
+  const left = padding.left * factor;
+  const right = padding.right * factor;
+  const top = padding.top * factor;
+
   return (
     <Box className={styles.typeGrid} style={{ fontSize: fontSize }}>
-      <Flex
-        className={styles.typeTop}
-        style={{ left: padding, right: padding, top: padding }}
-      >
+      <Flex className={styles.typeTop} style={{ left, right, top }}>
         <Box className={styles.typeLeft} style={{ maxWidth: "66%" }}>
           <TypePrimary style={{ color: contrast }}>{name}</TypePrimary>
           <TypeSecondary style={{ color: accent }}>{type}</TypeSecondary>
@@ -75,10 +89,7 @@ function TypeGrid({
           <TypeSecondary style={{ color: accent }}>{year}</TypeSecondary>
         </Box>
       </Flex>
-      <Flex
-        className={styles.typeBottom}
-        style={{ left: padding, right: padding, bottom: padding }}
-      >
+      <Flex className={styles.typeBottom} style={{ left, right, bottom }}>
         <Box className={styles.typeLeft} style={{ maxWidth: "66%" }}>
           <TypePrimary style={{ color: contrast }}>{state}</TypePrimary>
           <TypeSecondary style={{ color: accent }}>{country}</TypeSecondary>

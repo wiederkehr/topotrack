@@ -134,7 +134,13 @@ const presets: PresetType[] = [
 
 // Render
 // //////////////////////////////
-function Render({ activity, activityData, variables, size }: RenderType) {
+function Render({
+  activity,
+  activityData,
+  variables,
+  size,
+  format,
+}: RenderType) {
   const { latlng } = destructureActivityData(activityData);
   const { name, type, distance, elevation, state, country, day, year } =
     destructureActivity(activity);
@@ -170,6 +176,7 @@ function Render({ activity, activityData, variables, size }: RenderType) {
           accent={accent ?? "#FFF"}
           contrast={contrast ?? "#FFF"}
           width={width}
+          format={format}
         />
       </Layer>
     </>

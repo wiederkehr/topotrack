@@ -107,6 +107,7 @@ function Render({
           accent={accent ?? "#FFF"}
           contrast={contrast ?? "#FFF"}
           width={width}
+          format={format}
         />
       </Layer>
     </>
