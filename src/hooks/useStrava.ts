@@ -5,7 +5,7 @@ import { mockActivities, mockActivitiesData } from "@/data/mock";
 import type { ActivityType } from "@/types";
 
 export const baseUrl = "https://www.strava.com/api/v3/";
-export const pageLimit = 20;
+export const pageLimit = 100;
 
 type FetcherProps = {
   token: string;
