@@ -147,16 +147,6 @@ function Composer({ token }: ComposerProps) {
     }
   };
 
-  const getVariables = (template: TemplateType, preset: PresetType) => {
-    const variables = template.variables.map((variable) => {
-      return {
-        ...variable,
-        value: preset[variable.name],
-      };
-    });
-    return variables;
-  };
-
   // Variables
   // //////////////////////////////
   const [variables, setVariables] = useState(
@@ -186,6 +176,15 @@ function Composer({ token }: ComposerProps) {
     });
     setPreset(matchingPreset || defaultPreset);
     setVariables(newVariables);
+  };
+  const getVariables = (template: TemplateType, preset: PresetType) => {
+    const variables = template.variables.map((variable) => {
+      return {
+        ...variable,
+        value: preset[variable.name],
+      };
+    });
+    return variables;
   };
 
   // Export
