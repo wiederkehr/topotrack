@@ -1,4 +1,5 @@
 import {
+  amber,
   blue,
   crimson,
   cyan,
@@ -8,14 +9,19 @@ import {
   indigo,
   iris,
   jade,
+  lime,
+  mint,
+  orange,
   pink,
   plum,
   purple,
   red,
   ruby,
+  sky,
   teal,
   tomato,
   violet,
+  yellow,
 } from "@radix-ui/colors";
 
 export const colors = {
@@ -42,6 +48,12 @@ export const colors = {
     green: green.green9,
     grass: grass.grass9,
     gray: gray.gray9,
+    lime: lime.lime9,
+    mint: mint.mint9,
+    sky: sky.sky9,
+    yellow: yellow.yellow9,
+    amber: amber.amber9,
+    orange: orange.orange9,
   },
   dark: {
     tomato: tomato.tomato12,
@@ -61,5 +73,11 @@ export const colors = {
     green: green.green12,
     grass: grass.grass12,
     gray: gray.gray12,
+    lime: lime.lime12,
+    mint: mint.mint12,
+    sky: sky.sky12,
+    yellow: yellow.yellow12,
+    amber: amber.amber12,
+    orange: orange.orange12,
   },
 };
