@@ -29,6 +29,24 @@ const variables: VariableType[] = [
 // //////////////////////////////
 const presets: PresetType[] = [
   {
+    name: "Yellow",
+    background: colors.dark.yellow,
+    accent: colors.light.yellow,
+    contrast: colors.contrast.dark,
+  },
+  {
+    name: "Amber",
+    background: colors.dark.amber,
+    accent: colors.light.amber,
+    contrast: colors.contrast.dark,
+  },
+  {
+    name: "Orange",
+    background: colors.dark.orange,
+    accent: colors.light.orange,
+    contrast: colors.contrast.dark,
+  },
+  {
     name: "Tomato",
     background: colors.dark.tomato,
     accent: colors.light.tomato,
@@ -95,9 +113,21 @@ const presets: PresetType[] = [
     contrast: colors.contrast.dark,
   },
   {
+    name: "Sky",
+    background: colors.dark.sky,
+    accent: colors.light.sky,
+    contrast: colors.contrast.dark,
+  },
+  {
     name: "Cyan",
     background: colors.dark.cyan,
     accent: colors.light.cyan,
+    contrast: colors.contrast.dark,
+  },
+  {
+    name: "Mint",
+    background: colors.dark.mint,
+    accent: colors.light.mint,
     contrast: colors.contrast.dark,
   },
   {
@@ -122,6 +152,12 @@ const presets: PresetType[] = [
     name: "Grass",
     background: colors.dark.grass,
     accent: colors.light.grass,
+    contrast: colors.contrast.dark,
+  },
+  {
+    name: "Lime",
+    background: colors.dark.lime,
+    accent: colors.light.lime,
     contrast: colors.contrast.dark,
   },
   {
