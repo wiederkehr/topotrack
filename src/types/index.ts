@@ -1,5 +1,5 @@
 export type ActivityDataType = {
-  data: [];
+  data: number[] | [number, number][];
   type: string;
 };
 

@@ -6,7 +6,8 @@ import templates from "@/features/templates";
 import { toPng, toSvg } from "@/functions/export";
 import { formatFilename } from "@/functions/format";
 import { useGetAddress } from "@/hooks/useGetAddress";
-import { useStrava } from "@/hooks/useStrava";
+import { useStravaActivities } from "@/hooks/useStravaActivities";
+import { useStravaActivity } from "@/hooks/useStravaActivity";
 import type {
   ActivityType,
   AssetType,
@@ -39,11 +40,7 @@ function Composer({ token }: ComposerProps) {
     data: activitiesData,
     error: activitiesError,
     loading: activitiesLoading,
-  } = useStrava({
-    type: "activities",
-    token: token,
-    params: { pageNumber },
-  });
+  } = useStravaActivities({ token: token ?? "", pageNumber });
 
   useEffect(() => {
     if (activitiesData && Array.isArray(activitiesData)) {
@@ -75,11 +72,7 @@ function Composer({ token }: ComposerProps) {
     data: activityData,
     error: activityError,
     loading: activityLoading,
-  } = useStrava({
-    type: "activity",
-    token: token,
-    params: { id: activity?.id },
-  });
+  } = useStravaActivity({ token: token ?? "", id: activity?.id ?? null });
 
   // Activity Address Data
   // //////////////////////////////
