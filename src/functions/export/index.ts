@@ -1,5 +1,5 @@
-import { toMp4 } from "./toMp4";
 import { toPng } from "./toPng";
 import { toSvg } from "./toSvg";
+import { toWebM } from "./toWebM";
 
-export { toMp4, toPng, toSvg };
+export { toPng, toSvg, toWebM };

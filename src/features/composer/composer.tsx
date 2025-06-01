@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import templates from "@/features/templates";
-import { toPng, toSvg } from "@/functions/export";
+import { toPng, toSvg, toWebM } from "@/functions/export";
 import { formatFilename } from "@/functions/format";
 import { useGetAddress } from "@/hooks/useGetAddress";
 import { useStravaActivities } from "@/hooks/useStravaActivities";
@@ -205,6 +205,9 @@ function Composer({ token }: ComposerProps) {
       case "svg":
         void toSvg({ node: figureRef.current!, name, format });
         break;
+      // case "webm":
+      //   void toWebM({ node: figureRef.current!, name, format });
+      //   break;
       default:
         break;
     }

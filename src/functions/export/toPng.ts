@@ -13,8 +13,8 @@ async function toPng({ node, name, format }: ToPngProps): Promise<void> {
   await Promise.resolve();
   const data = await htmlToPng(node, {
     pixelRatio: 2,
-    canvasWidth: format?.width,
-    canvasHeight: format?.height,
+    canvasWidth: format?.width ?? node.offsetWidth,
+    canvasHeight: format?.height ?? node.offsetHeight,
   });
   if (typeof data === "string") {
     download(data, name, "image/png");
