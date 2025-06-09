@@ -3,7 +3,7 @@ import { AxiosError } from "axios";
 
 import Scrollarea from "@/components/interface/scrollarea";
 import {
-  ActivityDataType,
+  ActivityStreamsType,
   ActivityType,
   FormatType,
   TemplateType,
@@ -16,7 +16,7 @@ import styles from "./output.module.css";
 
 type OutputProps = {
   activity: ActivityType | undefined;
-  activityData?: ActivityDataType[] | null;
+  activityData?: ActivityStreamsType | null;
   activityError?: AxiosError | null;
   activityLoading?: boolean;
   figureRef: React.Ref<HTMLDivElement>;
