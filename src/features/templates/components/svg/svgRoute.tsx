@@ -1,16 +1,23 @@
 import type { ExtendedFeatureCollection } from "d3-geo";
 import type { ExtendedFeature } from "d3-geo";
-import { geoBounds, geoMercator } from "d3-geo";
+import { geoMercator } from "d3-geo";
 import { curveCatmullRom, line } from "d3-shape";
 
 type SVGRouteProps = {
-  color: string;
   data: [number, number][];
   height: number;
+  strokeColor: string;
+  strokeWidth: number;
   width: number;
 };
 
-function SVGRoute({ data, height, width, color }: SVGRouteProps) {
+function SVGRoute({
+  strokeColor,
+  data,
+  height,
+  width,
+  strokeWidth,
+}: SVGRouteProps) {
   // Features
   // //////////////////////////////
   const features: ExtendedFeature[] = data.map((d) => ({
@@ -23,37 +30,11 @@ function SVGRoute({ data, height, width, color }: SVGRouteProps) {
     features: features,
   };
 
-  /**
-   * @see: https://d3js.org/d3-geo/math#geoBounds
-   * @returns: [[left, bottom], [right, top]]
-   **/
-  const bounds: [[number, number], [number, number]] =
-    geoBounds(featureCollection);
-
-  // Dimensions
-  // //////////////////////////////
-  const factor = 40 / 1080;
-  const padding = width * factor;
-  const innerWidth = width - padding * 2;
-  const innerHeight = height - padding * 2;
-  const innerRatio = innerWidth / innerHeight;
-  const boundsWidth = bounds[1][0] - bounds[0][0];
-  const boundsHeight = bounds[1][1] - bounds[0][1];
-  const boundsRatio = boundsWidth / boundsHeight;
-
-  // Rotation
-  // //////////////////////////////
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const shouldRotate =
-    (innerRatio < 1 && boundsRatio > 1) || (innerRatio > 1 && boundsRatio < 1);
-  const translation = `translate(${padding}, ${padding})`;
-
   // Projection
   // //////////////////////////////
   const projection = geoMercator()
     .angle(0)
-    .fitSize([innerWidth, innerHeight], featureCollection);
+    .fitSize([width, height], featureCollection);
 
   // Line
   // //////////////////////////////
@@ -77,14 +58,13 @@ function SVGRoute({ data, height, width, color }: SVGRouteProps) {
       )
       .filter((d): d is [number, number] => d !== null),
   );
-  const strokeWidth = width * 0.004;
 
   return (
-    <g id="route-translation-group" transform={translation}>
+    <g>
       <path
         d={lineData || ""}
         fill="none"
-        stroke={color}
+        stroke={strokeColor}
         strokeWidth={strokeWidth}
         strokeLinecap="round"
         strokeMiterlimit="4"
