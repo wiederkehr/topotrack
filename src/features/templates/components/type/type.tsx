@@ -2,8 +2,6 @@ import { ArrowRightIcon, ArrowUpIcon } from "@radix-ui/react-icons";
 import { Box, Flex, Text } from "@radix-ui/themes";
 import { CSSProperties, ReactNode } from "react";
 
-import { FormatType } from "@/types";
-
 import styles from "./type.module.css";
 
 type TypePrimaryProps = {
@@ -39,8 +37,15 @@ type TypeGridProps = {
   day: string;
   distance: string;
   elevation: string;
-  format: FormatType;
+  factor: number;
+  fontSize: number;
   name: string;
+  padding: {
+    bottom: number;
+    left: number;
+    right: number;
+    top: number;
+  };
   state: string;
   type: string;
   width: number;
@@ -56,26 +61,12 @@ function TypeGrid({
   elevation,
   state,
   country,
-  width,
-  format,
+  fontSize,
   contrast,
   accent,
+  padding,
 }: TypeGridProps) {
-  const factor = width / format.width;
-  const defaultFontSize = 40;
-  const fontSize = defaultFontSize * factor;
-  const defaultPadding = 40;
-  const storyVerticalPadding = 250;
-  const padding = {
-    top: format.name === "Story" ? storyVerticalPadding : defaultPadding,
-    bottom: format.name === "Story" ? storyVerticalPadding : defaultPadding,
-    left: defaultPadding,
-    right: defaultPadding,
-  };
-  const bottom = padding.bottom * factor;
-  const left = padding.left * factor;
-  const right = padding.right * factor;
-  const top = padding.top * factor;
+  const { top, left, right, bottom } = padding;
 
   return (
     <Box className={styles.typeGrid} style={{ fontSize: fontSize }}>

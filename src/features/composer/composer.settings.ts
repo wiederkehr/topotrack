@@ -10,7 +10,7 @@ const formats: FormatType[] = [
 const assets: AssetType[] = [
   { name: "Static PNG", type: "png" },
   { name: "Static SVG", type: "svg" },
-  { name: "Animated MP4", type: "mp4" },
+  { name: "Animated WebM", type: "webm" },
 ];
 
 const defaultPreset: PresetType = { name: "Custom" };

@@ -12,8 +12,8 @@ type ToSvgProps = {
 async function toSvg({ node, name, format }: ToSvgProps): Promise<void> {
   await Promise.resolve();
   const data = await htmlToSvg(node, {
-    canvasWidth: format?.width,
-    canvasHeight: format?.height,
+    canvasWidth: format?.width ?? node.offsetWidth,
+    canvasHeight: format?.height ?? node.offsetHeight,
   });
   if (typeof data === "string") {
     download(data, name, "image/svg+xml");

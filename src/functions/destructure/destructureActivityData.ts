@@ -1,20 +1,47 @@
-import { ActivityDataType } from "@/types";
+import { ActivityStreamsType } from "@/types";
 
 type DestructuredActivityData = {
   altitude: number[];
+  cadence: number[];
   distance: number[];
-  latlng: [];
+  grade_smooth: number[];
+  heartrate: number[];
+  latlng: [number, number][];
+  moving: number[];
+  temp: number[];
   time: number[];
+  velocity_smooth: number[];
+  watts: number[];
 };
 
 function destructureActivityData(
-  activityData: ActivityDataType[],
+  activityData: ActivityStreamsType,
 ): DestructuredActivityData {
-  const latlng = activityData?.find((d) => d.type === "latlng")?.data || [];
-  const distance = activityData?.find((d) => d.type === "distance")?.data || [];
-  const altitude = activityData?.find((d) => d.type === "altitude")?.data || [];
-  const time = activityData?.find((d) => d.type === "time")?.data || [];
-  return { latlng, distance, altitude, time };
+  const altitude = (activityData?.altitude?.data ?? []) as number[];
+  const distance = (activityData?.distance?.data ?? []) as number[];
+  const latlng = (activityData?.latlng?.data ?? []) as [number, number][];
+  const time = (activityData?.time?.data ?? []) as number[];
+  const cadence = (activityData?.cadence?.data ?? []) as number[];
+  const grade_smooth = (activityData?.grade_smooth?.data ?? []) as number[];
+  const heartrate = (activityData?.heartrate?.data ?? []) as number[];
+  const moving = (activityData?.moving?.data ?? []) as number[];
+  const temp = (activityData?.temp?.data ?? []) as number[];
+  const velocity_smooth = (activityData?.velocity_smooth?.data ??
+    []) as number[];
+  const watts = (activityData?.watts?.data ?? []) as number[];
+  return {
+    latlng,
+    distance,
+    altitude,
+    time,
+    cadence,
+    grade_smooth,
+    heartrate,
+    moving,
+    temp,
+    velocity_smooth,
+    watts,
+  };
 }
 
 export { destructureActivityData };

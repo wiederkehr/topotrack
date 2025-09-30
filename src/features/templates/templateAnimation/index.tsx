@@ -81,7 +81,23 @@ function Render({
   //   contrast: string;
   //   map: keyof typeof mapsStyles;
   // };
-  const { width } = size;
+  const { width, height } = size;
+  const factor = width / format.width;
+  const defaultPadding = 40;
+  const defaultFontSize = 40;
+  const storyVerticalPadding = 250;
+  const padding = {
+    top:
+      format.name === "Story"
+        ? storyVerticalPadding * factor
+        : defaultPadding * factor,
+    bottom:
+      format.name === "Story"
+        ? storyVerticalPadding * factor
+        : defaultPadding * factor,
+    left: defaultPadding * factor,
+    right: defaultPadding * factor,
+  };
   const mapStyle = mapsStyles[map as keyof typeof mapsStyles];
   return (
     <>
@@ -107,7 +123,9 @@ function Render({
           accent={accent ?? "#FFF"}
           contrast={contrast ?? "#FFF"}
           width={width}
-          format={format}
+          padding={padding}
+          factor={factor}
+          fontSize={defaultFontSize * factor}
         />
       </Layer>
     </>

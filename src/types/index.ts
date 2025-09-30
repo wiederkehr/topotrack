@@ -1,6 +1,23 @@
-export type ActivityDataType = {
-  data: [];
+export type ActivityStreamType = {
+  data: number[] | [number, number][];
+  original_size: number;
+  resolution: string;
+  series_type: string;
   type: string;
+};
+
+export type ActivityStreamsType = {
+  altitude: ActivityStreamType;
+  cadence: ActivityStreamType;
+  distance: ActivityStreamType;
+  grade_smooth: ActivityStreamType;
+  heartrate: ActivityStreamType;
+  latlng: ActivityStreamType;
+  moving: ActivityStreamType;
+  temp: ActivityStreamType;
+  time: ActivityStreamType;
+  velocity_smooth: ActivityStreamType;
+  watts: ActivityStreamType;
 };
 
 export type ActivityType = {
@@ -28,7 +45,7 @@ export type PresetType = {
 
 export type RenderType = {
   activity: ActivityType;
-  activityData: ActivityDataType[];
+  activityData: ActivityStreamsType;
   format: FormatType;
   size: SizeType;
   variables: VariableType[];
