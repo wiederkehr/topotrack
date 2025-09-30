@@ -1,14 +1,9 @@
 import { AxiosError } from "axios";
 
-import type {
-  ActivityType,
-  AssetType,
-  FormatType,
-  PresetType,
-  TemplateType,
-  VariableType,
-} from "@/types";
+import templates from "@/features/templates";
+import { useActivityStore, useExportStore, useTemplateStore } from "@/stores";
 
+import { assets, formats } from "../composer.settings";
 import Activities from "./activities";
 import Controls from "./controls";
 import Export from "./export";
@@ -20,69 +15,51 @@ import { Tab, Tabs } from "./tabs";
 import Template from "./template";
 
 type InputProps = {
-  activities: ActivityType[];
   activitiesError: AxiosError | null;
   activitiesLoading: boolean;
-  activity: ActivityType | undefined;
-  asset: AssetType;
-  assets: AssetType[];
-  disableLoadMore: boolean;
-  format: FormatType;
-  formats: FormatType[];
-  onActivityChange: (id: number) => void;
-  onAssetChange: (value: string) => void;
-  onAssetExport: () => void;
-  onFormatChange: (value: string) => void;
   onLoadMore: () => void;
-  onPresetChange: (value: string) => void;
-  onSearchChange: (value: string) => void;
-  onTemplateChange: (value: string) => void;
-  onVariableChange: (variable: { name: string; value: string }) => void;
-  preset: PresetType;
-  presets: PresetType[];
-  searchTerm: string;
-  template: TemplateType;
-  templates: TemplateType[];
-  variables: VariableType[];
 };
 
-function Input({
-  activities,
-  activitiesError,
-  activitiesLoading,
-  activity,
-  asset,
-  assets,
-  format,
-  formats,
-  onActivityChange,
-  onAssetChange,
-  onAssetExport,
-  onFormatChange,
-  onSearchChange,
-  onTemplateChange,
-  onPresetChange,
-  onVariableChange,
-  onLoadMore,
-  disableLoadMore,
-  searchTerm,
-  template,
-  templates,
-  preset,
-  presets,
-  variables,
-}: InputProps) {
+function Input({ activitiesError, activitiesLoading, onLoadMore }: InputProps) {
+  const {
+    activity,
+    visibleActivities,
+    searchTerm,
+    handleActivityChange,
+    handleSearchChange,
+  } = useActivityStore();
+  const {
+    template,
+    presets,
+    preset,
+    variables,
+    setTemplate,
+    setPreset,
+    setVariable,
+  } = useTemplateStore();
+  const { format, asset, setFormat, setAsset, handleExport } = useExportStore();
+
+  const disableLoadMore = activitiesLoading || searchTerm.length >= 3;
+
+  const handleAssetExport = () => {
+    if (activity) {
+      handleExport({
+        start_date_local: activity.start_date_local,
+        name: activity.name,
+      });
+    }
+  };
   return (
     <div className={styles.input}>
       <Tabs names={["Activity", "Design", "Export"]}>
         <Tab name="Activity">
-          <Search searchTerm={searchTerm} onSearchChange={onSearchChange} />
+          <Search searchTerm={searchTerm} onSearchChange={handleSearchChange} />
           <Activities
-            activities={activities}
+            activities={visibleActivities}
             activitiesError={activitiesError}
             activitiesLoading={activitiesLoading}
             selectedActivity={activity}
-            onActivityChange={onActivityChange}
+            onActivityChange={handleActivityChange}
             onLoadMore={onLoadMore}
             disableLoadMore={disableLoadMore}
           />
@@ -91,26 +68,26 @@ function Input({
           <Format
             format={format}
             formats={formats}
-            onFormatChange={onFormatChange}
+            onFormatChange={setFormat}
           />
           <Template
             template={template}
             templates={templates}
-            onTemplateChange={onTemplateChange}
+            onTemplateChange={setTemplate}
           />
           <Preset
             preset={preset}
             presets={presets}
-            onPresetChange={onPresetChange}
+            onPresetChange={setPreset}
           />
-          <Controls variables={variables} onVariableChange={onVariableChange} />
+          <Controls variables={variables} onVariableChange={setVariable} />
         </Tab>
         <Tab name="Export">
           <Export
             asset={asset}
             assets={assets}
-            onAssetChange={onAssetChange}
-            onAssetExport={onAssetExport}
+            onAssetChange={setAsset}
+            onAssetExport={handleAssetExport}
           />
         </Tab>
       </Tabs>

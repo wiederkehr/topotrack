@@ -21,6 +21,10 @@ export type ActivityStreamsType = {
 };
 
 export type ActivityType = {
+  address?: {
+    country?: string;
+    state?: string;
+  };
   id: number;
   name: string;
   start_date_local: string;
