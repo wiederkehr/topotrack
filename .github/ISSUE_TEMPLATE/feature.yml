@@ -1,0 +1,51 @@
+name: Feature Implementation
+description: Request a new feature or enhancement
+title: "[Feature]: "
+labels: ["feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Feature Request
+        Provide details about the feature you'd like to implement.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Brief description of the feature
+      placeholder: What should this feature do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Why is this feature needed?
+      placeholder: Explain the problem this solves or the value it adds
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: Specific, testable outcomes
+      placeholder: |
+        - [ ] Specific outcome 1
+        - [ ] Specific outcome 2
+        - [ ] Type-check passes
+        - [ ] Lint passes
+        - [ ] Tests pass
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Implementation Notes
+      description: Optional architectural decisions, constraints, or dependencies
+      placeholder: Any technical considerations or dependencies?
+    validations:
+      required: false
