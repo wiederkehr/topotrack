@@ -118,15 +118,16 @@ Key TypeScript types defined in `/src/types/`:
 ### Before Starting Implementation
 
 1. **Pick a GitHub Issue** - Choose from the project board
-2. **Create feature branch from main**:
+2. **Move issue to "Doing" status** - Update the issue status on the project board to "Doing"
+3. **Create feature branch from main**:
    ```bash
    git checkout main
    git pull origin main
    git checkout -b feature/XX-brief-description
    ```
-3. **Read the issue** - Understand requirements and acceptance criteria
-4. **Plan the approach** - Identify files to modify, new files to create, and potential edge cases
-5. **Check related code** - Review existing patterns for similar functionality
+4. **Read the issue** - Understand requirements and acceptance criteria
+5. **Plan the approach** - Identify files to modify, new files to create, and potential edge cases
+6. **Check related code** - Review existing patterns for similar functionality
 
 ### Implementation Process
 
@@ -165,18 +166,24 @@ Key TypeScript types defined in `/src/types/`:
 2. **Create PR to main using gh CLI**:
 
    ```bash
-   gh pr create --base main --title "[Feature]: Title" --body "Brief summary\n\nCloses #XX"
+   gh pr create --base main --title "[Feature]: Title" --body "Brief summary\n\nCloses #XX" --reviewer wiederkehr
    ```
 
-3. **Link PR to issue**: Include "Closes #XX" in PR description so merged PRs automatically close linked issues
+3. **Move issue to "Review" status** - Update the issue status on the project board to "Review"
 
-4. **Keep PR descriptions brief**:
+4. **Link PR to issue**: Include "Closes #XX" in PR description so merged PRs automatically close linked issues
+
+5. **Keep PR descriptions brief**:
 
    - 1-2 sentence summary
    - Link to GitHub issue (Closes #XX)
    - Screenshots/videos for UI changes (if applicable)
 
-5. **After PR is merged**:
+6. **After PR is approved and merged**:
+   - Merge the PR
+   - Check off all completed markdown subtasks in the issue description
+   - Move issue to "Done" status on the project board
+   - Clean up local branch:
    ```bash
    git checkout main
    git pull origin main
