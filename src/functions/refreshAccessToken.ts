@@ -14,9 +14,9 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
     // Check if the refresh token is available
     if (!token.refresh_token) {
-      console.error("No refresh token found on JWT");
       throw new Error("Missing refresh token");
     }
+
     const response = await axios.post<StravaTokenResponse>(
       "https://www.strava.com/oauth/token",
       null,

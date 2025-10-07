@@ -1,9 +1,9 @@
 export type ActivityStreamType = {
-  data: number[] | [number, number][];
+  data: number[] | [number, number][] | boolean[];
   original_size: number;
   resolution: string;
   series_type: string;
-  type: string;
+  type?: string;
 };
 
 export type ActivityStreamsType = {
@@ -28,7 +28,7 @@ export type ActivityType = {
   id: number;
   name: string;
   start_date_local: string;
-  start_latlng?: [number, number];
+  start_latlng?: [number, number] | null;
 };
 
 export type AssetType = {

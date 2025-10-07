@@ -42,6 +42,7 @@ export function useStravaActivities({
   const url = token
     ? `${baseUrl}athlete/activities?page=${pageNumber}&per_page=${pageLimit}`
     : null;
+
   const fetchWithToken = (url: string) => fetcher({ url, token });
   const { data, error, isLoading } = useSWR<ActivityType[], AxiosError>(
     url,

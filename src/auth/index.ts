@@ -45,13 +45,21 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     async jwt({ token, account }) {
       // On initial sign-in
       if (account) {
+        // Strava returns expires_at in seconds, convert to milliseconds
+        const expiresAtMs = account.expires_at
+          ? account.expires_at > 9999999999
+            ? account.expires_at
+            : account.expires_at * 1000
+          : Date.now() + 6 * 60 * 60 * 1000; // Default 6 hours
+
         return {
           ...token,
           access_token: account.access_token,
           refresh_token: account.refresh_token,
-          expires_at: account.expires_at ?? 0,
+          expires_at: expiresAtMs,
         };
       }
+
       // If the token is valid, return it
       if (Date.now() < (token.expires_at ?? 0)) {
         return token;
@@ -61,7 +69,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
     session({ session, token }) {
       if (token) {
-        session.access_token = token.access_token as string;
+        session.access_token = token.access_token ?? "";
+        if (token.error) {
+          session.error = token.error;
+        }
       }
       return session;
     },

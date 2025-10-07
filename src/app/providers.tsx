@@ -3,6 +3,7 @@
 import { Theme } from "@radix-ui/themes";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
+import { SWRConfig } from "swr";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -11,21 +12,29 @@ export interface ProvidersProps {
 export default function Providers({ children }: ProvidersProps) {
   return (
     <SessionProvider>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="dark"
-        themes={["light", "dark"]}
+      <SWRConfig
+        value={{
+          provider: () => new Map(),
+          revalidateOnFocus: false,
+          revalidateOnReconnect: false,
+        }}
       >
-        <Theme
-          accentColor="blue"
-          grayColor="gray"
-          panelBackground="solid"
-          scaling="100%"
-          radius="medium"
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          themes={["light", "dark"]}
         >
-          {children}
-        </Theme>
-      </ThemeProvider>
+          <Theme
+            accentColor="blue"
+            grayColor="gray"
+            panelBackground="solid"
+            scaling="100%"
+            radius="medium"
+          >
+            {children}
+          </Theme>
+        </ThemeProvider>
+      </SWRConfig>
     </SessionProvider>
   );
 }
