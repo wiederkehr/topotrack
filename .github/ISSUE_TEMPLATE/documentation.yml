@@ -1,0 +1,49 @@
+name: Documentation
+description: Documentation improvements
+title: "[Documentation]: "
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Documentation Task
+        Describe documentation that should be added or improved.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What documentation is needed?
+      placeholder: Describe the documentation task
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Why is this documentation needed?
+      placeholder: Explain what's missing or unclear
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: Specific, testable outcomes
+      placeholder: |
+        - [ ] Documentation added/updated
+        - [ ] Examples included (if applicable)
+        - [ ] Clear and concise
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Implementation Notes
+      description: Optional notes
+      placeholder: Any additional notes?
+    validations:
+      required: false

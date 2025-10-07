@@ -1,0 +1,51 @@
+name: Infrastructure
+description: Infrastructure or tooling improvements
+title: "[Infrastructure]: "
+labels: ["infrastructure"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Infrastructure Task
+        Describe infrastructure or tooling changes.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What infrastructure change is needed?
+      placeholder: Describe the infrastructure task
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Why is this needed?
+      placeholder: Explain the benefit or problem this solves
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: Specific, testable outcomes
+      placeholder: |
+        - [ ] Specific outcome 1
+        - [ ] Specific outcome 2
+        - [ ] Type-check passes
+        - [ ] Lint passes
+        - [ ] Tests pass
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Implementation Notes
+      description: Optional technical considerations
+      placeholder: Any technical notes?
+    validations:
+      required: false

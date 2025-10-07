@@ -1,0 +1,51 @@
+name: Enhancement
+description: Improve an existing feature
+title: "[Enhancement]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Enhancement Request
+        Describe how to improve an existing feature.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What should be improved?
+      placeholder: Describe the enhancement
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Why is this improvement needed?
+      placeholder: Explain the benefit of this enhancement
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: Specific, testable outcomes
+      placeholder: |
+        - [ ] Specific outcome 1
+        - [ ] Specific outcome 2
+        - [ ] Type-check passes
+        - [ ] Lint passes
+        - [ ] Tests pass
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Implementation Notes
+      description: Optional technical considerations
+      placeholder: Any technical notes?
+    validations:
+      required: false

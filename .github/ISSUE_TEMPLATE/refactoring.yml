@@ -1,0 +1,51 @@
+name: Refactoring
+description: Code refactoring or cleanup
+title: "[Refactoring]: "
+labels: ["refactoring"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Refactoring Task
+        Describe code that should be refactored.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What should be refactored?
+      placeholder: Describe the refactoring task
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Why is this refactoring needed?
+      placeholder: Explain the benefit (e.g., maintainability, performance, consistency)
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: Specific, testable outcomes
+      placeholder: |
+        - [ ] Specific outcome 1
+        - [ ] Specific outcome 2
+        - [ ] Type-check passes
+        - [ ] Lint passes
+        - [ ] Tests pass
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Implementation Notes
+      description: Optional technical considerations
+      placeholder: Any technical notes?
+    validations:
+      required: false
