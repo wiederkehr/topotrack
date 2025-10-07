@@ -81,7 +81,7 @@ function Render({
   //   contrast: string;
   //   map: keyof typeof mapsStyles;
   // };
-  const { width, height } = size;
+  const { width } = size;
   const factor = width / format.width;
   const defaultPadding = 40;
   const defaultFontSize = 40;

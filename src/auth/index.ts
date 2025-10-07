@@ -1,5 +1,4 @@
 import NextAuth from "next-auth";
-import { JWT } from "next-auth/jwt";
 import StravaProvider from "next-auth/providers/strava";
 
 import { refreshAccessToken } from "@/functions/refreshAccessToken";

@@ -1,5 +1,3 @@
-import { opacity } from "html2canvas/dist/types/css/property-descriptors/opacity";
-
 import { Layer } from "@/features/templates/components/layer";
 import {
   SVGBackground,

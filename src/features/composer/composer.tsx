@@ -73,6 +73,7 @@ function Composer({ token }: ComposerProps) {
         },
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activityData, activityAddress, activity?.id, setActivity]);
 
   // Figure ref for export

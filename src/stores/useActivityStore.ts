@@ -1,25 +1,23 @@
 import { create } from "zustand";
+
 import type { ActivityType } from "@/types";
 
 interface ActivityState {
-  // State
   activity: ActivityType | undefined;
+  addActivities: (activities: ActivityType[]) => void;
   allActivities: ActivityType[];
-  visibleActivities: ActivityType[];
+  handleActivityChange: (id: number) => void;
+  handleLoadMore: () => void;
+  handleSearchChange: (value: string) => void;
   pageNumber: number;
+  resetActivities: () => void;
   searchTerm: string;
-
-  // Actions
   setActivity: (activity: ActivityType | undefined) => void;
   setAllActivities: (activities: ActivityType[]) => void;
-  setVisibleActivities: (activities: ActivityType[]) => void;
-  addActivities: (activities: ActivityType[]) => void;
   setPageNumber: (pageNumber: number) => void;
   setSearchTerm: (searchTerm: string) => void;
-  handleActivityChange: (id: number) => void;
-  handleSearchChange: (value: string) => void;
-  handleLoadMore: () => void;
-  resetActivities: () => void;
+  setVisibleActivities: (activities: ActivityType[]) => void;
+  visibleActivities: ActivityType[];
 }
 
 export const useActivityStore = create<ActivityState>((set, get) => ({
@@ -40,8 +38,8 @@ export const useActivityStore = create<ActivityState>((set, get) => ({
   addActivities: (activities) =>
     set((state) => {
       // Prevent duplicate activities
-      const existingIds = new Set(state.allActivities.map(a => a.id));
-      const newActivities = activities.filter(a => !existingIds.has(a.id));
+      const existingIds = new Set(state.allActivities.map((a) => a.id));
+      const newActivities = activities.filter((a) => !existingIds.has(a.id));
 
       if (newActivities.length === 0) return state; // No new activities, return same state
 

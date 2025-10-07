@@ -1,7 +1,6 @@
 import { Box, Flex, Spinner } from "@radix-ui/themes";
 import { AxiosError } from "axios";
 
-import Scrollarea from "@/components/interface/scrollarea";
 import { useExportStore, useTemplateStore } from "@/stores";
 import { ActivityStreamsType, ActivityType } from "@/types";
 

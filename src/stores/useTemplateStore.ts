@@ -1,23 +1,27 @@
 import { create } from "zustand";
-import type { PresetType, TemplateType, VariableType } from "@/types";
-import templates from "@/features/templates";
+
 import { defaultPreset } from "@/features/composer/composer.settings";
+import templates from "@/features/templates";
+import type { PresetType, TemplateType, VariableType } from "@/types";
 
 interface TemplateState {
-  // State
-  template: TemplateType;
-  presets: PresetType[];
+  initializeTemplate: () => void;
   preset: PresetType;
-  variables: VariableType[];
+  presets: PresetType[];
+  setPreset: (value: string) => void;
 
   // Actions
   setTemplate: (value: string) => void;
-  setPreset: (value: string) => void;
   setVariable: (variable: { name: string; value: string }) => void;
-  initializeTemplate: () => void;
+  // State
+  template: TemplateType;
+  variables: VariableType[];
 }
 
-const getVariables = (template: TemplateType, preset: PresetType): VariableType[] => {
+const getVariables = (
+  template: TemplateType,
+  preset: PresetType,
+): VariableType[] => {
   return template.variables.map((variable) => ({
     ...variable,
     value: preset[variable.name] || "",
@@ -29,7 +33,10 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
   template: templates[0]!,
   presets: templates[0]!.presets,
   preset: templates[0]!.presets[0] || defaultPreset,
-  variables: getVariables(templates[0]!, templates[0]!.presets[0] || defaultPreset),
+  variables: getVariables(
+    templates[0]!,
+    templates[0]!.presets[0] || defaultPreset,
+  ),
 
   // Actions
   setTemplate: (value) => {
