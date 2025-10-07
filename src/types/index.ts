@@ -7,17 +7,17 @@ export type ActivityStreamType = {
 };
 
 export type ActivityStreamsType = {
-  altitude: ActivityStreamType;
-  cadence: ActivityStreamType;
-  distance: ActivityStreamType;
-  grade_smooth: ActivityStreamType;
-  heartrate: ActivityStreamType;
-  latlng: ActivityStreamType;
-  moving: ActivityStreamType;
-  temp: ActivityStreamType;
-  time: ActivityStreamType;
-  velocity_smooth: ActivityStreamType;
-  watts: ActivityStreamType;
+  altitude?: ActivityStreamType;
+  cadence?: ActivityStreamType;
+  distance?: ActivityStreamType;
+  grade_smooth?: ActivityStreamType;
+  heartrate?: ActivityStreamType;
+  latlng?: ActivityStreamType;
+  moving?: ActivityStreamType;
+  temp?: ActivityStreamType;
+  time?: ActivityStreamType;
+  velocity_smooth?: ActivityStreamType;
+  watts?: ActivityStreamType;
 };
 
 export type ActivityType = {

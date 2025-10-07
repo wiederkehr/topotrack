@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import useSWR from "swr";
 
+import { activityStreamsSchema } from "@/schemas/strava";
 import type { ActivityStreamsType } from "@/types";
 
 const baseUrl = "https://www.strava.com/api/v3/";
@@ -27,7 +28,10 @@ const fetcher = async ({
 }: FetcherProps): Promise<ActivityStreamsType> => {
   const args = { headers: { Authorization: `Bearer ${token}` } };
   const response = await axios.get<ActivityStreamsType>(url, args);
-  return response.data;
+
+  // Validate response data with Zod
+  const validated = activityStreamsSchema.parse(response.data);
+  return validated;
 };
 
 export function useStravaActivity({
