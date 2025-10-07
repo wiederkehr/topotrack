@@ -71,39 +71,53 @@ yarn type-check && yarn lint && yarn test --run
 
 ### Git Workflow
 
-This project uses [Husky](https://typicode.github.io/husky/) for Git hooks and [lint-staged](https://github.com/lint-staged/lint-staged) to ensure code quality.
+This project follows a feature branch workflow with the `main` branch as the single source of truth.
+
+**Branch Strategy:**
+
+- `main` - Production-ready code, deployed to Vercel
+- `feature/XX-description` - Short-lived branches for implementing GitHub issues
+
+**Development Process:**
+
+1. Create feature branch from main:
+
+   ```bash
+   git checkout main && git pull
+   git checkout -b feature/15-gpx-upload
+   ```
+
+2. Implement feature with regular commits
+
+3. Push and create PR to main:
+
+   ```bash
+   git push -u origin feature/15-gpx-upload
+   gh pr create --base main --title "[Feature]: GPX Upload" --body "Closes #15"
+   ```
+
+4. After PR merge, clean up:
+   ```bash
+   git checkout main && git pull
+   git branch -d feature/15-gpx-upload
+   ```
 
 **Pre-commit Hooks:**
 
-When you commit, the following automated checks run:
+This project uses [Husky](https://typicode.github.io/husky/) and [lint-staged](https://github.com/lint-staged/lint-staged) to ensure code quality.
+
+When you commit, automated checks run:
 
 1. **Type check** - Validates TypeScript types across the entire codebase
 2. **Lint & Format** - Fixes linting issues and formats staged files
 3. **Test related files** - Runs tests for files affected by your changes
 
-**Committing Changes:**
-
 ```bash
 git add .
-git commit -m "your message"
+git commit -m "add gpx upload functionality"
 ```
-
-The pre-commit hook will automatically:
-
-- Run type checking
-- Fix ESLint issues on staged files
-- Format code with Prettier
-- Run tests related to changed files
 
 If any check fails, the commit will be blocked. Fix the issues and try again.
-
-**Bypassing hooks (not recommended):**
-
-```bash
-git commit --no-verify -m "your message"
-```
-
-Only use `--no-verify` in exceptional circumstances, as it skips all quality checks.
 
 ### Environment Variables
 
