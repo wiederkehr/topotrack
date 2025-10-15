@@ -30,6 +30,10 @@ export const colors = {
     light: gray.gray12,
     dark: gray.gray1,
   },
+  mono: {
+    black: "#000",
+    white: "#FFF",
+  },
   light: {
     yellow: yellow.yellow9,
     amber: amber.amber9,

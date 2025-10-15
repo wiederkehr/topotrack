@@ -14,6 +14,7 @@ function Color({ value, onValueChange }: ColorProps) {
   const presetColors = [
     ...Object.values(colors.dark),
     ...Object.values(colors.light),
+    ...Object.values(colors.mono),
   ];
   return (
     <Popover.Root>

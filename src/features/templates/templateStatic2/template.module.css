@@ -1,0 +1,16 @@
+.debugBorder {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.title {
+  font-weight: 100;
+  font-family: var(--condensed-font-family);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.metaItem {
+  font-weight: 100;
+  font-family: var(--condensed-font-family);
+  text-transform: uppercase;
+}

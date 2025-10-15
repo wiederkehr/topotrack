@@ -2,11 +2,18 @@ import { lineString } from "@turf/turf";
 import { Layer, Source } from "react-map-gl";
 
 type RouteProps = {
-  color: string;
   data: [number, number][];
+  lineColor?: string;
+  lineOpacity?: number;
+  lineWidth?: number;
 };
 
-function Route({ data, color }: RouteProps) {
+function Route({
+  data,
+  lineColor = "#FFF",
+  lineWidth = 1,
+  lineOpacity = 1,
+}: RouteProps) {
   return (
     <Source type="geojson" data={lineString(data)}>
       <Layer
@@ -16,8 +23,9 @@ function Route({ data, color }: RouteProps) {
           "line-cap": "round",
         }}
         paint={{
-          "line-color": color,
-          "line-width": 2,
+          "line-color": lineColor,
+          "line-width": lineWidth,
+          "line-opacity": lineOpacity,
         }}
       />
     </Source>

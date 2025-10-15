@@ -146,8 +146,8 @@ function MapGLAnimated({
         initialViewState={mapConfig}
         attributionControl={false}
       >
-        <Route data={routeData} color={contrast} />
-        <Route data={progressData} color={accent} />
+        <Route data={routeData} lineColor={contrast ?? "#FFF"} lineWidth={2} />
+        <Route data={progressData} lineColor={accent ?? "#FFF"} lineWidth={2} />
         <Position data={positionData} color={accent} />
       </MapGL>
     </div>

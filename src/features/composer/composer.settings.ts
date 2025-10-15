@@ -2,7 +2,7 @@ import { AssetType, FormatType, PresetType } from "@/types";
 
 const formats: FormatType[] = [
   { name: "Square", width: 1080, height: 1080 },
-  { name: "Portrait", width: 1080, height: 1440 },
+  { name: "Portrait", width: 1080, height: 1350 },
   { name: "Landscape", width: 1920, height: 1080 },
   { name: "Story", width: 1080, height: 1920 },
 ];

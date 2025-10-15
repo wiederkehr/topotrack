@@ -6,30 +6,37 @@ import { useCallback, useEffect, useRef } from "react";
 import MapGL, { MapRef } from "react-map-gl";
 
 import styles from "./map.module.css";
-import Route from "./route";
+import type { mapStyle } from "./styles/contours";
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 type MapGLStaticProps = {
-  accent: string;
+  children?: React.ReactNode;
   data: [number, number][];
-  format: string;
-  style: string;
+  mapStyle: ReturnType<typeof mapStyle>;
+  padding?: {
+    bottom: number;
+    left: number;
+    right: number;
+    top: number;
+  };
 };
 
-function MapGLStatic({ data, style, accent }: MapGLStaticProps) {
+function MapGLStatic({ data, mapStyle, padding, children }: MapGLStaticProps) {
   // Data
   // //////////////////////////////
-  const latlng = data;
-  const lnglat = latlng.map((d) => [d[1], d[0]] as [number, number]);
-  // Features
-  // //////////////////////////////
-  const routeData = lnglat;
+  const routeData = data;
   const positionData = routeData[0];
+  // Layout
+  // //////////////////////////////
+  const paddingTop = padding?.top ?? 0;
+  const paddingBottom = padding?.bottom ?? 0;
+  const paddingLeft = padding?.left ?? 0;
+  const paddingRight = padding?.right ?? 0;
   // Map
   // //////////////////////////////
   const startBearing = 0;
-  const startPitch = 40;
+  const startPitch = 0;
   const mapRef = useRef<MapRef>(null);
   const mapConfig = {
     longitude: positionData ? positionData[0] : 0,
@@ -39,10 +46,13 @@ function MapGLStatic({ data, style, accent }: MapGLStaticProps) {
     zoom: 12,
   };
 
-  // Fit Bounds
+  // Fit route to bounds
   // //////////////////////////////
-  const onMapLoad = useCallback(() => {
+  const fitRouteToBounds = useCallback(() => {
     if (!mapRef.current) return;
+
+    const map = mapRef.current.getMap();
+    if (!map.loaded()) return;
 
     const routeLineString = lineString(routeData);
     const routeBboxArray = bbox(routeLineString);
@@ -52,33 +62,55 @@ function MapGLStatic({ data, style, accent }: MapGLStaticProps) {
       routeBboxArray[2],
       routeBboxArray[3],
     ];
-    mapRef.current.fitBounds(routeBbox, {
+
+    map.fitBounds(routeBbox, {
       duration: 300,
       bearing: startBearing,
       pitch: startPitch,
-      padding: 32,
+      padding: {
+        top: paddingTop,
+        bottom: paddingBottom,
+        left: paddingLeft,
+        right: paddingRight,
+      },
     });
-  }, [routeData, startBearing, startPitch]);
+  }, [
+    routeData,
+    startBearing,
+    startPitch,
+    paddingTop,
+    paddingBottom,
+    paddingLeft,
+    paddingRight,
+  ]);
 
-  // Update on onMapLoad Change
+  // Update map on load and when data changes
   // //////////////////////////////
   useEffect(() => {
-    if (mapRef.current) {
-      void onMapLoad();
+    if (!mapRef.current) return;
+
+    const map = mapRef.current.getMap();
+
+    if (map.loaded()) {
+      fitRouteToBounds();
+    } else {
+      map.once("idle", fitRouteToBounds);
     }
-  }, [onMapLoad]);
+  }, [fitRouteToBounds, routeData]);
 
   return (
     <div className={styles.map}>
       <MapGL
         ref={mapRef}
-        onLoad={void onMapLoad}
-        mapStyle={style}
+        onLoad={fitRouteToBounds}
+        mapStyle={mapStyle}
         mapboxAccessToken={MAPBOX_TOKEN}
         initialViewState={mapConfig}
+        interactive={false}
         attributionControl={false}
+        preserveDrawingBuffer={true}
       >
-        <Route data={routeData} color={accent} />
+        {children}
       </MapGL>
     </div>
   );

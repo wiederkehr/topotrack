@@ -1,9 +1,10 @@
 import "@/styles/index.css";
 
+import { clsx } from "clsx";
 import type { Metadata } from "next";
 
 import Providers from "@/app/providers";
-import { sans } from "@/fonts";
+import { condensed, sans } from "@/fonts";
 
 export const metadata: Metadata = {
   title: "Topotrack",
@@ -12,7 +13,11 @@ export const metadata: Metadata = {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={sans.variable}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={clsx(sans.variable, condensed.variable)}
+    >
       <body>
         <Providers>{children}</Providers>
       </body>

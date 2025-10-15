@@ -17,7 +17,7 @@ import { PresetType, RenderType, VariableType } from "@/types";
 
 // Name
 // //////////////////////////////
-const name = "Static";
+const name = "Static 1.0";
 
 // Variables
 // //////////////////////////////
