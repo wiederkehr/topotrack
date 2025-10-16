@@ -65,11 +65,6 @@ function Input({ activitiesError, activitiesLoading, onLoadMore }: InputProps) {
           />
         </Tab>
         <Tab name="Design">
-          <Format
-            format={format}
-            formats={formats}
-            onFormatChange={setFormat}
-          />
           <Template
             template={template}
             templates={templates}
@@ -83,6 +78,11 @@ function Input({ activitiesError, activitiesLoading, onLoadMore }: InputProps) {
           <Controls variables={variables} onVariableChange={setVariable} />
         </Tab>
         <Tab name="Export">
+          <Format
+            format={format}
+            formats={formats}
+            onFormatChange={setFormat}
+          />
           <Export
             asset={asset}
             assets={assets}
