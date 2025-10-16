@@ -62,8 +62,11 @@ function MapGLAnimated({
   };
   // Animation
   // //////////////////////////////
+  // Maximum animation duration optimized for Instagram (10 seconds default)
+  // Instagram recommends videos between 5-15 seconds for optimal engagement
+  const MAX_ANIMATION_DURATION = 10000;
   const durationFly = 5000;
-  const durationFollow = 10000;
+  const durationFollow = MAX_ANIMATION_DURATION;
 
   // Fly To Point
   // //////////////////////////////
@@ -120,6 +123,7 @@ function MapGLAnimated({
     positionData,
     routeData,
     durationFly,
+    durationFollow,
     startAltitude,
     stopAltitude,
     startBearing,

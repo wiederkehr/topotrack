@@ -1,18 +1,10 @@
-import { Box, Flex, Heading, Text } from "@radix-ui/themes";
+import { Box } from "@radix-ui/themes";
 import chroma from "chroma-js";
-import {
-  ArrowRight,
-  ArrowUp,
-  Calendar,
-  LucideProps,
-  MapPin,
-  Timer,
-} from "lucide-react";
+import { ArrowRight, ArrowUp, Calendar, MapPin, Timer } from "lucide-react";
 
 import { MapGLStatic } from "@/features/templates/components/mapGL";
 import { Route } from "@/features/templates/components/mapGL/route";
 import { mapStyle } from "@/features/templates/components/mapGL/styles/contours";
-import { SVGContainer, SVGProfile } from "@/features/templates/components/svg";
 import {
   destructureActivity,
   destructureActivityData,
@@ -24,7 +16,7 @@ import { colors } from "@/styles/constants";
 import { OverrideType, RenderType, VariableType } from "@/types";
 
 import { Layer } from "../components/layer";
-import styles from "./template.module.css";
+import { InfoBlock, MetaList, Profile, Title } from "../components/overlay";
 
 // Name
 // //////////////////////////////
@@ -219,116 +211,6 @@ function Render({
     </>
   );
 }
-
-// Subcomponents
-// //////////////////////////////
-const Profile = ({
-  height,
-  width,
-  color,
-  data,
-}: {
-  color: string;
-  data: number[];
-  height: number;
-  width: number;
-}) => (
-  <Box mb="-14px">
-    <SVGContainer width={width} height={height}>
-      <SVGProfile
-        data={data}
-        height={height}
-        width={width}
-        strokeColor={color}
-        strokeWidth={2}
-        fillGradient={{
-          startColor: chroma(color).alpha(0.4).hex(),
-          endColor: chroma(color).alpha(0.0).hex(),
-        }}
-      />
-    </SVGContainer>
-  </Box>
-);
-const InfoBlock = ({
-  padding,
-  position,
-  children,
-}: {
-  children: React.ReactNode;
-  padding: { bottom: number; left: number; right: number; top: number };
-  position: "top" | "bottom";
-}) => {
-  function toPixel(number: number): string {
-    return number.toString() + "px";
-  }
-  return (
-    <Box
-      position={"absolute"}
-      bottom={position === "bottom" ? toPixel(padding.bottom) : undefined}
-      top={position === "top" ? toPixel(padding.top) : undefined}
-      left={toPixel(padding.left)}
-      right={toPixel(padding.right)}
-    >
-      {children}
-    </Box>
-  );
-};
-
-const Title = ({ children }: { children: React.ReactNode }) => (
-  <Heading className={styles.title}>{children}</Heading>
-);
-const MetaList = ({
-  color,
-  items,
-}: {
-  color: string;
-  items: {
-    icon: React.ForwardRefExoticComponent<
-      Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
-    >;
-    value: string;
-  }[];
-}) => (
-  <Flex position="relative" align="center">
-    <MetaDivider color={color} />
-    <Flex
-      direction="row"
-      display="inline-flex"
-      align="center"
-      justify="center"
-      gap="4"
-      px="2"
-      className={styles.metaList}
-      style={{ color: color }}
-    >
-      {items.map((item, i) => (
-        <MetaItem key={i} icon={item.icon}>
-          {item.value}
-        </MetaItem>
-      ))}
-    </Flex>
-    <MetaDivider color={color} />
-  </Flex>
-);
-
-const MetaDivider = ({ color }: { color: string }) => (
-  <Box flexGrow="1" height="1px" style={{ backgroundColor: color }} />
-);
-
-const MetaItem = ({
-  children,
-  icon: Icon,
-}: {
-  children: React.ReactNode;
-  icon: React.ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
-  >;
-}) => (
-  <Flex className={styles.metaItem} align="center" gap="2">
-    <Icon size={16} />
-    <Text className={styles.metaItem}>{children}</Text>
-  </Flex>
-);
 
 // Export
 // //////////////////////////////
