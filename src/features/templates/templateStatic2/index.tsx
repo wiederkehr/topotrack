@@ -19,8 +19,9 @@ import {
   destructureOverrides,
   destructureVariables,
 } from "@/functions/destructure";
+import { generateColorPresets } from "@/functions/presets";
 import { colors } from "@/styles/constants";
-import { OverrideType, PresetType, RenderType, VariableType } from "@/types";
+import { OverrideType, RenderType, VariableType } from "@/types";
 
 import { Layer } from "../components/layer";
 import styles from "./template.module.css";
@@ -43,14 +44,11 @@ const overrides: OverrideType[] = [{ label: "Title", name: "name" }];
 
 // Presets
 // //////////////////////////////
-const presets: PresetType[] = [
-  {
-    name: "Indigo",
-    foreground: colors.mono.white,
-    middleground: colors.light.indigo,
-    background: colors.dark.indigo,
-  },
-];
+const presets = generateColorPresets({
+  foreground: "mono",
+  middleground: "light",
+  background: "dark",
+});
 
 // Render
 // //////////////////////////////
