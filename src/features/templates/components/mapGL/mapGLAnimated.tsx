@@ -73,11 +73,12 @@ function MapGLAnimated({
   const onMapLoad = useCallback(async () => {
     if (!mapRef.current) return;
 
+    const startPosition = routeData[0] || [0, 0];
     const afterFlyInPosition = await flyToPoint({
       map: mapRef.current.getMap(),
       targetPosition: {
-        lng: positionData[0] || 0,
-        lat: positionData[1] || 0,
+        lng: startPosition[0],
+        lat: startPosition[1],
       },
       duration: durationFly,
       startAltitude: startAltitude,
@@ -120,7 +121,6 @@ function MapGLAnimated({
       padding: 32,
     });
   }, [
-    positionData,
     routeData,
     durationFly,
     durationFollow,
@@ -144,7 +144,9 @@ function MapGLAnimated({
     <div className={styles.map}>
       <MapGL
         ref={mapRef}
-        onLoad={void onMapLoad()}
+        onLoad={() => {
+          void onMapLoad();
+        }}
         mapStyle={style}
         mapboxAccessToken={MAPBOX_TOKEN}
         initialViewState={mapConfig}
