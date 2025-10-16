@@ -16,10 +16,11 @@ import { SVGContainer, SVGProfile } from "@/features/templates/components/svg";
 import {
   destructureActivity,
   destructureActivityData,
+  destructureOverrides,
   destructureVariables,
 } from "@/functions/destructure";
 import { colors } from "@/styles/constants";
-import { PresetType, RenderType, VariableType } from "@/types";
+import { OverrideType, PresetType, RenderType, VariableType } from "@/types";
 
 import { Layer } from "../components/layer";
 import styles from "./template.module.css";
@@ -34,12 +35,11 @@ const variables: VariableType[] = [
   { label: "Foreground", name: "foreground", type: "color" },
   { label: "Middleground", name: "middleground", type: "color" },
   { label: "Background", name: "background", type: "color" },
-  {
-    label: "Title Override",
-    name: "titleOverride",
-    type: "text",
-  },
 ];
+
+// Overrides
+// //////////////////////////////
+const overrides: OverrideType[] = [{ label: "Title", name: "name" }];
 
 // Presets
 // //////////////////////////////
@@ -49,7 +49,6 @@ const presets: PresetType[] = [
     foreground: colors.mono.white,
     middleground: colors.light.indigo,
     background: colors.dark.indigo,
-    titleOverride: "",
   },
 ];
 
@@ -59,6 +58,7 @@ function Render({
   activity,
   activityData,
   variables,
+  overrides,
   size,
   format,
   units,
@@ -67,8 +67,8 @@ function Render({
     foreground = colors.mono.white,
     middleground = colors.light.indigo,
     background = colors.dark.indigo,
-    titleOverride = "",
   } = destructureVariables(variables);
+  const { name: nameOverride = "" } = destructureOverrides(overrides);
   const { width } = size;
   const { lnglat, altitude, time } = destructureActivityData(activityData);
   const {
@@ -81,8 +81,8 @@ function Render({
     year,
   } = destructureActivity(activity, units);
 
-  // Use override if provided, otherwise use original name
-  const name = titleOverride || originalName;
+  // Use override if provided, otherwise use original value
+  const name = nameOverride || originalName;
 
   const routeForeground = chroma(foreground).mix(middleground, 0.2).hex();
   const routeBackground = chroma(middleground).mix(background, 0.6).hex();
@@ -337,6 +337,7 @@ const MetaItem = ({
 const template = {
   name,
   variables,
+  overrides,
   presets,
   Render,
 };

@@ -13,7 +13,7 @@ import {
   destructureVariables,
 } from "@/functions/destructure";
 import { colors } from "@/styles/constants";
-import { PresetType, RenderType, VariableType } from "@/types";
+import { OverrideType, PresetType, RenderType, VariableType } from "@/types";
 
 // Name
 // //////////////////////////////
@@ -26,6 +26,10 @@ const variables: VariableType[] = [
   { label: "Accent", name: "accent", type: "color" },
   { label: "Contrast", name: "contrast", type: "color" },
 ];
+
+// Overrides
+// //////////////////////////////
+const overrides: OverrideType[] = [];
 
 // Presets
 // //////////////////////////////
@@ -176,6 +180,8 @@ function Render({
   activity,
   activityData,
   variables,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  overrides: _overrides,
   size,
   format,
   units,
@@ -273,6 +279,6 @@ function Render({
 
 // Export
 // //////////////////////////////
-const template = { name, variables, presets, Render };
+const template = { name, variables, overrides, presets, Render };
 
 export default template;

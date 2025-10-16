@@ -47,10 +47,17 @@ export type PresetType = {
   name: string;
 };
 
+export type OverrideType = {
+  label: string;
+  name: string;
+  value?: string;
+};
+
 export type RenderType = {
   activity: ActivityType;
   activityData: ActivityStreamsType;
   format: FormatType;
+  overrides: OverrideType[];
   size: SizeType;
   units: "metric" | "imperial";
   variables: VariableType[];
@@ -64,6 +71,7 @@ export type SizeType = {
 export type TemplateType = {
   Render: React.ElementType;
   name: string;
+  overrides: OverrideType[];
   presets: PresetType[];
   variables: VariableType[];
 };
@@ -72,7 +80,6 @@ export type VariableType = {
   label: string;
   name: string;
   options?: string[];
-  placeholder?: string;
-  type: "select" | "color" | "text";
+  type: "select" | "color";
   value?: string;
 };

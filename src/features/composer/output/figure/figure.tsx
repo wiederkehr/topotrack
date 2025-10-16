@@ -1,6 +1,7 @@
 import { useParentSize } from "@cutting/use-get-parent-size";
 import { forwardRef, Ref, RefObject } from "react";
 
+import { useTemplateStore } from "@/stores";
 import { useUnitStore } from "@/stores/useUnitStore";
 import type {
   ActivityStreamsType,
@@ -36,6 +37,7 @@ function Figure(
   };
   const { Render } = template;
   const units = useUnitStore((state) => state.units);
+  const overrides = useTemplateStore((state) => state.overrides);
 
   return (
     <div className={styles.figure} ref={ref}>
@@ -43,6 +45,7 @@ function Figure(
         activity={activity}
         activityData={activityData}
         variables={variables}
+        overrides={overrides}
         format={format}
         size={size}
         units={units}
