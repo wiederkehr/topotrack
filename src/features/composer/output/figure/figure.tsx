@@ -1,6 +1,7 @@
 import { useParentSize } from "@cutting/use-get-parent-size";
 import { forwardRef, Ref, RefObject } from "react";
 
+import { useUnitStore } from "@/stores/useUnitStore";
 import type {
   ActivityStreamsType,
   ActivityType,
@@ -34,6 +35,7 @@ function Figure(
     height: height || initialSize.height,
   };
   const { Render } = template;
+  const units = useUnitStore((state) => state.units);
 
   return (
     <div className={styles.figure} ref={ref}>
@@ -43,6 +45,7 @@ function Figure(
         variables={variables}
         format={format}
         size={size}
+        units={units}
       />
     </div>
   );

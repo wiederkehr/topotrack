@@ -55,6 +55,7 @@ function Render({
   variables,
   size,
   format,
+  units,
 }: RenderType) {
   const {
     foreground = colors.mono.white,
@@ -64,7 +65,7 @@ function Render({
   const { width } = size;
   const { lnglat, altitude, time } = destructureActivityData(activityData);
   const { name, distance, elevation, state, country, day, year } =
-    destructureActivity(activity);
+    destructureActivity(activity, units);
 
   const routeForeground = chroma(foreground).mix(middleground, 0.2).hex();
   const routeBackground = chroma(middleground).mix(background, 0.6).hex();

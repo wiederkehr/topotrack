@@ -52,6 +52,7 @@ export type RenderType = {
   activityData: ActivityStreamsType;
   format: FormatType;
   size: SizeType;
+  units: "metric" | "imperial";
   variables: VariableType[];
 };
 

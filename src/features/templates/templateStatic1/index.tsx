@@ -178,10 +178,11 @@ function Render({
   variables,
   size,
   format,
+  units,
 }: RenderType) {
   const { latlng, altitude } = destructureActivityData(activityData);
   const { name, type, distance, elevation, state, country, day, year } =
-    destructureActivity(activity);
+    destructureActivity(activity, units);
   const { background, accent, contrast } = destructureVariables(variables);
   const { width, height } = size;
   const factor = width / format.width;

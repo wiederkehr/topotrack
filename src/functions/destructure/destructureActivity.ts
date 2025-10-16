@@ -4,7 +4,7 @@ import {
   formatMonthDay,
   formatYear,
 } from "@/functions/format";
-import { useUnitStore } from "@/stores/useUnitStore";
+import type { UnitSystem } from "@/stores/useUnitStore";
 
 type Activity = {
   address?: {
@@ -29,8 +29,10 @@ type DestructuredActivity = {
   year: string;
 };
 
-function destructureActivity(activity: Activity): DestructuredActivity {
-  const units = useUnitStore.getState().units;
+function destructureActivity(
+  activity: Activity,
+  units: UnitSystem,
+): DestructuredActivity {
   const name = activity?.name || "No name";
   const type = activity?.type || "No type";
   const distance = activity?.distance
