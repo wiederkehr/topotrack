@@ -1,4 +1,10 @@
-import { formatMeters, formatMonthDay, formatYear } from "@/functions/format";
+import {
+  formatDistance,
+  formatElevation,
+  formatMonthDay,
+  formatYear,
+} from "@/functions/format";
+import type { UnitSystem } from "@/stores/useUnitStore";
 
 type Activity = {
   address?: {
@@ -23,14 +29,17 @@ type DestructuredActivity = {
   year: string;
 };
 
-function destructureActivity(activity: Activity): DestructuredActivity {
+function destructureActivity(
+  activity: Activity,
+  units: UnitSystem,
+): DestructuredActivity {
   const name = activity?.name || "No name";
   const type = activity?.type || "No type";
   const distance = activity?.distance
-    ? formatMeters(activity?.distance)
+    ? formatDistance(activity?.distance, units)
     : "No distance";
   const elevation = activity?.total_elevation_gain
-    ? formatMeters(activity?.total_elevation_gain)
+    ? formatElevation(activity?.total_elevation_gain, units)
     : "No elevation";
   const state = activity?.address?.state || "No state";
   const country = activity?.address?.country || "No country";

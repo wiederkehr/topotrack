@@ -71,10 +71,11 @@ function Render({
   variables,
   format,
   size,
+  units,
 }: RenderType) {
   const { latlng } = destructureActivityData(activityData);
   const { name, type, distance, elevation, state, country, day, year } =
-    destructureActivity(activity);
+    destructureActivity(activity, units);
   const { map, accent, contrast } = destructureVariables(variables);
   // const { map, accent, contrast } = variables as {
   //   accent: string;

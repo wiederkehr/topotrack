@@ -12,12 +12,14 @@ import {
   Separator,
   Text,
 } from "@radix-ui/themes";
+import { Ruler } from "lucide-react";
 import Form from "next/form";
 import type { User as UserType } from "next-auth";
 import { useTheme } from "next-themes";
 
 import { signOutAction } from "@/app/actions";
 import { formatInitials } from "@/functions/format";
+import { useUnitStore } from "@/stores/useUnitStore";
 
 import styles from "./user.module.css";
 
@@ -25,6 +27,7 @@ type UserProps = { user: UserType };
 
 function User({ user }: UserProps) {
   const { theme, setTheme } = useTheme();
+  const { units, setUnits } = useUnitStore();
   const handleSignOut = () => {
     void signOutAction();
   };
@@ -76,6 +79,31 @@ function User({ user }: UserProps) {
                 <Flex align={"center"} gap={"1"}>
                   <MoonIcon />
                   Dark
+                </Flex>
+              </SegmentedControl.Item>
+            </SegmentedControl.Root>
+          </Flex>
+          <Flex direction="column" gap="2">
+            <Heading as="h3" size="2">
+              Units
+            </Heading>
+            <SegmentedControl.Root
+              onValueChange={(value) =>
+                setUnits(value as "metric" | "imperial")
+              }
+              defaultValue={units}
+              className={styles.userSegmentedControl}
+            >
+              <SegmentedControl.Item value="metric">
+                <Flex align={"center"} gap={"1"}>
+                  <Ruler size={16} />
+                  Metric
+                </Flex>
+              </SegmentedControl.Item>
+              <SegmentedControl.Item value="imperial">
+                <Flex align={"center"} gap={"1"}>
+                  <Ruler size={16} />
+                  Imperial
                 </Flex>
               </SegmentedControl.Item>
             </SegmentedControl.Root>
