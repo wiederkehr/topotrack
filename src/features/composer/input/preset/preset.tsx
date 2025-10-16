@@ -1,5 +1,5 @@
 import { Module } from "@/components/interface/module";
-import { Select } from "@/components/interface/select";
+import { PresetSelect } from "@/components/interface/presetselect";
 import { PresetType } from "@/types";
 
 type PresetProps = {
@@ -11,10 +11,10 @@ type PresetProps = {
 export function Preset({ preset, presets, onPresetChange }: PresetProps) {
   return (
     <Module label="Preset">
-      <Select
+      <PresetSelect
         value={preset.name}
         onValueChange={onPresetChange}
-        options={presets.map(({ name }) => name)}
+        presets={presets}
       />
     </Module>
   );
