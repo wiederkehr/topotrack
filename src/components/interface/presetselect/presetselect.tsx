@@ -46,17 +46,15 @@ export function PresetSelect({
       .map(([, value]) => value);
   };
 
+  const selectedPreset = presets.find((p) => p.name === value);
+
   return (
     <Root value={value} onValueChange={onValueChange}>
       <Trigger className={styles.presetSelectTrigger}>
         <div className={styles.presetSelectValue}>
           <Value>{value}</Value>
-          {presets.find((p) => p.name === value) && (
-            <ColorGlyph
-              colors={getPresetColors(
-                presets.find((p) => p.name === value) as PresetType,
-              )}
-            />
+          {selectedPreset && (
+            <ColorGlyph colors={getPresetColors(selectedPreset)} />
           )}
         </div>
       </Trigger>
