@@ -2,7 +2,7 @@ import { RefObject } from "react";
 import { create } from "zustand";
 
 import { assets, formats } from "@/features/composer/composer.settings";
-import { toPng, toSvg } from "@/functions/export";
+import { type ExportFormat, exportNode } from "@/functions/export";
 import { formatFilename } from "@/functions/format";
 import type { AssetType, FormatType } from "@/types";
 
@@ -39,27 +39,20 @@ export const useExportStore = create<ExportState>((set, get) => ({
 
   handleExport: (activity) => {
     const { figureRef, format, asset } = get();
-    if (!figureRef?.current || !activity) return;
+    if (!figureRef?.current || !activity || !asset?.type) return;
 
     const name = formatFilename({
       date: activity.start_date_local,
       name: activity.name,
       format: format?.name || "Custom",
-      type: asset?.type || "png",
+      type: asset.type,
     });
 
-    switch (asset?.type) {
-      case "png":
-        void toPng({ node: figureRef.current, name, format });
-        break;
-      case "svg":
-        void toSvg({ node: figureRef.current, name, format });
-        break;
-      // case "webm":
-      //   void toWebM({ node: figureRef.current, name, format });
-      //   break;
-      default:
-        break;
-    }
+    void exportNode({
+      node: figureRef.current,
+      name,
+      format,
+      type: asset.type as ExportFormat,
+    });
   },
 }));

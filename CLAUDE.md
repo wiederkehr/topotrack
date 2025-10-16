@@ -47,7 +47,7 @@ TopoTrack is a Next.js application for visualizing Strava activities with custom
 
 #### `/src/functions/`
 
-- **`export/`**: Export functionality (`toPng`, `toSvg`, `toWebM`)
+- **`export/`**: Export functionality (unified `exportNode` API for PNG, SVG, WebM)
 - **`format/`**: Data formatting utilities (dates, distances, filenames)
 - **`destructure/`**: Data transformation utilities for activities
 
@@ -117,17 +117,31 @@ Key TypeScript types defined in `/src/types/`:
 
 ### Before Starting Implementation
 
-1. **Pick a GitHub Issue** - Choose from the project board
-2. **Move issue to "Doing" status** - Update the issue status on the project board to "Doing"
+1. **Pick a GitHub Issue** - Pick assigned issues from the "Todo" column on the project board
+2. **Move issue to "Doing" status** - Update the issue status on the project board to "Doing":
+
+   ```bash
+   # Get the project item ID for the issue
+   ITEM_ID=$(gh project item-list 1 --owner wiederkehr --limit 50 --format json | \
+     jq -r '.items[] | select(.content.number == ISSUE_NUMBER) | .id')
+
+   # Move to "Doing" status
+   gh project item-edit \
+     --id "$ITEM_ID" \
+     --project-id PVT_kwHNOyHOAFgQiA \
+     --field-id PVTSSF_lAHNOyHOAFgQiM4DhHth \
+     --single-select-option-id 47fc9ee4
+   ```
+
 3. **Create feature branch from main**:
    ```bash
    git checkout main
    git pull origin main
    git checkout -b feature/XX-brief-description
    ```
-4. **Read the issue** - Understand requirements and acceptance criteria
-5. **Plan the approach** - Identify files to modify, new files to create, and potential edge cases
-6. **Check related code** - Review existing patterns for similar functionality
+4. **Read the issue** - Understand requirements and acceptance criteria and ask any follow up questions
+5. **Plan the approach** - Identify files to modify, new files to create, and potential edge cases and explain the implementation approach
+6. **Check related code** - Review existing principles and code patterns for a consistent implementation
 
 ### Implementation Process
 
@@ -169,7 +183,20 @@ Key TypeScript types defined in `/src/types/`:
    gh pr create --base main --title "[Feature]: Title" --body "Brief summary\n\nCloses #XX" --reviewer wiederkehr
    ```
 
-3. **Move issue to "Review" status** - Update the issue status on the project board to "Review"
+3. **Move issue to "Review" status** - Update the issue status on the project board to "Review":
+
+   ```bash
+   # Get the project item ID (if not already set from step 2)
+   ITEM_ID=$(gh project item-list 1 --owner wiederkehr --limit 50 --format json | \
+     jq -r '.items[] | select(.content.number == ISSUE_NUMBER) | .id')
+
+   # Move to "Review" status
+   gh project item-edit \
+     --id "$ITEM_ID" \
+     --project-id PVT_kwHNOyHOAFgQiA \
+     --field-id PVTSSF_lAHNOyHOAFgQiM4DhHth \
+     --single-select-option-id 886aeac6
+   ```
 
 4. **Link PR to issue**: Include "Closes #XX" in PR description so merged PRs automatically close linked issues
 
@@ -179,16 +206,46 @@ Key TypeScript types defined in `/src/types/`:
    - Link to GitHub issue (Closes #XX)
    - Screenshots/videos for UI changes (if applicable)
 
-6. **After PR is approved and merged**:
+6. **Read PR review and implement requested changes**: Read the PR review from Github and identify any change requests that need implementation as part of this PR.
+
+7. **After PR is approved and merged**:
+
    - Merge the PR
    - Check off all completed markdown subtasks in the issue description
-   - Move issue to "Done" status on the project board
+   - Move issue to "Done" status on the project board:
+
+   ```bash
+   # Get the project item ID (if not already set)
+   ITEM_ID=$(gh project item-list 1 --owner wiederkehr --limit 50 --format json | \
+     jq -r '.items[] | select(.content.number == ISSUE_NUMBER) | .id')
+
+   # Move to "Done" status
+   gh project item-edit \
+     --id "$ITEM_ID" \
+     --project-id PVT_kwHNOyHOAFgQiA \
+     --field-id PVTSSF_lAHNOyHOAFgQiM4DhHth \
+     --single-select-option-id 98236657
+   ```
+
    - Clean up local branch:
+
    ```bash
    git checkout main
    git pull origin main
    git branch -d feature/XX-brief-description
    ```
+
+8. **Check out main branch**: Get ready for future development by checking out the main branch again and delete the local version of the previous feature branch.
+
+### Project Board Management
+
+For detailed documentation on managing the GitHub project board, including all project IDs, field IDs, and status option IDs, see [.github/project-commands.md](.github/project-commands.md).
+
+**Quick reference:**
+
+- Project Number: 1
+- Owner: wiederkehr
+- Status options: Backlog, Todo, Doing, Review, Done
 
 ## Code Patterns
 
@@ -380,9 +437,8 @@ Imports are auto-sorted by `eslint-plugin-simple-import-sort`:
 
 ### Branch Strategy
 
-- **main** - Production-ready code
-- **dev** - Development branch (current working branch)
-- **feature/** - Feature branches created from dev
+- **main** - Production-ready code (deployed to Vercel)
+- **feature/** - Feature branches created from main for each issue
 
 ### Commit Requirements
 
@@ -395,13 +451,13 @@ All commits must:
 
 ### Pull Request Workflow
 
-1. Create feature branch from `dev`
+1. Create feature branch from `main`
 2. Implement feature following this guide
 3. Ensure all quality checks pass
-4. Create PR with descriptive summary
+4. Create PR to `main` with descriptive summary
 5. Wait for review and Vercel staging deployment
 6. Address feedback if any
-7. Merge when approved
+7. Merge to `main` when approved
 
 ## Common Tasks
 
