@@ -21,20 +21,12 @@
   box-shadow: none;
 }
 
-.presetSelectTrigger[data-placeholder] {
-  color: #999;
-}
-
 .presetSelectValue {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2);
   flex: 1;
-}
-
-.presetSelectIcon {
-  color: #999;
 }
 
 .presetSelectContent {
@@ -93,7 +85,7 @@
   align-items: center;
   justify-content: center;
   height: 1.5rem;
-  background-color: white;
-  color: black;
+  background-color: var(--color-control-background);
+  color: var(--gray-12);
   cursor: default;
 }
