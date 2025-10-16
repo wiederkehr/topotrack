@@ -84,7 +84,7 @@ function Render({
   } = destructureVariables(variables);
   const { name: nameOverride = "" } = destructureOverrides(overrides);
   const { width } = size;
-  const { latlng, altitude, time } = destructureActivityData(activityData);
+  const { lnglat, altitude, time } = destructureActivityData(activityData);
   const {
     name: originalName,
     distance,
@@ -154,7 +154,7 @@ function Render({
       <Layer>
         <MapGLAnimated
           key={format.name}
-          data={latlng}
+          data={lnglat}
           style={mapStyle}
           accent={middleground}
           contrast={foreground}
