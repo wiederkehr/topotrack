@@ -1,5 +1,6 @@
-import { toPng } from "./toPng";
-import { toSvg } from "./toSvg";
-import { toWebM } from "./toWebM";
-
-export { toPng, toSvg, toWebM };
+// Unified export API
+export {
+  type ExportFormat,
+  exportNode,
+  type ExportOptions,
+} from "./exportNode";
