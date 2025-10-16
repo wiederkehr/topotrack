@@ -32,12 +32,11 @@ function MapGLAnimated({
 }: MapGLAnimatedProps) {
   // Data
   // //////////////////////////////
-  const latlng = data;
-  const lnglat = latlng.map((d) => [d[1], d[0]] as [number, number]);
-  // Features
+  const routeData = data;
+  const positionData = routeData[0];
+  // State
   // //////////////////////////////
-  const routeData = lnglat;
-  const [positionData, setPositionData] = useState<[number, number]>(
+  const [currentPosition, setCurrentPosition] = useState<[number, number]>(
     routeData[0] || [0, 0],
   );
   const [progressData, setProgressData] = useState<[number, number][]>([
@@ -99,7 +98,7 @@ function MapGLAnimated({
       bearing: afterFlyInPosition.bearing,
       pitch: afterFlyInPosition.pitch,
       onUpdate: (pointData) => {
-        setPositionData([pointData.lng, pointData.lat]);
+        setCurrentPosition([pointData.lng, pointData.lat]);
         setProgressData((prev) => [...prev, [pointData.lng, pointData.lat]]);
       },
     });
@@ -154,7 +153,7 @@ function MapGLAnimated({
       >
         <Route data={routeData} lineColor={contrast ?? "#FFF"} lineWidth={2} />
         <Route data={progressData} lineColor={accent ?? "#FFF"} lineWidth={2} />
-        <Position data={positionData} color={accent} />
+        <Position data={currentPosition} color={accent} />
       </MapGL>
     </div>
   );
