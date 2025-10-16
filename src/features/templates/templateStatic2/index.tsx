@@ -38,7 +38,6 @@ const variables: VariableType[] = [
     label: "Title Override",
     name: "titleOverride",
     type: "text",
-    placeholder: "Leave empty to use activity name",
   },
 ];
 

@@ -75,7 +75,11 @@ function Input({ activitiesError, activitiesLoading, onLoadMore }: InputProps) {
             presets={presets}
             onPresetChange={setPreset}
           />
-          <Controls variables={variables} onVariableChange={setVariable} />
+          <Controls
+            variables={variables}
+            onVariableChange={setVariable}
+            activity={activity}
+          />
         </Tab>
         <Tab name="Export">
           <Format

@@ -3,14 +3,15 @@ import Label from "@/components/interface/label";
 import { Module, Submodule } from "@/components/interface/module";
 import Select from "@/components/interface/select";
 import Text from "@/components/interface/text";
-import { VariableType } from "@/types";
+import { ActivityType, VariableType } from "@/types";
 
 type ControlsProps = {
+  activity: ActivityType | undefined;
   onVariableChange: (variable: { name: string; value: string }) => void;
   variables: VariableType[];
 };
 
-function Controls({ variables, onVariableChange }: ControlsProps) {
+function Controls({ variables, onVariableChange, activity }: ControlsProps) {
   return (
     <Module label="Variables">
       {variables.map((variable, index) => {
@@ -38,13 +39,18 @@ function Controls({ variables, onVariableChange }: ControlsProps) {
             );
             break;
           case "text":
+            // For titleOverride, use the activity name as placeholder
+            const placeholder =
+              variable.name === "titleOverride" && activity
+                ? activity.name
+                : variable.placeholder;
             control = (
               <Text
                 value={variable.value ?? ""}
                 onValueChange={(value) => {
                   onVariableChange({ name: variable.name, value: value });
                 }}
-                placeholder={variable.placeholder}
+                placeholder={placeholder}
               />
             );
             break;
