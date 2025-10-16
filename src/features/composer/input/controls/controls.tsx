@@ -2,6 +2,7 @@ import Color from "@/components/interface/color";
 import Label from "@/components/interface/label";
 import { Module, Submodule } from "@/components/interface/module";
 import Select from "@/components/interface/select";
+import Text from "@/components/interface/text";
 import { VariableType } from "@/types";
 
 type ControlsProps = {
@@ -33,6 +34,17 @@ function Controls({ variables, onVariableChange }: ControlsProps) {
                 onValueChange={(value) => {
                   onVariableChange({ name: variable.name, value: value });
                 }}
+              />
+            );
+            break;
+          case "text":
+            control = (
+              <Text
+                value={variable.value ?? ""}
+                onValueChange={(value) => {
+                  onVariableChange({ name: variable.name, value: value });
+                }}
+                placeholder={variable.placeholder}
               />
             );
             break;

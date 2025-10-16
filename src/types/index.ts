@@ -72,6 +72,7 @@ export type VariableType = {
   label: string;
   name: string;
   options?: string[];
-  type: "select" | "color";
+  placeholder?: string;
+  type: "select" | "color" | "text";
   value?: string;
 };
