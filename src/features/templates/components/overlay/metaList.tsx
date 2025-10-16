@@ -29,8 +29,8 @@ export function MetaList({ color, items }: MetaListProps) {
         className={styles.metaList}
         style={{ color: color }}
       >
-        {items.map((item, i) => (
-          <MetaItem key={i} icon={item.icon}>
+        {items.map((item) => (
+          <MetaItem key={item.value} icon={item.icon}>
             {item.value}
           </MetaItem>
         ))}

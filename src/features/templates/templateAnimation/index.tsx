@@ -54,13 +54,13 @@ const lightPresets = generateColorPresets({
   foreground: "mono",
   middleground: "light",
   background: "dark",
-}).map((preset) => ({ ...preset, map: mapOptions[0] }));
+}).map((preset) => ({ ...preset, map: "Light" as string }));
 
 const darkPresets = generateColorPresets({
   foreground: "mono",
   middleground: "light",
   background: "dark",
-}).map((preset) => ({ ...preset, map: mapOptions[1] }));
+}).map((preset) => ({ ...preset, map: "Dark" as string }));
 
 // Use first 12 light and first 12 dark to create 24 total presets
 const presets = [...lightPresets.slice(0, 12), ...darkPresets.slice(0, 12)];
@@ -84,7 +84,7 @@ function Render({
   } = destructureVariables(variables);
   const { name: nameOverride = "" } = destructureOverrides(overrides);
   const { width } = size;
-  const { lnglat, altitude, time } = destructureActivityData(activityData);
+  const { latlng, altitude, time } = destructureActivityData(activityData);
   const {
     name: originalName,
     distance,
@@ -154,7 +154,7 @@ function Render({
       <Layer>
         <MapGLAnimated
           key={format.name}
-          data={lnglat}
+          data={latlng}
           style={mapStyle}
           accent={middleground}
           contrast={foreground}
@@ -195,12 +195,14 @@ function Render({
           />
         </InfoBlock>
         <InfoBlock position="bottom" padding={padding}>
-          <Profile
-            color={middleground}
-            width={profileWidth}
-            height={profileHeight}
-            data={altitude}
-          />
+          <Box mb="-14px">
+            <Profile
+              color={middleground}
+              width={profileWidth}
+              height={profileHeight}
+              data={altitude}
+            />
+          </Box>
           <MetaList
             color={middleground}
             items={[

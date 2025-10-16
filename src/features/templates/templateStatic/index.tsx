@@ -192,12 +192,14 @@ function Render({
           />
         </InfoBlock>
         <InfoBlock position="bottom" padding={padding}>
-          <Profile
-            color={middleground}
-            width={profileWidth}
-            height={profileHeight}
-            data={altitude}
-          />
+          <Box mb="-14px">
+            <Profile
+              color={middleground}
+              width={profileWidth}
+              height={profileHeight}
+              data={altitude}
+            />
+          </Box>
           <MetaList
             color={middleground}
             items={[
