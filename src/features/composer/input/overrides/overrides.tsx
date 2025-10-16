@@ -16,14 +16,15 @@ function Overrides({ overrides, onOverrideChange, activity }: OverridesProps) {
 
   return (
     <Module label="Content">
-      {overrides.map((override, index) => {
+      {overrides.map((override) => {
         // Use the activity's property as placeholder
-        const placeholder = activity[override.name as keyof ActivityType] as
-          | string
-          | undefined;
+        // Only use string values as placeholders to avoid stringification issues
+        const activityValue = activity[override.name as keyof ActivityType];
+        const placeholder =
+          typeof activityValue === "string" ? activityValue : undefined;
 
         return (
-          <Submodule key={index}>
+          <Submodule key={override.name}>
             <Label>{override.label}</Label>
             <Text
               value={override.value ?? ""}
