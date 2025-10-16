@@ -1,0 +1,22 @@
+.colorGlyph {
+  display: flex;
+  border-radius: var(--radius-1);
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid var(--gray-6);
+}
+
+.colorGlyph.small {
+  width: 24px;
+  height: 16px;
+}
+
+.colorGlyph.medium {
+  width: 32px;
+  height: 20px;
+}
+
+.colorBar {
+  height: 100%;
+  flex-shrink: 0;
+}
