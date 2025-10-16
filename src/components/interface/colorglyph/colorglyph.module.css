@@ -3,7 +3,7 @@
   border-radius: var(--radius-1);
   overflow: hidden;
   flex-shrink: 0;
-  border: 1px solid var(--gray-6);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
 }
 
 .colorGlyph.small {

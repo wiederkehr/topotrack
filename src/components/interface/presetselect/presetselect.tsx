@@ -5,7 +5,6 @@ import {
 } from "@radix-ui/react-icons";
 import {
   Content,
-  Icon,
   Item,
   ItemIndicator,
   ItemText,
@@ -60,9 +59,6 @@ export function PresetSelect({
             />
           )}
         </div>
-        <Icon className={styles.presetSelectIcon}>
-          <ChevronDownIcon />
-        </Icon>
       </Trigger>
       <Content className={styles.presetSelectContent}>
         <ScrollUpButton className={styles.presetSelectScrollButton}>
