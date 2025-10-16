@@ -9,6 +9,7 @@ import Controls from "./controls";
 import Export from "./export";
 import Format from "./format";
 import styles from "./input.module.css";
+import Overrides from "./overrides";
 import Preset from "./preset";
 import Search from "./search";
 import { Tab, Tabs } from "./tabs";
@@ -33,9 +34,11 @@ function Input({ activitiesError, activitiesLoading, onLoadMore }: InputProps) {
     presets,
     preset,
     variables,
+    overrides,
     setTemplate,
     setPreset,
     setVariable,
+    setOverride,
   } = useTemplateStore();
   const { format, asset, setFormat, setAsset, handleExport } = useExportStore();
 
@@ -76,6 +79,11 @@ function Input({ activitiesError, activitiesLoading, onLoadMore }: InputProps) {
             onPresetChange={setPreset}
           />
           <Controls variables={variables} onVariableChange={setVariable} />
+          <Overrides
+            overrides={overrides}
+            onOverrideChange={setOverride}
+            activity={activity}
+          />
         </Tab>
         <Tab name="Export">
           <Format

@@ -16,10 +16,11 @@ import { SVGContainer, SVGProfile } from "@/features/templates/components/svg";
 import {
   destructureActivity,
   destructureActivityData,
+  destructureOverrides,
   destructureVariables,
 } from "@/functions/destructure";
 import { colors } from "@/styles/constants";
-import { PresetType, RenderType, VariableType } from "@/types";
+import { OverrideType, PresetType, RenderType, VariableType } from "@/types";
 
 import { Layer } from "../components/layer";
 import styles from "./template.module.css";
@@ -35,6 +36,10 @@ const variables: VariableType[] = [
   { label: "Middleground", name: "middleground", type: "color" },
   { label: "Background", name: "background", type: "color" },
 ];
+
+// Overrides
+// //////////////////////////////
+const overrides: OverrideType[] = [{ label: "Title", name: "name" }];
 
 // Presets
 // //////////////////////////////
@@ -53,6 +58,7 @@ function Render({
   activity,
   activityData,
   variables,
+  overrides,
   size,
   format,
   units,
@@ -62,10 +68,21 @@ function Render({
     middleground = colors.light.indigo,
     background = colors.dark.indigo,
   } = destructureVariables(variables);
+  const { name: nameOverride = "" } = destructureOverrides(overrides);
   const { width } = size;
   const { lnglat, altitude, time } = destructureActivityData(activityData);
-  const { name, distance, elevation, state, country, day, year } =
-    destructureActivity(activity, units);
+  const {
+    name: originalName,
+    distance,
+    elevation,
+    state,
+    country,
+    day,
+    year,
+  } = destructureActivity(activity, units);
+
+  // Use override if provided, otherwise use original value
+  const name = nameOverride || originalName;
 
   const routeForeground = chroma(foreground).mix(middleground, 0.2).hex();
   const routeBackground = chroma(middleground).mix(background, 0.6).hex();
@@ -320,6 +337,7 @@ const MetaItem = ({
 const template = {
   name,
   variables,
+  overrides,
   presets,
   Render,
 };

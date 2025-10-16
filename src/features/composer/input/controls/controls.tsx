@@ -36,7 +36,6 @@ function Controls({ variables, onVariableChange }: ControlsProps) {
               />
             );
             break;
-
           default:
             break;
         }

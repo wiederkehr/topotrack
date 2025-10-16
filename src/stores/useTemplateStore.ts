@@ -2,12 +2,19 @@ import { create } from "zustand";
 
 import { defaultPreset } from "@/features/composer/composer.settings";
 import templates from "@/features/templates";
-import type { PresetType, TemplateType, VariableType } from "@/types";
+import type {
+  OverrideType,
+  PresetType,
+  TemplateType,
+  VariableType,
+} from "@/types";
 
 interface TemplateState {
   initializeTemplate: () => void;
+  overrides: OverrideType[];
   preset: PresetType;
   presets: PresetType[];
+  setOverride: (override: { name: string; value: string }) => void;
   setPreset: (value: string) => void;
 
   // Actions
@@ -28,6 +35,13 @@ const getVariables = (
   }));
 };
 
+const getOverrides = (template: TemplateType): OverrideType[] => {
+  return template.overrides.map((override) => ({
+    ...override,
+    value: "",
+  }));
+};
+
 export const useTemplateStore = create<TemplateState>((set, get) => ({
   // Initial state
   template: templates[0]!,
@@ -37,6 +51,7 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
     templates[0]!,
     templates[0]!.presets[0] || defaultPreset,
   ),
+  overrides: getOverrides(templates[0]!),
 
   // Actions
   setTemplate: (value) => {
@@ -45,12 +60,14 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
       const presets = template.presets;
       const preset = template.presets[0] || defaultPreset;
       const variables = getVariables(template, preset);
+      const overrides = getOverrides(template);
 
       set({
         template,
         presets,
         preset,
         variables,
+        overrides,
       });
     }
   },
@@ -60,6 +77,7 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
     const preset = presets.find((preset) => preset.name === value);
     if (preset) {
       const variables = getVariables(template, preset);
+      // Don't reset overrides when changing presets - preserve user input
       set({ preset, variables });
     }
   },
@@ -88,17 +106,30 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
     });
   },
 
+  setOverride: (newOverride) => {
+    const { overrides } = get();
+    const newOverrides = overrides.map((oldOverride) =>
+      oldOverride.name === newOverride.name
+        ? { ...oldOverride, value: newOverride.value }
+        : oldOverride,
+    );
+
+    set({ overrides: newOverrides });
+  },
+
   initializeTemplate: () => {
     const template = templates[0]!;
     const presets = template.presets;
     const preset = presets[0] || defaultPreset;
     const variables = getVariables(template, preset);
+    const overrides = getOverrides(template);
 
     set({
       template,
       presets,
       preset,
       variables,
+      overrides,
     });
   },
 }));
