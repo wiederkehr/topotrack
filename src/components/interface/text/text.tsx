@@ -7,7 +7,7 @@ type TextProps = {
   value: string;
 };
 
-function Text({ value, onValueChange, placeholder }: TextProps) {
+export function Text({ value, onValueChange, placeholder }: TextProps) {
   return (
     <TextField.Root
       size="2"
@@ -19,5 +19,3 @@ function Text({ value, onValueChange, placeholder }: TextProps) {
     />
   );
 }
-
-export default Text;

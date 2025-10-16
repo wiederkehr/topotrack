@@ -1,2 +1,2 @@
-import Figure from "./figure";
-export default Figure;
+export type { FigureProps } from "./figure";
+export { Figure } from "./figure";

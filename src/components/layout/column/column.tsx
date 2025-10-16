@@ -5,12 +5,10 @@ type ColumnProps = {
   children: ReactNode;
 };
 
-function Column({ children }: ColumnProps) {
+export function Column({ children }: ColumnProps) {
   return (
     <Flex direction="column" minHeight="100vh">
       {children}
     </Flex>
   );
 }
-
-export default Column;

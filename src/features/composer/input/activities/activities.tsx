@@ -3,12 +3,12 @@ import { Button, Flex, Skeleton, Spinner } from "@radix-ui/themes";
 import { AxiosError } from "axios";
 import { useEffect, useRef } from "react";
 
-import Callout from "@/components/interface/callout";
+import { Callout } from "@/components/interface/callout";
 import { Module } from "@/components/interface/module";
 import { formatDate } from "@/functions/format";
 import type { ActivityType } from "@/types";
 
-import Activity from "./activity";
+import { Activity } from "./activity";
 
 type ActivitiesProps = {
   activities: ActivityType[];
@@ -20,7 +20,7 @@ type ActivitiesProps = {
   selectedActivity: ActivityType | undefined;
 };
 
-function Activities({
+export function Activities({
   activities,
   activitiesError,
   activitiesLoading,
@@ -88,5 +88,3 @@ function Activities({
     </Module>
   );
 }
-
-export default Activities;

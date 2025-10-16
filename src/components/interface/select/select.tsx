@@ -25,7 +25,7 @@ type SelectProps = {
   value: string;
 };
 
-function Select({ value, onValueChange, options }: SelectProps) {
+export function Select({ value, onValueChange, options }: SelectProps) {
   return (
     <Root value={value} onValueChange={onValueChange}>
       <Trigger className={styles.selectTrigger}>
@@ -55,5 +55,3 @@ function Select({ value, onValueChange, options }: SelectProps) {
     </Root>
   );
 }
-
-export default Select;

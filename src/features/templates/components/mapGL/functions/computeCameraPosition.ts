@@ -56,4 +56,4 @@ function computeCameraPosition({
   return newCameraPosition;
 }
 
-export default computeCameraPosition;
+export { computeCameraPosition };

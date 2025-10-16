@@ -4,8 +4,8 @@ import { AxiosError } from "axios";
 import { useExportStore, useTemplateStore } from "@/stores";
 import { ActivityStreamsType, ActivityType } from "@/types";
 
-import Canvas from "./canvas";
-import Figure from "./figure";
+import { Canvas } from "./canvas";
+import { Figure } from "./figure";
 import styles from "./output.module.css";
 
 type OutputProps = {
@@ -16,7 +16,7 @@ type OutputProps = {
   figureRef: React.Ref<HTMLDivElement>;
 };
 
-function Output({ activity, activityData, figureRef }: OutputProps) {
+export function Output({ activity, activityData, figureRef }: OutputProps) {
   const { format } = useExportStore();
   const { template, variables } = useTemplateStore();
 
@@ -52,6 +52,4 @@ function Output({ activity, activityData, figureRef }: OutputProps) {
     </div>
   );
 }
-
-export default Output;
 export type { OutputProps };

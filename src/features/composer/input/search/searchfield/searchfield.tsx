@@ -8,7 +8,7 @@ type SearchfieldProps = {
   searchTerm: string;
 };
 
-function Searchfield({ searchTerm, onSearchChange }: SearchfieldProps) {
+export function Searchfield({ searchTerm, onSearchChange }: SearchfieldProps) {
   return (
     <div className={styles.searchfield}>
       <TextField.Root
@@ -25,6 +25,4 @@ function Searchfield({ searchTerm, onSearchChange }: SearchfieldProps) {
     </div>
   );
 }
-
-export default Searchfield;
 export type { SearchfieldProps };

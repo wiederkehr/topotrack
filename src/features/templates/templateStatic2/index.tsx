@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 
 import { MapGLStatic } from "@/features/templates/components/mapGL";
-import Route from "@/features/templates/components/mapGL/route";
+import { Route } from "@/features/templates/components/mapGL/route";
 import { mapStyle } from "@/features/templates/components/mapGL/styles/contours";
 import { SVGContainer, SVGProfile } from "@/features/templates/components/svg";
 import {

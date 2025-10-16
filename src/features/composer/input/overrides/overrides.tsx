@@ -1,6 +1,6 @@
-import Label from "@/components/interface/label";
+import { Label } from "@/components/interface/label";
 import { Module, Submodule } from "@/components/interface/module";
-import Text from "@/components/interface/text";
+import { Text } from "@/components/interface/text";
 import { ActivityType, OverrideType } from "@/types";
 
 type OverridesProps = {
@@ -9,7 +9,11 @@ type OverridesProps = {
   overrides: OverrideType[];
 };
 
-function Overrides({ overrides, onOverrideChange, activity }: OverridesProps) {
+export function Overrides({
+  overrides,
+  onOverrideChange,
+  activity,
+}: OverridesProps) {
   if (!activity || overrides.length === 0) {
     return null;
   }
@@ -39,5 +43,3 @@ function Overrides({ overrides, onOverrideChange, activity }: OverridesProps) {
     </Module>
   );
 }
-
-export default Overrides;

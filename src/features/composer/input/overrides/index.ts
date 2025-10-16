@@ -1,1 +1,1 @@
-export { default } from "./overrides";
+export { Overrides } from "./overrides";

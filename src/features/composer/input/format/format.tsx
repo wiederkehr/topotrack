@@ -1,7 +1,7 @@
 import { Module, Submodule } from "@/components/interface/module";
-import Select from "@/components/interface/select";
+import { Select } from "@/components/interface/select";
 
-import Dimensionfields from "./dimensionfields";
+import { Dimensionfields } from "./dimensionfields";
 
 type FormatProps = {
   format: { height: number; name: string; width: number };
@@ -9,7 +9,7 @@ type FormatProps = {
   onFormatChange: (value: string) => void;
 };
 
-function Format({ format, formats, onFormatChange }: FormatProps) {
+export function Format({ format, formats, onFormatChange }: FormatProps) {
   return (
     <Module label="Format">
       <Submodule>
@@ -25,5 +25,3 @@ function Format({ format, formats, onFormatChange }: FormatProps) {
     </Module>
   );
 }
-
-export default Format;

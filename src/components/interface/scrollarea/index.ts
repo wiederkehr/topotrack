@@ -1,2 +1,1 @@
-import Scrollarea from "./scrollarea";
-export default Scrollarea;
+export { Scrollarea } from "./scrollarea";

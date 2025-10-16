@@ -6,7 +6,7 @@ import { signInAction } from "@/app/actions";
 
 import styles from "./signin.module.css";
 
-function SignIn() {
+export function SignIn() {
   const handleSignIn = () => {
     void signInAction();
   };
@@ -24,5 +24,3 @@ function SignIn() {
     </Form>
   );
 }
-
-export default SignIn;

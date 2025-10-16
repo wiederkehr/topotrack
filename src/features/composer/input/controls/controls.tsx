@@ -1,7 +1,7 @@
-import Color from "@/components/interface/color";
-import Label from "@/components/interface/label";
+import { Color } from "@/components/interface/color";
+import { Label } from "@/components/interface/label";
 import { Module, Submodule } from "@/components/interface/module";
-import Select from "@/components/interface/select";
+import { Select } from "@/components/interface/select";
 import { VariableType } from "@/types";
 
 type ControlsProps = {
@@ -9,7 +9,7 @@ type ControlsProps = {
   variables: VariableType[];
 };
 
-function Controls({ variables, onVariableChange }: ControlsProps) {
+export function Controls({ variables, onVariableChange }: ControlsProps) {
   return (
     <Module label="Variables">
       {variables.map((variable, index) => {
@@ -49,5 +49,3 @@ function Controls({ variables, onVariableChange }: ControlsProps) {
     </Module>
   );
 }
-
-export default Controls;

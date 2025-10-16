@@ -1,2 +1,1 @@
-import Preset from "./preset";
-export default Preset;
+export { Preset } from "./preset";

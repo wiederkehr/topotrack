@@ -10,7 +10,7 @@ type ColorProps = {
   value: string;
 };
 
-function Color({ value, onValueChange }: ColorProps) {
+export function Color({ value, onValueChange }: ColorProps) {
   const presetColors = [
     ...Object.values(colors.dark),
     ...Object.values(colors.light),
@@ -47,5 +47,3 @@ function Color({ value, onValueChange }: ColorProps) {
     </Popover.Root>
   );
 }
-
-export default Color;

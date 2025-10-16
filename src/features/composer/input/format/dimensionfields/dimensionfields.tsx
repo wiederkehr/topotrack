@@ -5,7 +5,7 @@ type DimensionfieldsProps = {
   width: number;
 };
 
-function Dimensionfields({ width, height }: DimensionfieldsProps) {
+export function Dimensionfields({ width, height }: DimensionfieldsProps) {
   return (
     <div className={styles.dimensionfields}>
       <div className={styles.dimensionfield}>
@@ -19,6 +19,4 @@ function Dimensionfields({ width, height }: DimensionfieldsProps) {
     </div>
   );
 }
-
-export default Dimensionfields;
 export type { DimensionfieldsProps };

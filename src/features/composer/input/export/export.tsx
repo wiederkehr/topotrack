@@ -1,6 +1,6 @@
-import Button from "@/components/interface/button";
+import { Button } from "@/components/interface/button";
 import { Module, Submodule } from "@/components/interface/module";
-import Select from "@/components/interface/select";
+import { Select } from "@/components/interface/select";
 import { AssetType } from "@/types";
 
 type ExportProps = {
@@ -10,7 +10,12 @@ type ExportProps = {
   onAssetExport: () => void;
 };
 
-function Export({ asset, assets, onAssetChange, onAssetExport }: ExportProps) {
+export function Export({
+  asset,
+  assets,
+  onAssetChange,
+  onAssetExport,
+}: ExportProps) {
   return (
     <Module label="Export">
       <Submodule>
@@ -26,5 +31,3 @@ function Export({ asset, assets, onAssetChange, onAssetExport }: ExportProps) {
     </Module>
   );
 }
-
-export default Export;

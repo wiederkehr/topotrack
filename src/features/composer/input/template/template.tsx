@@ -1,5 +1,5 @@
 import { Module } from "@/components/interface/module";
-import Select from "@/components/interface/select";
+import { Select } from "@/components/interface/select";
 
 type TemplateProps = {
   onTemplateChange: (value: string) => void;
@@ -11,7 +11,11 @@ type TemplateProps = {
   }[];
 };
 
-function Template({ template, templates, onTemplateChange }: TemplateProps) {
+export function Template({
+  template,
+  templates,
+  onTemplateChange,
+}: TemplateProps) {
   return (
     <Module label="Template">
       <Select
@@ -22,6 +26,4 @@ function Template({ template, templates, onTemplateChange }: TemplateProps) {
     </Module>
   );
 }
-
-export default Template;
 export type { TemplateProps };

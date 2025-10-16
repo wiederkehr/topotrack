@@ -1,18 +1,18 @@
 import { Flex } from "@radix-ui/themes";
 import type { User as UserType } from "next-auth";
 
-import Row from "@/components/layout/row";
+import { Row } from "@/components/layout/row";
 
 import styles from "./header.module.css";
-import Logo from "./logo";
-import SignIn from "./signin";
-import User from "./user";
+import { Logo } from "./logo";
+import { SignIn } from "./signin";
+import { User } from "./user";
 
 type HeaderProps = {
   user: UserType | null;
 };
 
-function Header({ user }: HeaderProps) {
+export function Header({ user }: HeaderProps) {
   return (
     <header className={styles.header}>
       <Row>
@@ -24,5 +24,3 @@ function Header({ user }: HeaderProps) {
     </header>
   );
 }
-
-export default Header;

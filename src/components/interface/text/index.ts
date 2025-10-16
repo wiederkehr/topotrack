@@ -1,1 +1,1 @@
-export { default } from "./text";
+export { Text } from "./text";

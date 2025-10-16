@@ -1,2 +1,1 @@
-import PoweredBy from "./poweredBy";
-export default PoweredBy;
+export { PoweredBy } from "./poweredBy";

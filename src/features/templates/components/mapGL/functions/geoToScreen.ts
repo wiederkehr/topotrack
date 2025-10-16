@@ -22,4 +22,4 @@ function geoToScreen({
   );
 }
 
-export default geoToScreen;
+export { geoToScreen };

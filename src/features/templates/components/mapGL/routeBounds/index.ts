@@ -1,2 +1,1 @@
-import { RouteBounds } from "./routeBounds";
-export default RouteBounds;
+export { RouteBounds } from "./routeBounds";

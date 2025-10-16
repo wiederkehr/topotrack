@@ -25,7 +25,7 @@ import styles from "./user.module.css";
 
 type UserProps = { user: UserType };
 
-function User({ user }: UserProps) {
+export function User({ user }: UserProps) {
   const { theme, setTheme } = useTheme();
   const { units, setUnits } = useUnitStore();
   const handleSignOut = () => {
@@ -119,5 +119,3 @@ function User({ user }: UserProps) {
     </Popover.Root>
   );
 }
-
-export default User;

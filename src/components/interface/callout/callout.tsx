@@ -7,7 +7,7 @@ type CalloutProps = {
   m?: string;
 };
 
-function Callout({ children, m }: CalloutProps) {
+export function Callout({ children, m }: CalloutProps) {
   return (
     <RxCallout.Root m={m}>
       <RxCallout.Icon>
@@ -17,5 +17,3 @@ function Callout({ children, m }: CalloutProps) {
     </RxCallout.Root>
   );
 }
-
-export default Callout;

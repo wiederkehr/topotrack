@@ -1,2 +1,1 @@
-import { Position } from "./position";
-export default Position;
+export { Position } from "./position";
