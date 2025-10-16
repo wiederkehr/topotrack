@@ -1,2 +1,1 @@
-import Dimensionfields from "./dimensionfields";
-export default Dimensionfields;
+export { Dimensionfields } from "./dimensionfields";

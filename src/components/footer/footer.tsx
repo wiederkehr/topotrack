@@ -1,12 +1,12 @@
 import { Flex } from "@radix-ui/themes";
 
-import Row from "@/components/layout/row";
+import { Row } from "@/components/layout/row";
 
-import CopyrightBy from "./copyrightBy";
+import { CopyrightBy } from "./copyrightBy";
 import styles from "./footer.module.css";
-import PoweredBy from "./poweredBy";
+import { PoweredBy } from "./poweredBy";
 
-function Footer() {
+export function Footer() {
   return (
     <footer className={styles.footer}>
       <Row>
@@ -23,5 +23,3 @@ function Footer() {
     </footer>
   );
 }
-
-export default Footer;

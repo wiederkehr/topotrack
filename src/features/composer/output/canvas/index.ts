@@ -1,2 +1,1 @@
-import Canvas from "./canvas";
-export default Canvas;
+export { Canvas } from "./canvas";

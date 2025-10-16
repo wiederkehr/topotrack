@@ -1,7 +1,7 @@
 import { easeCubicOut } from "d3";
 import { Map } from "mapbox-gl";
 
-import computeCameraPosition from "./computeCameraPosition";
+import { computeCameraPosition } from "./computeCameraPosition";
 import type { PositionType } from "./types";
 
 type FlyToPointProps = {
@@ -83,4 +83,4 @@ function flyToPoint({
   });
 }
 
-export default flyToPoint;
+export { flyToPoint };

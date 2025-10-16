@@ -7,7 +7,7 @@ type TabsProps = {
   names: string[];
 };
 
-function Tabs({ names, children }: TabsProps) {
+export function Tabs({ names, children }: TabsProps) {
   return (
     <Root className={styles.tabsRoot} defaultValue={names[0]}>
       <List className={styles.tabsList}>
@@ -21,6 +21,4 @@ function Tabs({ names, children }: TabsProps) {
     </Root>
   );
 }
-
-export default Tabs;
 export type { TabsProps };

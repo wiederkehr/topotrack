@@ -5,12 +5,10 @@ type RowProps = {
   children: ReactNode;
 };
 
-function Row({ children }: RowProps) {
+export function Row({ children }: RowProps) {
   return (
     <Box mx="auto" px="5">
       {children}
     </Box>
   );
 }
-
-export default Row;

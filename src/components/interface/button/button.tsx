@@ -8,12 +8,10 @@ type ButtonProps = {
   onClick: MouseEventHandler<HTMLButtonElement>;
 };
 
-function Button({ children, onClick }: ButtonProps) {
+export function Button({ children, onClick }: ButtonProps) {
   return (
     <RxButton size="3" className={styles.button} onClick={onClick}>
       {children}
     </RxButton>
   );
 }
-
-export default Button;

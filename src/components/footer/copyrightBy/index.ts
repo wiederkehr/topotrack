@@ -1,2 +1,1 @@
-import CopyrightBy from "./copyrightBy";
-export default CopyrightBy;
+export { CopyrightBy } from "./copyrightBy";

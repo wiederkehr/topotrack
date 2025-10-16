@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 import { defaultPreset } from "@/features/composer/composer.settings";
-import templates from "@/features/templates";
+import { templates } from "@/features/templates";
 import type {
   OverrideType,
   PresetType,

@@ -9,7 +9,7 @@ type ActivityProps = {
   onClick: () => void;
 };
 
-function Activity({ name, date, active, onClick }: ActivityProps) {
+export function Activity({ name, date, active, onClick }: ActivityProps) {
   return (
     <Card asChild className={active ? styles.activityActive : undefined}>
       <button onClick={onClick}>
@@ -19,5 +19,3 @@ function Activity({ name, date, active, onClick }: ActivityProps) {
     </Card>
   );
 }
-
-export default Activity;

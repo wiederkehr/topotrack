@@ -8,15 +8,15 @@ import { useStravaActivity } from "@/hooks/useStravaActivity";
 import { useActivityStore, useExportStore } from "@/stores";
 
 import styles from "./composer.module.css";
-import Error from "./error";
-import Input from "./input";
-import Output from "./output";
+import { Error } from "./error";
+import { Input } from "./input";
+import { Output } from "./output";
 
 type ComposerProps = {
   token: string;
 };
 
-function Composer({ token }: ComposerProps) {
+export function Composer({ token }: ComposerProps) {
   const {
     activity,
     visibleActivities,
@@ -104,5 +104,3 @@ function Composer({ token }: ComposerProps) {
     </div>
   );
 }
-
-export default Composer;

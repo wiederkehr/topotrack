@@ -7,11 +7,11 @@ import MapGL, { MapRef } from "react-map-gl";
 
 import type { FormatType } from "@/types";
 
-import flyToPoint from "./functions/flyToPoint";
-import followPath from "./functions/followPath";
+import { flyToPoint } from "./functions/flyToPoint";
+import { followPath } from "./functions/followPath";
 import styles from "./map.module.css";
-import Position from "./position";
-import Route from "./route";
+import { Position } from "./position";
+import { Route } from "./route";
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 

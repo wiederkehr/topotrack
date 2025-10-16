@@ -1,7 +1,7 @@
 import { along, length } from "@turf/turf";
 import type { Map } from "mapbox-gl";
 
-import computeCameraPosition from "./computeCameraPosition";
+import { computeCameraPosition } from "./computeCameraPosition";
 import type { PositionType } from "./types";
 
 type FollowPathProps = {
@@ -79,4 +79,4 @@ function followPath({
   });
 }
 
-export default followPath;
+export { followPath };

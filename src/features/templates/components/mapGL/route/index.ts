@@ -1,2 +1,1 @@
-import { Route } from "./route";
-export default Route;
+export { Route } from "./route";

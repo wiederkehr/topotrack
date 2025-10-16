@@ -22,7 +22,7 @@ type FigureProps = {
   variables: VariableType[];
 };
 
-function Figure(
+function FigureComponent(
   { activity, activityData, format, template, variables }: FigureProps,
   ref: Ref<HTMLDivElement>,
 ) {
@@ -54,7 +54,5 @@ function Figure(
   );
 }
 
-const ForwardedFigure = forwardRef(Figure);
-
-export default ForwardedFigure;
+export const Figure = forwardRef(FigureComponent);
 export type { FigureProps };

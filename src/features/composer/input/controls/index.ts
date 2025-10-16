@@ -1,2 +1,1 @@
-import Controls from "./controls";
-export default Controls;
+export { Controls } from "./controls";

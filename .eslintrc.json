@@ -25,11 +25,28 @@
       "rules": {
         "jsonc/sort-keys": "error"
       }
+    },
+    {
+      "files": [
+        "src/app/**/page.tsx",
+        "src/app/**/layout.tsx",
+        "src/app/**/error.tsx",
+        "src/app/**/loading.tsx",
+        "src/app/**/not-found.tsx",
+        "src/app/**/template.tsx",
+        "src/features/templates/**/index.tsx",
+        "next.config.js",
+        "*.config.{js,ts}"
+      ],
+      "rules": {
+        "import/no-default-export": "off"
+      }
     }
   ],
   "parser": "@typescript-eslint/parser",
   "plugins": [
     "@typescript-eslint",
+    "import",
     "react",
     "react-hooks",
     "simple-import-sort",
@@ -37,6 +54,8 @@
   ],
   "root": true,
   "rules": {
+    "import/no-default-export": "error",
+    "import/prefer-default-export": "off",
     "simple-import-sort/exports": "error",
     "simple-import-sort/imports": "error"
   },

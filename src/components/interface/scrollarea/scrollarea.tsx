@@ -13,7 +13,7 @@ type ScrollareaProps = {
   children: ReactNode;
 };
 
-function Scrollarea({ children }: ScrollareaProps) {
+export function Scrollarea({ children }: ScrollareaProps) {
   return (
     <div className={styles.scrollArea}>
       <Root className={styles.scrollAreaRoot}>
@@ -35,5 +35,3 @@ function Scrollarea({ children }: ScrollareaProps) {
     </div>
   );
 }
-
-export default Scrollarea;

@@ -3,7 +3,7 @@ import "@/styles/index.css";
 import { clsx } from "clsx";
 import type { Metadata } from "next";
 
-import Providers from "@/app/providers";
+import { Providers } from "@/app/providers";
 import { condensed, sans } from "@/fonts";
 
 export const metadata: Metadata = {

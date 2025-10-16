@@ -1,6 +1,4 @@
-import computeCameraPosition from "./computeCameraPosition";
-import flyToPoint from "./flyToPoint";
-import followPath from "./followPath";
-import geoToScreen from "./geoToScreen";
-
-export { computeCameraPosition, flyToPoint, followPath, geoToScreen };
+export { computeCameraPosition } from "./computeCameraPosition";
+export { flyToPoint } from "./flyToPoint";
+export { followPath } from "./followPath";
+export { geoToScreen } from "./geoToScreen";

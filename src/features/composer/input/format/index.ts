@@ -1,2 +1,1 @@
-import Format from "./format";
-export default Format;
+export { Format } from "./format";

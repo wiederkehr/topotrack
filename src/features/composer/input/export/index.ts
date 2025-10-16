@@ -1,2 +1,1 @@
-import Export from "./export";
-export default Export;
+export { Export } from "./export";

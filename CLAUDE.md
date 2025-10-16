@@ -272,10 +272,22 @@ For detailed documentation on managing the GitHub project board, including all p
 
 ### Component Patterns
 
+**File Structure:**
+
+All components follow this standardized structure:
+
+```
+componentName/
+  ├── componentName.tsx          # Component implementation
+  ├── index.ts                   # Barrel file (re-exports)
+  ├── componentName.module.css   # Component styles
+  └── componentName.test.tsx     # Component tests
+```
+
 **React Components:**
 
 ```typescript
-// Prefer named exports
+// componentName.tsx - ALWAYS use named exports
 export function ComponentName({ prop1, prop2 }: ComponentProps) {
   // Implementation
 }
@@ -287,10 +299,40 @@ interface ComponentProps {
 }
 ```
 
+**Barrel Files (index.ts):**
+
+```typescript
+// index.ts - Re-export using named exports
+export { ComponentName } from "./componentName";
+
+// For multiple exports
+export { Module, Submodule } from "./module";
+```
+
+**Import Pattern:**
+
+```typescript
+// CORRECT - Named imports
+import { Button } from "@/components/interface/button";
+import { Module, Submodule } from "@/components/interface/module";
+
+// INCORRECT - Default imports (do not use)
+// import Button from '@/components/interface/button';  ❌
+```
+
+**Export Guidelines:**
+
+- ✅ **ALWAYS use named exports** for components
+- ✅ Named exports improve IDE support (autocomplete, refactoring)
+- ✅ Named exports enforce consistent naming
+- ✅ Named exports enable better tree-shaking
+- ❌ **NEVER use default exports** for components (enforced by ESLint)
+- ℹ️ Exception: Next.js App Router files (page.tsx, layout.tsx) require default exports
+
 **Styling:**
 
 - Use CSS Modules (`.module.css`)
-- Import styles: `import styles from './Component.module.css'`
+- Import styles: `import styles from './componentName.module.css'`
 - Use classnames library for conditional classes
 - **Use CSS variables for colors** (not absolute values) to support light/dark mode
 - Check existing CSS for color variable patterns

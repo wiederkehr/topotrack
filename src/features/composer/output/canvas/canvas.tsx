@@ -9,7 +9,7 @@ type CanvasProps = {
   format: FormatType;
 };
 
-function Canvas({ format, children }: CanvasProps) {
+export function Canvas({ format, children }: CanvasProps) {
   return (
     <div className={styles.canvas}>
       <AspectRatio
@@ -21,6 +21,4 @@ function Canvas({ format, children }: CanvasProps) {
     </div>
   );
 }
-
-export default Canvas;
 export type { CanvasProps };

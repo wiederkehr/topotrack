@@ -5,12 +5,10 @@ type CellProps = {
   children: ReactNode;
 };
 
-function Cell({ children }: CellProps) {
+export function Cell({ children }: CellProps) {
   return (
     <Flex direction="column" minHeight={{ initial: "100vh" }}>
       {children}
     </Flex>
   );
 }
-
-export default Cell;

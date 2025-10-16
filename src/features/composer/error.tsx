@@ -1,8 +1,8 @@
 import { Flex } from "@radix-ui/themes";
 
-import Callout from "@/components/interface/callout";
+import { Callout } from "@/components/interface/callout";
 
-function Error() {
+export function Error() {
   return (
     <Flex m="5" direction="column">
       <Callout>
@@ -11,5 +11,3 @@ function Error() {
     </Flex>
   );
 }
-
-export default Error;
