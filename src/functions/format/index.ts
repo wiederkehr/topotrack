@@ -5,6 +5,7 @@ import { formatElevation } from "./formatElevation";
 import { formatFilename } from "./formatFilename";
 import { formatInitials } from "./formatInitials";
 import { formatMeters } from "./formatMeters";
+import { formatTime } from "./formatTime";
 import { formatYear } from "./formatYear";
 
 export {
@@ -15,5 +16,6 @@ export {
   formatInitials,
   formatMeters,
   formatMonthDay,
+  formatTime,
   formatYear,
 };
