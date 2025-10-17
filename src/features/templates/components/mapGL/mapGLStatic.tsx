@@ -35,18 +35,18 @@ function MapGLStatic({ data, mapStyle, padding, children }: MapGLStaticProps) {
   const paddingRight = padding?.right ?? 0;
   // Map
   // //////////////////////////////
-  const startBearing = 0;
-  const startPitch = 0;
+  const bearing = 0;
+  const pitch = 0;
   const mapRef = useRef<MapRef>(null);
   const mapConfig = {
     longitude: positionData ? positionData[0] : 0,
     latitude: positionData ? positionData[1] : 0,
-    bearing: startBearing,
-    pitch: startPitch,
+    bearing: bearing,
+    pitch: pitch,
     zoom: 12,
   };
 
-  // Fit route to bounds
+  // Fit Bounds
   // //////////////////////////////
   const fitRouteToBounds = useCallback(() => {
     if (!mapRef.current) return;
@@ -62,11 +62,10 @@ function MapGLStatic({ data, mapStyle, padding, children }: MapGLStaticProps) {
       routeBboxArray[2],
       routeBboxArray[3],
     ];
-
     map.fitBounds(routeBbox, {
       duration: 300,
-      bearing: startBearing,
-      pitch: startPitch,
+      bearing: bearing,
+      pitch: pitch,
       padding: {
         top: paddingTop,
         bottom: paddingBottom,
@@ -76,8 +75,8 @@ function MapGLStatic({ data, mapStyle, padding, children }: MapGLStaticProps) {
     });
   }, [
     routeData,
-    startBearing,
-    startPitch,
+    bearing,
+    pitch,
     paddingTop,
     paddingBottom,
     paddingLeft,

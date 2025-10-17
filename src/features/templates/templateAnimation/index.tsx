@@ -1,17 +1,16 @@
 import { Layer } from "@/features/templates/components/layer";
 import { MapGLAnimated } from "@/features/templates/components/mapGL";
-import { TypeGrid } from "@/features/templates/components/type";
 import {
-  destructureActivity,
   destructureActivityData,
   destructureVariables,
 } from "@/functions/destructure";
+import { generateColorPresets } from "@/functions/presets";
 import { colors } from "@/styles/constants";
-import { PresetType, RenderType, VariableType } from "@/types";
+import { OverrideType, RenderType, VariableType } from "@/types";
 
 // Name
 // //////////////////////////////
-const name = "Animation";
+const name = "Animation 2.0";
 
 // Variables
 // //////////////////////////////
@@ -28,105 +27,68 @@ const variables: VariableType[] = [
     options: mapOptions,
     type: "select",
   },
-  {
-    label: "Accent",
-    name: "accent",
-    type: "color",
-  },
-  {
-    label: "Contrast",
-    name: "contrast",
-    type: "color",
-  },
+  { label: "Foreground", name: "foreground", type: "color" },
+  { label: "Middleground", name: "middleground", type: "color" },
+  { label: "Background", name: "background", type: "color" },
 ];
+
+// Overrides
+// //////////////////////////////
+const overrides: OverrideType[] = [{ label: "Title", name: "name" }];
 
 // Presets
 // //////////////////////////////
-const presets: PresetType[] = [
-  {
-    name: "Indigo",
-    map: mapOptions[0] as string,
-    accent: colors.light.indigo,
-    contrast: colors.contrast.light,
-  },
-  {
-    name: "Ruby",
-    map: mapOptions[1] as string,
-    accent: colors.light.ruby,
-    contrast: colors.contrast.dark,
-  },
-  {
-    name: "Teal",
-    map: mapOptions[1] as string,
-    accent: colors.light.teal,
-    contrast: colors.contrast.dark,
-  },
-];
+const presets = generateColorPresets({
+  foreground: "mono",
+  middleground: "light",
+  background: "dark",
+}).map((preset) => ({ ...preset, map: "Dark" as string }));
 
 // Render
 // //////////////////////////////
-function Render({
-  activity,
-  activityData,
-  variables,
-  format,
-  size,
-  units,
-}: RenderType) {
-  const { latlng } = destructureActivityData(activityData);
-  const { name, type, distance, elevation, state, country, day, year } =
-    destructureActivity(activity, units);
-  const { map, accent, contrast } = destructureVariables(variables);
-  // const { map, accent, contrast } = variables as {
-  //   accent: string;
-  //   contrast: string;
-  //   map: keyof typeof mapsStyles;
-  // };
-  const { width } = size;
-  const factor = width / format.width;
-  const defaultPadding = 40;
-  const defaultFontSize = 40;
-  const storyVerticalPadding = 250;
+function Render({ activityData, variables, format }: RenderType) {
+  const {
+    foreground = colors.mono.white,
+    middleground = colors.light.indigo,
+    map = mapOptions[0],
+  } = destructureVariables(variables);
+  const { lnglat } = destructureActivityData(activityData);
+
+  const formatPadding: Record<string, { bottom: number; top: number }> = {
+    Square: { top: 50, bottom: 50 },
+    Portrait: { top: 50, bottom: 50 },
+    Story: { top: 50, bottom: 50 },
+    Landscape: { top: 50, bottom: 50 },
+  };
   const padding = {
-    top:
-      format.name === "Story"
-        ? storyVerticalPadding * factor
-        : defaultPadding * factor,
-    bottom:
-      format.name === "Story"
-        ? storyVerticalPadding * factor
-        : defaultPadding * factor,
-    left: defaultPadding * factor,
-    right: defaultPadding * factor,
+    top: 0,
+    bottom: 0,
+    left: 50,
+    right: 50,
+    ...formatPadding[format.name],
+  };
+  const headerHeight = 56;
+  const headerToRouteGap = 20;
+  const footerToRouteGap = 20;
+  const footerHeight = 148;
+  const routePadding = {
+    top: padding.top + headerHeight + headerToRouteGap,
+    bottom: padding.bottom + footerHeight + footerToRouteGap,
+    left: 50,
+    right: 50,
   };
   const mapStyle = mapsStyles[map as keyof typeof mapsStyles];
+
   return (
     <>
       <Layer>
         <MapGLAnimated
-          data={latlng}
+          key={format.name}
+          data={lnglat}
+          padding={routePadding}
           style={mapStyle}
-          accent={accent ?? "#FFF"}
-          contrast={contrast ?? "#FFF"}
-          format={format}
-        />
-      </Layer>
-      <Layer>
-        <TypeGrid
-          name={name}
-          type={type}
-          day={day}
-          year={year}
-          distance={distance}
-          elevation={elevation}
-          state={state}
-          country={country}
-          accent={accent ?? "#FFF"}
-          contrast={contrast ?? "#FFF"}
-          width={width}
-          padding={padding}
-          factor={factor}
-          fontSize={defaultFontSize * factor}
+          routeColor={middleground}
+          progressColor={foreground}
         />
       </Layer>
     </>
@@ -138,6 +100,7 @@ function Render({
 const template = {
   name,
   variables,
+  overrides,
   presets,
   Render,
 };

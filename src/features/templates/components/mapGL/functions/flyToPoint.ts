@@ -1,21 +1,52 @@
 import { easeCubicOut } from "d3";
-import { Map } from "mapbox-gl";
+import { Map, MercatorCoordinate } from "mapbox-gl";
 
 import { computeCameraPosition } from "./computeCameraPosition";
-import type { PositionType } from "./types";
+import type { CameraPositionType, PositionType } from "./types";
 
 type FlyToPointProps = {
+  /** Animation duration in milliseconds */
   duration: number;
+  /** Mapbox GL map instance */
   map: Map;
+  /** Starting altitude in meters */
   startAltitude: number;
+  /** Starting bearing in degrees (0 = north) */
   startBearing: number;
+  /** Starting pitch in degrees (0 = looking straight down) */
   startPitch: number;
+  /** Ending altitude in meters */
   stopAltitude: number;
+  /** Ending bearing in degrees (0 = north) */
   stopBearing: number;
+  /** Ending pitch in degrees (0 = looking straight down) */
   stopPitch: number;
+  /** Geographic position to fly to */
   targetPosition: PositionType;
 };
 
+/**
+ * Animates the camera flying to a target position with smooth easing.
+ * Uses Mapbox's FreeCameraOptions API for proper 3D camera positioning.
+ *
+ * @param props - Animation parameters
+ * @returns Promise that resolves with final camera position when animation completes
+ *
+ * @example
+ * ```ts
+ * await flyToPoint({
+ *   map: mapRef.current.getMap(),
+ *   targetPosition: { lng: -122.4194, lat: 37.7749 },
+ *   duration: 2000,
+ *   startAltitude: 10000,
+ *   stopAltitude: 5000,
+ *   startBearing: 0,
+ *   stopBearing: 0,
+ *   startPitch: 0,
+ *   stopPitch: 60,
+ * });
+ * ```
+ */
 function flyToPoint({
   map,
   targetPosition,
@@ -26,11 +57,7 @@ function flyToPoint({
   stopBearing,
   startPitch,
   stopPitch,
-}: FlyToPointProps): Promise<{
-  altitude: number;
-  bearing: number;
-  pitch: number;
-}> {
+}: FlyToPointProps): Promise<CameraPositionType> {
   return new Promise((resolve) => {
     let startTime: number | undefined;
     let currentAltitude: number;
@@ -40,6 +67,7 @@ function flyToPoint({
     function frame(currentTime: number) {
       // Set start time
       if (!startTime) startTime = currentTime;
+
       // Calculate progress
       const progress = (currentTime - startTime) / duration;
       const easedProgress = easeCubicOut(Math.min(progress, 1));
@@ -51,21 +79,30 @@ function flyToPoint({
         startBearing + (stopBearing - startBearing) * easedProgress;
       currentPitch = startPitch + (stopPitch - startPitch) * easedProgress;
 
-      // Compute new camera position
-      const cameraPosition = computeCameraPosition({
+      // Compute camera position to keep target centered in view
+      // When pitch = 0, camera is directly above the target
+      // When pitch > 0, camera is positioned behind the target looking forward at it
+      const cameraGroundPosition = computeCameraPosition({
         targetPosition,
         altitude: currentAltitude,
         bearing: currentBearing,
         pitch: currentPitch,
       });
 
-      // Set camera position
-      map.setCenter([cameraPosition.lng, cameraPosition.lat]);
-      map.setBearing(currentBearing);
-      map.setPitch(currentPitch);
-      map.setZoom(
-        map.getZoom() + (stopAltitude - startAltitude) * easedProgress,
+      // Use FreeCameraOptions API for proper 3D positioning
+      const camera = map.getFreeCameraOptions();
+
+      // Position camera at the computed position (behind target when pitch > 0)
+      camera.position = MercatorCoordinate.fromLngLat(
+        [cameraGroundPosition.lng, cameraGroundPosition.lat],
+        currentAltitude,
       );
+
+      // Set pitch and bearing to look at the target
+      camera.setPitchBearing(currentPitch, currentBearing);
+
+      // Apply camera changes
+      map.setFreeCameraOptions(camera);
 
       // Continue animation or resolve promise
       if (progress < 1) {
