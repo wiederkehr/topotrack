@@ -2,11 +2,11 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import { bbox, lineString } from "@turf/turf";
 import { LngLatBoundsLike } from "mapbox-gl";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import MapGL, { MapRef } from "react-map-gl";
 
-import type { FormatType } from "@/types";
-
+import { altitudeToZoom } from "./functions/altitudeToZoom";
+import { resetCameraPositionState } from "./functions/computeCameraPosition";
 import { flyToPoint } from "./functions/flyToPoint";
 import { followPath } from "./functions/followPath";
 import styles from "./map.module.css";
@@ -16,70 +16,96 @@ import { Route } from "./route";
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 type MapGLAnimatedProps = {
-  accent: string;
-  contrast: string;
   data: [number, number][];
-  format: FormatType;
+  padding?: {
+    bottom: number;
+    left: number;
+    right: number;
+    top: number;
+  };
+  progressColor: string;
+  routeColor: string;
   style: string;
 };
 
 function MapGLAnimated({
   data,
+  padding,
   style,
-  accent,
-  contrast,
-  format,
+  progressColor,
+  routeColor,
 }: MapGLAnimatedProps) {
   // Data
   // //////////////////////////////
   const routeData = data;
-  const positionData = routeData[0];
+  const startPosition = useMemo<[number, number]>(
+    () => routeData[0] || ([0, 0] as [number, number]),
+    [routeData],
+  );
+
+  // Layout
+  // //////////////////////////////
+  const paddingTop = padding?.top ?? 0;
+  const paddingBottom = padding?.bottom ?? 0;
+  const paddingLeft = padding?.left ?? 0;
+  const paddingRight = padding?.right ?? 0;
+
   // State
   // //////////////////////////////
-  const [currentPosition, setCurrentPosition] = useState<[number, number]>(
-    routeData[0] || [0, 0],
-  );
-  const [progressData, setProgressData] = useState<[number, number][]>([
-    routeData[0] || [0, 0],
-    routeData[0] || [0, 0],
+  const [currentPosition, setCurrentPosition] = useState<[number, number]>([
+    0, 0,
   ]);
-  // Map
+  const [progressData, setProgressData] = useState<[number, number][]>([]);
+
+  // Animation parameters
   // //////////////////////////////
-  const startAltitude = 100000;
-  const stopAltitude = 5000;
-  const startBearing = -60;
+  const startAltitude = 10000;
+  const stopAltitude = 4000;
+  const startBearing = 0;
   const stopBearing = 0;
   const startPitch = 0;
-  const stopPitch = 50;
+  const stopPitch = 60;
+
+  // Calculate initial zoom from startAltitude to avoid flicker
+  const startZoom = useMemo(
+    () => altitudeToZoom(startAltitude, startPosition[1]),
+    [startAltitude, startPosition],
+  );
+
+  // Map
+  // //////////////////////////////
   const mapRef = useRef<MapRef>(null);
   const mapConfig = {
-    longitude: positionData ? positionData[0] : 0,
-    latitude: positionData ? positionData[1] : 0,
+    longitude: startPosition[0],
+    latitude: startPosition[1],
     bearing: startBearing,
     pitch: startPitch,
-    zoom: 10,
+    zoom: startZoom,
   };
-  // Animation
-  // //////////////////////////////
-  // Maximum animation duration optimized for Instagram (10 seconds default)
-  // Instagram recommends videos between 5-15 seconds for optimal engagement
-  const MAX_ANIMATION_DURATION = 10000;
-  const durationFly = 5000;
-  const durationFollow = MAX_ANIMATION_DURATION;
 
-  // Fly To Point
+  // Animate Route
   // //////////////////////////////
-  const onMapLoad = useCallback(async () => {
+  const animateRoute = useCallback(async () => {
     if (!mapRef.current) return;
+    const map = mapRef.current.getMap();
 
-    const startPosition = routeData[0] || [0, 0];
+    // Reset camera position state for smooth new animation sequence
+    resetCameraPositionState();
+
+    // Initialize progress tracking with 2 points (minimum for lineString)
+    setCurrentPosition(startPosition);
+    setProgressData([startPosition, startPosition]);
+
+    // Phase 1: Fly to start point
+    // //////////////////////////////
+    const flyToPointDuration = 2000;
     const afterFlyInPosition = await flyToPoint({
-      map: mapRef.current.getMap(),
+      map: map,
       targetPosition: {
         lng: startPosition[0],
         lat: startPosition[1],
       },
-      duration: durationFly,
+      duration: flyToPointDuration,
       startAltitude: startAltitude,
       stopAltitude: stopAltitude,
       startBearing: startBearing,
@@ -88,23 +114,26 @@ function MapGLAnimated({
       stopPitch: stopPitch,
     });
 
-    // Follow Path
+    // Phase 2: Follow the path
     // //////////////////////////////
+    const followPathDuration = 6000;
     await followPath({
-      map: mapRef.current.getMap(),
-      duration: durationFollow,
+      map: map,
+      duration: followPathDuration,
       path: lineString(routeData),
       altitude: afterFlyInPosition.altitude,
-      bearing: afterFlyInPosition.bearing,
       pitch: afterFlyInPosition.pitch,
+      lookAheadDistance: 0.5,
+      bearingDamping: 0.95,
       onUpdate: (pointData) => {
         setCurrentPosition([pointData.lng, pointData.lat]);
         setProgressData((prev) => [...prev, [pointData.lng, pointData.lat]]);
       },
     });
 
-    // Fit Bounds
+    // Phase 3: Zoom out to show entire route
     // //////////////////////////////
+    const fitBoundsDuration = 2000;
     const routeLineString = lineString(routeData);
     const routeBboxArray = bbox(routeLineString);
     const routeBbox: LngLatBoundsLike = [
@@ -113,47 +142,58 @@ function MapGLAnimated({
       routeBboxArray[2],
       routeBboxArray[3],
     ];
-    mapRef.current.getMap().fitBounds(routeBbox, {
-      duration: 3000,
-      bearing: startBearing,
-      pitch: startPitch,
-      padding: 32,
+    map.fitBounds(routeBbox, {
+      duration: fitBoundsDuration,
+      bearing: 0,
+      pitch: 0,
+      padding: {
+        top: paddingTop,
+        bottom: paddingBottom,
+        left: paddingLeft,
+        right: paddingRight,
+      },
     });
   }, [
     routeData,
-    durationFly,
-    durationFollow,
+    startPosition,
+    startBearing,
+    startPitch,
     startAltitude,
     stopAltitude,
-    startBearing,
     stopBearing,
-    startPitch,
     stopPitch,
+    paddingTop,
+    paddingBottom,
+    paddingLeft,
+    paddingRight,
   ]);
-
-  // Update on Format Change
-  // //////////////////////////////
-  useEffect(() => {
-    if (mapRef.current) {
-      // Add any necessary logic here if needed
-    }
-  }, [format]);
 
   return (
     <div className={styles.map}>
       <MapGL
         ref={mapRef}
-        onLoad={() => {
-          void onMapLoad();
-        }}
+        onLoad={() => void animateRoute()}
         mapStyle={style}
         mapboxAccessToken={MAPBOX_TOKEN}
         initialViewState={mapConfig}
         attributionControl={false}
+        interactive={false}
       >
-        <Route data={routeData} lineColor={contrast ?? "#FFF"} lineWidth={2} />
-        <Route data={progressData} lineColor={accent ?? "#FFF"} lineWidth={2} />
-        <Position data={currentPosition} color={accent} />
+        <Route
+          data={routeData}
+          lineColor={routeColor ?? "#FFF"}
+          lineWidth={2}
+        />
+        {progressData.length >= 2 && (
+          <>
+            <Route
+              data={progressData}
+              lineColor={progressColor ?? "#FFF"}
+              lineWidth={2}
+            />
+            <Position data={currentPosition} color={progressColor} />
+          </>
+        )}
       </MapGL>
     </div>
   );
