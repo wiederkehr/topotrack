@@ -35,13 +35,13 @@ function FigureComponent(
     width: width || initialSize.width,
     height: height || initialSize.height,
   };
-  const { Render } = template;
+  const { Visual } = template;
   const units = useUnitStore((state) => state.units);
   const overrides = useTemplateStore((state) => state.overrides);
 
   return (
     <div className={styles.figure} ref={ref}>
-      <Render
+      <Visual
         activity={activity}
         activityData={activityData}
         variables={variables}

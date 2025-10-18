@@ -53,13 +53,15 @@ export type OverrideType = {
   value?: string;
 };
 
-export type RenderType = {
+export type UnitType = "metric" | "imperial";
+
+export type VisualType = {
   activity: ActivityType;
   activityData: ActivityStreamsType;
   format: FormatType;
   overrides: OverrideType[];
   size: SizeType;
-  units: "metric" | "imperial";
+  units: UnitType;
   variables: VariableType[];
 };
 
@@ -69,7 +71,7 @@ export type SizeType = {
 };
 
 export type TemplateType = {
-  Render: React.ElementType;
+  Visual: React.ElementType;
   name: string;
   overrides: OverrideType[];
   presets: PresetType[];

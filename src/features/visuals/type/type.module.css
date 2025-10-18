@@ -5,7 +5,7 @@
   text-transform: uppercase;
 }
 
-.typeGrid>div {
+.typeGrid > div {
   position: absolute;
   justify-content: space-between;
   left: 40px;
