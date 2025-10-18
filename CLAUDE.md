@@ -206,36 +206,17 @@ Key TypeScript types defined in `/src/types/`:
    - Link to GitHub issue (Closes #XX)
    - Screenshots/videos for UI changes (if applicable)
 
-6. **Read PR review and implement requested changes**: Read the PR review from Github and identify any change requests that need implementation as part of this PR.
+6. **After PR is approved and merged**:
+   Get ready for future development by checking out the main branch again and delete the local version of the previous feature branch.
 
-7. **After PR is approved and merged**:
-
-   - Merge the PR
-   - Check off all completed markdown subtasks in the issue description
-   - Move issue to "Done" status on the project board:
-
-   ```bash
-   # Get the project item ID (if not already set)
-   ITEM_ID=$(gh project item-list 1 --owner wiederkehr --limit 50 --format json | \
-     jq -r '.items[] | select(.content.number == ISSUE_NUMBER) | .id')
-
-   # Move to "Done" status
-   gh project item-edit \
-     --id "$ITEM_ID" \
-     --project-id PVT_kwHNOyHOAFgQiA \
-     --field-id PVTSSF_lAHNOyHOAFgQiM4DhHth \
-     --single-select-option-id 98236657
-   ```
-
-   - Clean up local branch:
+   - Clean up local branch
+   - Check out main branch
 
    ```bash
    git checkout main
    git pull origin main
    git branch -d feature/XX-brief-description
    ```
-
-8. **Check out main branch**: Get ready for future development by checking out the main branch again and delete the local version of the previous feature branch.
 
 ### Project Board Management
 
