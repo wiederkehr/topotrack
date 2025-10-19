@@ -169,7 +169,7 @@ function MapGLAnimated({
   ]);
 
   return (
-    <div className={styles.map}>
+    <div className={styles.mapContainer}>
       <MapGL
         ref={mapRef}
         onLoad={() => void animateRoute()}

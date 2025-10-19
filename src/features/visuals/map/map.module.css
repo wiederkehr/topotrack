@@ -1,10 +1,10 @@
-.map {
+.mapContainer {
   height: 100%;
   width: 100%;
   overflow: hidden;
   position: relative;
 }
 
-.map :global(.mapboxgl-ctrl-logo) {
+.mapContainer :global(.mapboxgl-ctrl-logo) {
   display: none !important;
 }

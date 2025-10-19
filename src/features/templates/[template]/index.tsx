@@ -4,19 +4,17 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 
-import { PresetType, RenderType, VariableType } from "@/types";
+import { OverrideType, PresetType, VariableType } from "@/types";
 
-// Types
-// //////////////////////////////
-type VariablesType = {};
-
-type RenderProps = RenderType & {
-  variables: VariablesType;
-};
+import { Visual } from "./visual";
 
 // Name
 // //////////////////////////////
 const name = "";
+
+// Overrides
+// //////////////////////////////
+const overrides: OverrideType[] = [];
 
 // Variables
 // //////////////////////////////
@@ -26,25 +24,12 @@ const variables: VariableType[] = [];
 // //////////////////////////////
 const presets: PresetType[] = [];
 
-// Render
-// //////////////////////////////
-const Render = ({
-  activity,
-  activityData,
-  variables,
-  format,
-  size,
-}: RenderProps) => {
-  return null;
-};
-
 // Export
 // //////////////////////////////
-const template = {
+export const templateName = {
   name,
+  overrides,
   variables,
   presets,
-  Render,
+  Visual,
 };
-
-export default template;

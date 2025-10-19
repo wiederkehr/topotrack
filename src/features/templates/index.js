@@ -1,4 +1,4 @@
-import templateAnimation from "./templateAnimation";
-import templateStatic from "./templateStatic";
+import { templateAnimation } from "./templateAnimation";
+import { templateStatic } from "./templateStatic";
 
-export const templates = [templateAnimation, templateStatic];
+export const templates = [templateStatic, templateAnimation];

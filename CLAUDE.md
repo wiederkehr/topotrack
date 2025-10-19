@@ -43,7 +43,6 @@ TopoTrack is a Next.js application for visualizing Strava activities with custom
 - `useStravaActivities.ts`: Fetch paginated Strava activities with SWR
 - `useStravaActivity.ts`: Fetch detailed activity data (streams)
 - `useGetAddress.ts`: Reverse geocoding for activity locations
-- `useGetElevation.ts`: Elevation data fetching
 
 #### `/src/functions/`
 
