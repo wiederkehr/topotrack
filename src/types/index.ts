@@ -79,6 +79,7 @@ export type SizeType = {
 
 export type TemplateType = {
   Visual: React.ElementType;
+  isAnimated?: boolean;
   name: string;
   overrides: OverrideType[];
   presets: PresetType[];

@@ -42,4 +42,5 @@ export const templateAnimation = {
   overrides,
   presets,
   Visual,
+  isAnimated: true,
 };

@@ -2,8 +2,10 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import { bbox, lineString } from "@turf/turf";
 import { LngLatBoundsLike } from "mapbox-gl";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import MapGL, { MapRef } from "react-map-gl";
+
+import { useTemplateStore } from "@/stores";
 
 import { altitudeToZoom } from "./functions/altitudeToZoom";
 import { resetCameraPositionState } from "./functions/computeCameraPosition";
@@ -82,6 +84,10 @@ function MapGLAnimated({
     pitch: startPitch,
     zoom: startZoom,
   };
+
+  // Replay trigger
+  // //////////////////////////////
+  const replayTrigger = useTemplateStore((state) => state.replayTrigger);
 
   // Animate Route
   // //////////////////////////////
@@ -167,6 +173,14 @@ function MapGLAnimated({
     paddingLeft,
     paddingRight,
   ]);
+
+  // Watch for replay trigger changes
+  // //////////////////////////////
+  useEffect(() => {
+    if (replayTrigger > 0) {
+      void animateRoute();
+    }
+  }, [replayTrigger, animateRoute]);
 
   return (
     <div className={styles.mapContainer}>

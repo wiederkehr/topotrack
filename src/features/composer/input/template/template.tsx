@@ -1,9 +1,14 @@
-import { Module } from "@/components/interface/module";
+import { Button } from "@radix-ui/themes";
+import { RotateCw } from "lucide-react";
+
+import { Module, Submodule } from "@/components/interface/module";
 import { Select } from "@/components/interface/select";
+import { useTemplateStore } from "@/stores";
 
 type TemplateProps = {
   onTemplateChange: (value: string) => void;
   template: {
+    isAnimated?: boolean;
     name: string;
   };
   templates: {
@@ -16,13 +21,24 @@ export function Template({
   templates,
   onTemplateChange,
 }: TemplateProps) {
+  const triggerReplay = useTemplateStore((state) => state.triggerReplay);
   return (
     <Module label="Template">
-      <Select
-        value={template.name}
-        onValueChange={onTemplateChange}
-        options={templates.map(({ name }) => name)}
-      />
+      <Submodule>
+        <Select
+          value={template.name}
+          onValueChange={onTemplateChange}
+          options={templates.map(({ name }) => name)}
+        />
+      </Submodule>
+      {template.isAnimated && (
+        <Submodule>
+          <Button variant="outline" onClick={triggerReplay}>
+            <RotateCw size={16} />
+            Replay
+          </Button>
+        </Submodule>
+      )}
     </Module>
   );
 }
