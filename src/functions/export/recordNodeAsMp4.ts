@@ -1,4 +1,3 @@
-import { Recorder } from "canvas-record";
 import html2canvas from "html2canvas";
 
 import type { FormatType } from "@/types";
@@ -14,6 +13,9 @@ type RecordNodeAsMp4Props = {
 /**
  * Records an HTML node as an MP4 video using canvas-record library.
  * Uses WebCodecs when available for fast encoding (10x faster than realtime).
+ *
+ * IMPORTANT: This function uses dynamic imports to load canvas-record only when needed,
+ * preventing the large library from being bundled into the main page bundle.
  *
  * @param props - Recording configuration
  * @returns Promise that resolves to a Blob containing the MP4 video
@@ -37,6 +39,10 @@ export async function recordNodeAsMp4({
   onProgress,
 }: RecordNodeAsMp4Props): Promise<Blob | null> {
   try {
+    // Dynamically import canvas-record only when MP4 export is triggered
+    // This prevents the large library (~4MB) from being bundled into the page
+    const { Recorder } = await import("canvas-record");
+
     const width = format?.width ?? node.offsetWidth;
     const height = format?.height ?? node.offsetHeight;
 
