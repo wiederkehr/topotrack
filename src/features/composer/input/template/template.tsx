@@ -1,6 +1,6 @@
-import { Button } from "@radix-ui/themes";
 import { RotateCw } from "lucide-react";
 
+import { Button } from "@/components/interface/button";
 import { Module, Submodule } from "@/components/interface/module";
 import { Select } from "@/components/interface/select";
 import { useTemplateStore } from "@/stores";
@@ -33,7 +33,7 @@ export function Template({
       </Submodule>
       {template.isAnimated && (
         <Submodule>
-          <Button variant="outline" onClick={triggerReplay}>
+          <Button onClick={triggerReplay}>
             <RotateCw size={16} />
             Replay
           </Button>
