@@ -35,4 +35,5 @@ export const templateStatic = {
   overrides,
   presets,
   Visual,
+  isAnimated: false,
 };

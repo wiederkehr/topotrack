@@ -11,6 +11,7 @@ import { Format } from "./format";
 import styles from "./input.module.css";
 import { Overrides } from "./overrides";
 import { Preset } from "./preset";
+import { Replay } from "./replay";
 import { Search } from "./search";
 import { Tab, Tabs } from "./tabs";
 import { Template } from "./template";
@@ -88,6 +89,7 @@ export function Input({
             onOverrideChange={setOverride}
             activity={activity}
           />
+          <Replay />
         </Tab>
         <Tab name="Export">
           <Format

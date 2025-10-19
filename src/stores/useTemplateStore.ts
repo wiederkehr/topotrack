@@ -14,14 +14,16 @@ interface TemplateState {
   overrides: OverrideType[];
   preset: PresetType;
   presets: PresetType[];
+  replayTrigger: number;
   setOverride: (override: { name: string; value: string }) => void;
   setPreset: (value: string) => void;
 
   // Actions
   setTemplate: (value: string) => void;
   setVariable: (variable: { name: string; value: string }) => void;
-  // State
   template: TemplateType;
+  triggerReplay: () => void;
+  // State
   variables: VariableType[];
 }
 
@@ -52,6 +54,7 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
     templates[0]!.presets[0] || defaultPreset,
   ),
   overrides: getOverrides(templates[0]!),
+  replayTrigger: 0,
 
   // Actions
   setTemplate: (value) => {
@@ -131,5 +134,9 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
       variables,
       overrides,
     });
+  },
+
+  triggerReplay: () => {
+    set((state) => ({ replayTrigger: state.replayTrigger + 1 }));
   },
 }));
