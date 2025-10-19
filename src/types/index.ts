@@ -36,9 +36,16 @@ export type AssetType = {
   type: string;
 };
 
+export type FormatNameType =
+  | "Square"
+  | "Portrait"
+  | "Story"
+  | "Landscape"
+  | "Custom";
+
 export type FormatType = {
   height: number;
-  name: string;
+  name: FormatNameType;
   width: number;
 };
 
@@ -84,4 +91,11 @@ export type VariableType = {
   options?: string[];
   type: "select" | "color";
   value?: string;
+};
+
+export type PaddingType = {
+  bottom: number;
+  left: number;
+  right: number;
+  top: number;
 };

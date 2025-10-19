@@ -5,6 +5,7 @@ import {
   mapStyle,
   mapStyleOptions,
 } from "@/features/visuals/map/styles/minimal";
+import { getPadding } from "@/features/visuals/padding";
 import {
   destructureActivityData,
   destructureVariables,
@@ -21,43 +22,17 @@ export function Visual({ activityData, variables, format }: VisualType) {
     map = mapStyleOptions[0],
   } = destructureVariables(variables);
   const { lnglat } = destructureActivityData(activityData);
-
-  const formatPadding: Record<string, { bottom: number; top: number }> = {
-    Square: { top: 50, bottom: 50 },
-    Portrait: { top: 50, bottom: 50 },
-    Story: { top: 50, bottom: 50 },
-    Landscape: { top: 50, bottom: 50 },
-  };
-  const padding = {
-    top: 0,
-    bottom: 0,
-    left: 50,
-    right: 50,
-    ...formatPadding[format.name],
-  };
-  const headerHeight = 56;
-  const headerToRouteGap = 20;
-  const footerToRouteGap = 20;
-  const footerHeight = 148;
-  const routePadding = {
-    top: padding.top + headerHeight + headerToRouteGap,
-    bottom: padding.bottom + footerHeight + footerToRouteGap,
-    left: 50,
-    right: 50,
-  };
-
+  const padding = getPadding(format.name);
   return (
-    <>
-      <Layer>
-        <MapGLAnimated
-          key={format.name}
-          data={lnglat}
-          padding={routePadding}
-          style={mapStyle({ mapShade: map as MapShadeType })}
-          routeColor={middleground}
-          progressColor={foreground}
-        />
-      </Layer>
-    </>
+    <Layer>
+      <MapGLAnimated
+        key={format.name}
+        data={lnglat}
+        padding={padding}
+        style={mapStyle({ mapShade: map as MapShadeType })}
+        routeColor={middleground}
+        progressColor={foreground}
+      />
+    </Layer>
   );
 }
