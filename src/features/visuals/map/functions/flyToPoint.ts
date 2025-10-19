@@ -64,6 +64,12 @@ function flyToPoint({
     let currentBearing: number;
     let currentPitch: number;
 
+    // Calculate the shortest angular difference for bearing interpolation
+    // This ensures we rotate in the shortest direction (e.g., 350° -> 10° goes through 0°, not 180°)
+    let bearingDiff = stopBearing - startBearing;
+    while (bearingDiff > 180) bearingDiff -= 360;
+    while (bearingDiff < -180) bearingDiff += 360;
+
     function frame(currentTime: number) {
       // Set start time
       if (!startTime) startTime = currentTime;
@@ -75,8 +81,12 @@ function flyToPoint({
       // Interpolate values
       currentAltitude =
         startAltitude + (stopAltitude - startAltitude) * easedProgress;
-      currentBearing =
-        startBearing + (stopBearing - startBearing) * easedProgress;
+
+      // Interpolate bearing using the shortest angular path
+      currentBearing = startBearing + bearingDiff * easedProgress;
+      // Normalize to 0-360 range
+      currentBearing = (currentBearing + 360) % 360;
+
       currentPitch = startPitch + (stopPitch - startPitch) * easedProgress;
 
       // Compute camera position to keep target centered in view

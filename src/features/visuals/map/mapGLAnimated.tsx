@@ -11,6 +11,7 @@ import { altitudeToZoom } from "./functions/altitudeToZoom";
 import { resetCameraPositionState } from "./functions/computeCameraPosition";
 import { flyToPoint } from "./functions/flyToPoint";
 import { followPath } from "./functions/followPath";
+import { getInitialBearing } from "./functions/getInitialBearing";
 import styles from "./map.module.css";
 import { Position } from "./position";
 import { Route } from "./route";
@@ -64,9 +65,9 @@ function MapGLAnimated({
   const startAltitude = 10000;
   const stopAltitude = 4000;
   const startBearing = 0;
-  const stopBearing = 0;
   const startPitch = 0;
   const stopPitch = 60;
+  const lookAheadDistance = 0.5; // Look-ahead distance for both bearing calculation and followPath
 
   // Calculate initial zoom from startAltitude to avoid flicker
   const startZoom = useMemo(
@@ -102,6 +103,17 @@ function MapGLAnimated({
     setCurrentPosition(startPosition);
     setProgressData([startPosition, startPosition]);
 
+    // Prepare route data
+    // //////////////////////////////
+    const routeLineString = lineString(routeData);
+
+    // Calculate initial bearing for followPath to align flyTo animation
+    // //////////////////////////////
+    const stopBearing = getInitialBearing({
+      path: routeLineString,
+      lookAheadDistance: lookAheadDistance,
+    });
+
     // Phase 1: Fly to start point
     // //////////////////////////////
     const flyToPointDuration = 2000;
@@ -126,10 +138,10 @@ function MapGLAnimated({
     await followPath({
       map: map,
       duration: followPathDuration,
-      path: lineString(routeData),
+      path: routeLineString,
       altitude: afterFlyInPosition.altitude,
       pitch: afterFlyInPosition.pitch,
-      lookAheadDistance: 0.5,
+      lookAheadDistance: lookAheadDistance,
       bearingDamping: 0.95,
       onUpdate: (pointData) => {
         setCurrentPosition([pointData.lng, pointData.lat]);
@@ -140,7 +152,6 @@ function MapGLAnimated({
     // Phase 3: Zoom out to show entire route
     // //////////////////////////////
     const fitBoundsDuration = 2000;
-    const routeLineString = lineString(routeData);
     const routeBboxArray = bbox(routeLineString);
     const routeBbox: LngLatBoundsLike = [
       routeBboxArray[0],
@@ -166,8 +177,8 @@ function MapGLAnimated({
     startPitch,
     startAltitude,
     stopAltitude,
-    stopBearing,
     stopPitch,
+    lookAheadDistance,
     paddingTop,
     paddingBottom,
     paddingLeft,
