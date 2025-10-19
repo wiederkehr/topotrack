@@ -11,11 +11,10 @@ type RecordNodeAsMp4Props = {
 };
 
 /**
- * Records an HTML node as an MP4 video using canvas-record library.
- * Uses WebCodecs when available for fast encoding (10x faster than realtime).
+ * Records an HTML node as an MP4 video using native browser MediaRecorder API.
+ * Requires Chrome 126+ (June 2024) or equivalent browser with MP4 support.
  *
- * IMPORTANT: This function uses dynamic imports to load canvas-record only when needed,
- * preventing the large library from being bundled into the main page bundle.
+ * Uses the same approach as recordNodeAsBlob (WebM) but with MP4 mimetype.
  *
  * @param props - Recording configuration
  * @returns Promise that resolves to a Blob containing the MP4 video
@@ -38,92 +37,71 @@ export async function recordNodeAsMp4({
   fps = 30,
   onProgress,
 }: RecordNodeAsMp4Props): Promise<Blob | null> {
-  try {
-    // Dynamically import canvas-record only when MP4 export is triggered
-    // This prevents the large library (~4MB) from being bundled into the page
-    const { Recorder } = await import("canvas-record");
+  const canvas = document.createElement("canvas");
+  const stream = canvas.captureStream(fps);
 
-    const width = format?.width ?? node.offsetWidth;
-    const height = format?.height ?? node.offsetHeight;
+  // Try MP4 with different codec combinations for best compatibility
+  const mimeTypes = [
+    "video/mp4;codecs=avc1,mp4a.40.2", // H.264 + AAC (most compatible)
+    "video/mp4;codecs=vp9,opus", // VP9 + Opus (newer, open codecs)
+    "video/mp4", // Generic fallback
+  ];
 
-    // Create a temporary canvas for recording
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) {
-      throw new Error("Could not create canvas context");
+  let mimeType = mimeTypes[0];
+  for (const type of mimeTypes) {
+    if (MediaRecorder.isTypeSupported(type)) {
+      mimeType = type;
+      break;
     }
-
-    // Create recorder with MP4 format using canvas-record API
-    const recorder = new Recorder(ctx, {
-      name: "topotrack",
-      extension: "mp4",
-      duration: duration / 1000, // Convert ms to seconds
-      frameRate: fps,
-      download: false, // We'll handle the blob ourselves
-      encoderOptions: {
-        bitrate: 8000000, // 8 Mbps for high quality
-      },
-    });
-
-    const totalFrames = Math.floor((duration / 1000) * fps);
-    let frame = 0;
-
-    // Start recording
-    await recorder.start();
-
-    // Render each frame
-    async function renderFrame(): Promise<void> {
-      // Capture the current state of the node as a canvas
-      const bitmap = await html2canvas(node, { width, height });
-
-      // Draw to our recording canvas (ctx is guaranteed to exist after check above)
-      ctx!.clearRect(0, 0, width, height);
-      ctx!.drawImage(bitmap, 0, 0);
-
-      // Record this frame
-      await recorder.step();
-
-      frame++;
-      const progress = Math.round((frame / totalFrames) * 100);
-
-      // Report progress
-      if (onProgress) {
-        onProgress(progress);
-      }
-
-      if (frame < totalFrames) {
-        // Continue to next frame
-        await renderFrame();
-      }
-    }
-
-    await renderFrame();
-
-    // Stop recording and get the buffer
-    const buffer = recorder.stop();
-
-    // Clean up
-    await recorder.dispose();
-
-    // Convert buffer to Blob
-    if (buffer) {
-      // Handle different buffer types that can be returned
-      if (buffer instanceof Blob) {
-        return buffer;
-      } else if (Array.isArray(buffer)) {
-        // Array of Blobs
-        return new Blob(buffer, { type: "video/mp4" });
-      } else {
-        // ArrayBuffer or Uint8Array
-        return new Blob([buffer], { type: "video/mp4" });
-      }
-    }
-
-    return null;
-  } catch (error) {
-    console.error("Error recording MP4:", error);
-    return null;
   }
+
+  const recorder = new MediaRecorder(stream, { mimeType });
+  const ctx = canvas.getContext("2d")!;
+  const chunks: BlobPart[] = [];
+
+  const width = format?.width ?? node.offsetWidth;
+  const height = format?.height ?? node.offsetHeight;
+
+  canvas.width = width;
+  canvas.height = height;
+
+  recorder.ondataavailable = (e) => {
+    if (e.data.size > 0) chunks.push(e.data);
+  };
+
+  const totalFrames = Math.floor((duration / 1000) * fps);
+  let frame = 0;
+
+  recorder.start();
+
+  async function renderFrame() {
+    const bitmap = await html2canvas(node, { width, height });
+    ctx.clearRect(0, 0, width, height);
+    ctx.drawImage(bitmap, 0, 0);
+
+    frame++;
+    const progress = Math.round((frame / totalFrames) * 100);
+
+    // Report progress
+    if (onProgress) {
+      onProgress(progress);
+    }
+
+    if (frame < totalFrames) {
+      setTimeout(() => {
+        void renderFrame();
+      }, 1000 / fps);
+    } else {
+      recorder.stop();
+    }
+  }
+
+  return new Promise<Blob | null>((resolve) => {
+    recorder.onstop = () => {
+      const blob = new Blob(chunks, { type: "video/mp4" });
+      resolve(blob);
+    };
+
+    void renderFrame();
+  });
 }
