@@ -1,3 +1,6 @@
+export { Footer } from "./footer";
+export { GradientMask } from "./gradientMask";
+export { Header } from "./header";
 export { InfoBlock } from "./infoBlock";
 export { MetaDivider } from "./metaDivider";
 export { MetaItem } from "./metaItem";

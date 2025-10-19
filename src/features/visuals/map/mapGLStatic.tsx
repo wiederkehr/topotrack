@@ -98,7 +98,7 @@ function MapGLStatic({ data, mapStyle, padding, children }: MapGLStaticProps) {
   }, [fitRouteToBounds, routeData]);
 
   return (
-    <div className={styles.map}>
+    <div className={styles.mapContainer}>
       <MapGL
         ref={mapRef}
         onLoad={fitRouteToBounds}

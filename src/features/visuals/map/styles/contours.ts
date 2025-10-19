@@ -1,13 +1,23 @@
+import chroma from "chroma-js";
 import type { BackgroundLayer, LineLayer, Style } from "mapbox-gl";
 
-type MapStyleOptions = {
+type MapStyleProps = {
   backgroundColor?: string;
   lineColor?: string;
   lineOpacity?: number;
   lineWidth?: number;
 };
 
-export function mapStyle(options?: MapStyleOptions): Style {
+export function getContourColor(color: string = "#fff"): string {
+  const colorLuminance = chroma(color).luminance();
+  if (colorLuminance <= 0.5) {
+    return chroma(color).brighten(0.4).hex();
+  } else {
+    return chroma(color).darken(0.4).hex();
+  }
+}
+
+export function mapStyle(options?: MapStyleProps): Style {
   const {
     backgroundColor = "#000",
     lineColor = "#fff",

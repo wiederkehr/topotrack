@@ -2,9 +2,12 @@ import { Box } from "@radix-ui/themes";
 import chroma from "chroma-js";
 import { ArrowRight, ArrowUp, Calendar, MapPin, Timer } from "lucide-react";
 
-import { MapGLStatic } from "@/features/visuals/mapGL";
-import { Route } from "@/features/visuals/mapGL/route";
-import { mapStyle } from "@/features/visuals/mapGL/styles/contours";
+import { MapGLStatic } from "@/features/visuals/map";
+import { Route } from "@/features/visuals/map/route";
+import {
+  getContourColor,
+  mapStyle,
+} from "@/features/visuals/map/styles/contours";
 import {
   destructureActivity,
   destructureActivityData,
@@ -16,7 +19,14 @@ import { colors } from "@/styles/constants";
 import { VisualType } from "@/types";
 
 import { Layer } from "../../visuals/layer";
-import { InfoBlock, MetaList, Profile, Title } from "../../visuals/overlay";
+import {
+  Footer,
+  GradientMask,
+  Header,
+  MetaList,
+  Profile,
+  Title,
+} from "../../visuals/overlay";
 
 // Visual
 // //////////////////////////////
@@ -46,26 +56,11 @@ export function Visual({
     day,
     year,
   } = destructureActivity(activity, units);
-
-  // Use override if provided, otherwise use original value
   const name = nameOverride || originalName;
-
   const routeForeground = chroma(foreground).mix(middleground, 0.2).hex();
   const routeBackground = chroma(middleground).mix(background, 0.6).hex();
-
-  function getContourColor(color: string = "#fff"): string {
-    const colorLuminance = chroma(color).luminance();
-    if (colorLuminance <= 0.5) {
-      return chroma(color).brighten(0.4).hex();
-    } else {
-      return chroma(color).darken(0.4).hex();
-    }
-  }
-
   const contourColor = getContourColor(background);
-
   const formattedTime = formatTime(time[time.length - 1] || 0);
-
   const formatPadding: Record<string, { bottom: number; top: number }> = {
     Square: { top: 50, bottom: 50 },
     Portrait: { top: 50, bottom: 50 },
@@ -110,29 +105,19 @@ export function Visual({
         </MapGLStatic>
       </Layer>
       <Layer>
-        <Box
-          position="absolute"
-          top="0"
-          left="0"
-          right="0"
-          height={headerOverlayHeight + "px"}
-          style={{
-            background: `linear-gradient(${chroma(background).alpha(1).css()} 66%, ${chroma(background).alpha(0).css()} 100%)`,
-          }}
+        <GradientMask
+          height={headerOverlayHeight}
+          position="top"
+          color={background}
         />
-        <Box
-          position="absolute"
-          bottom="0"
-          left="0"
-          right="0"
-          height={footerOverlayHeight + "px"}
-          style={{
-            background: `linear-gradient(${chroma(background).alpha(0).css()} 0%, ${chroma(background).alpha(1).css()} 33%)`,
-          }}
+        <GradientMask
+          height={footerOverlayHeight}
+          position="bottom"
+          color={background}
         />
       </Layer>
       <Layer>
-        <InfoBlock position="top" padding={padding}>
+        <Header padding={padding}>
           <Title>{name}</Title>
           <MetaList
             color={middleground}
@@ -141,8 +126,8 @@ export function Visual({
               { value: state + ", " + country, icon: MapPin },
             ]}
           />
-        </InfoBlock>
-        <InfoBlock position="bottom" padding={padding}>
+        </Header>
+        <Footer padding={padding}>
           <Box mb="-14px">
             <Profile
               color={middleground}
@@ -159,7 +144,7 @@ export function Visual({
               { value: formattedTime, icon: Timer },
             ]}
           />
-        </InfoBlock>
+        </Footer>
       </Layer>
     </>
   );
