@@ -4,9 +4,10 @@ import { toPng as htmlToPng, toSvg as htmlToSvg } from "html-to-image";
 import type { FormatType } from "@/types";
 
 import { recordNodeAsBlob } from "./recordNodeAsBlob";
+import { recordNodeAsMp4 } from "./recordNodeAsMp4";
 
 // Shared types for all export operations
-export type ExportFormat = "png" | "svg" | "webm";
+export type ExportFormat = "png" | "svg" | "webm" | "mp4";
 
 export type ExportOptions = {
   format?: FormatType;
@@ -56,6 +57,20 @@ const exportConfigs: Record<ExportFormat, ExportConfig> = {
         fps: 30,
       }),
     mimeType: "video/webm",
+  },
+  mp4: {
+    generate: async (node, options) =>
+      recordNodeAsMp4({
+        node,
+        format: {
+          name: "Custom",
+          width: options.canvasWidth,
+          height: options.canvasHeight,
+        },
+        duration: 10000, // 10 seconds to match full animation
+        fps: 30,
+      }),
+    mimeType: "video/mp4",
   },
 };
 

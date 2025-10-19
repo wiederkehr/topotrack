@@ -16,6 +16,7 @@
     "@turf/turf": "^7.1.0",
     "@types/chroma-js": "^3.1.1",
     "axios": "^1.12.0",
+    "canvas-record": "^5.4.2",
     "chroma-js": "^3.1.2",
     "classnames": "^2.3.2",
     "clsx": "^2.1.1",

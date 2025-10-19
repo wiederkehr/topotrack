@@ -4,3 +4,4 @@ export {
   exportNode,
   type ExportOptions,
 } from "./exportNode";
+export { recordNodeAsMp4 } from "./recordNodeAsMp4";
