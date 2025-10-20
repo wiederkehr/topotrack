@@ -53,10 +53,15 @@ export async function recordNodeAsMp4({
   useFrameByFrame = false,
   onProgress,
 }: RecordNodeAsMp4Props): Promise<Blob | null> {
+  console.log("[recordNodeAsMp4] Starting export", { useFrameByFrame, fps });
+
   // Get duration from export store if using frame-by-frame mode
   const duration = useFrameByFrame
     ? (useExportStore.getState().animationDuration ?? 10000)
     : 10000;
+
+  console.log("[recordNodeAsMp4] Duration:", duration, "ms");
+
   const canvas = document.createElement("canvas");
   const stream = canvas.captureStream(fps);
 
@@ -75,6 +80,8 @@ export async function recordNodeAsMp4({
     }
   }
 
+  console.log("[recordNodeAsMp4] Selected mimeType:", mimeType);
+
   const recorder = new MediaRecorder(stream, { mimeType });
   const ctx = canvas.getContext("2d")!;
   const chunks: BlobPart[] = [];
@@ -82,15 +89,21 @@ export async function recordNodeAsMp4({
   const width = format?.width ?? node.offsetWidth;
   const height = format?.height ?? node.offsetHeight;
 
+  console.log("[recordNodeAsMp4] Canvas size:", { width, height });
+
   canvas.width = width;
   canvas.height = height;
 
   recorder.ondataavailable = (e) => {
+    console.log("[recordNodeAsMp4] Data available:", e.data.size, "bytes");
     if (e.data.size > 0) chunks.push(e.data);
   };
 
   const totalFrames = Math.floor((duration / 1000) * fps);
   let frame = 0;
+
+  console.log("[recordNodeAsMp4] Total frames to render:", totalFrames);
+  console.log("[recordNodeAsMp4] Starting recorder");
 
   recorder.start();
 
@@ -101,6 +114,17 @@ export async function recordNodeAsMp4({
     const timestamp = (frame / fps) * 1000; // Convert frame number to milliseconds
     const progress = Math.round((frame / totalFrames) * 100);
 
+    console.log(
+      "[recordNodeAsMp4] Rendering frame:",
+      frame,
+      "/",
+      totalFrames,
+      `(${progress}%)`,
+      "timestamp:",
+      timestamp,
+      "ms",
+    );
+
     // Report progress to callback and store
     if (onProgress) {
       onProgress(progress);
@@ -110,17 +134,24 @@ export async function recordNodeAsMp4({
     if (frame < totalFrames) {
       // Set up callback for when frame is ready
       useExportStore.getState().setFrameReadyCallback(() => {
+        console.log(
+          "[recordNodeAsMp4] Frame ready callback called for frame:",
+          frame,
+        );
         // Once frame is rendered, capture it to canvas
         void captureNodeToCanvas().then(() => {
+          console.log("[recordNodeAsMp4] Frame captured to canvas:", frame);
           frame++;
           // Render next frame
           void renderFrameControlled();
         });
       });
 
+      console.log("[recordNodeAsMp4] Setting exportTimestamp to:", timestamp);
       // Request animation to render at this timestamp
       useExportStore.getState().setExportTimestamp(timestamp);
     } else {
+      console.log("[recordNodeAsMp4] All frames rendered, stopping recorder");
       // Animation complete - cleanup and stop recording
       useExportStore.getState().setExportMode(false);
       useExportStore.getState().setFrameReadyCallback(null);
@@ -164,17 +195,25 @@ export async function recordNodeAsMp4({
 
   return new Promise<Blob | null>((resolve) => {
     recorder.onstop = () => {
+      console.log(
+        "[recordNodeAsMp4] Recorder stopped, creating blob from",
+        chunks.length,
+        "chunks",
+      );
       const blob = new Blob(chunks, { type: "video/mp4" });
+      console.log("[recordNodeAsMp4] Blob created, size:", blob.size, "bytes");
       resolve(blob);
     };
 
     // Choose rendering mode
     if (useFrameByFrame) {
+      console.log("[recordNodeAsMp4] Using frame-by-frame mode");
       // Enable export mode in store
       useExportStore.getState().setExportMode(true);
       useExportStore.getState().setExportTimestamp(0);
       void renderFrameControlled();
     } else {
+      console.log("[recordNodeAsMp4] Using legacy mode");
       void renderFrameLegacy();
     }
   });
