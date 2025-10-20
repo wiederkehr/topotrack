@@ -30,9 +30,6 @@ export function AnimationController({ config, map }: AnimationControllerProps) {
   const frameReadyCallback = useExportStore(
     (state) => state.frameReadyCallback,
   );
-  const setAnimationDuration = useExportStore(
-    (state) => state.setAnimationDuration,
-  );
 
   const mode = exportMode ? "export" : "preview";
 
@@ -150,9 +147,8 @@ export function AnimationController({ config, map }: AnimationControllerProps) {
    */
   useEffect(() => {
     const totalDuration = config.phases.reduce((sum, p) => sum + p.duration, 0);
-    setAnimationDuration(totalDuration);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config]); // setAnimationDuration is stable (Zustand setter)
+    useExportStore.getState().setAnimationDuration(totalDuration);
+  }, [config]);
 
   /**
    * Export mode: Render single frame at specific timestamp
