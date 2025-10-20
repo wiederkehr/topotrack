@@ -1,3 +1,4 @@
+import { Progress, Text } from "@radix-ui/themes";
 import { useMemo } from "react";
 
 import { Button } from "@/components/interface/button";
@@ -60,11 +61,12 @@ export function Export({
 
       {showProgress && (
         <Submodule>
-          <div style={{ fontSize: "12px", color: "#888" }}>
-            Exporting: {exportProgress}%
+          <Progress value={exportProgress} size="1" />
+          <Text size="1" color="gray">
+            {exportProgress}%
             {estimatedTimeRemaining > 0 &&
               ` • ~${estimatedTimeRemaining}s remaining`}
-          </div>
+          </Text>
         </Submodule>
       )}
     </Module>
