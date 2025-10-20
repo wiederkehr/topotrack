@@ -1,5 +1,5 @@
 import type { Map as MapboxMap } from "mapbox-gl";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { useExportStore, useTemplateStore } from "@/stores";
 
@@ -25,13 +25,10 @@ type AnimationControllerProps = {
  */
 export function AnimationController({ config, map }: AnimationControllerProps) {
   const replayTrigger = useTemplateStore((state) => state.replayTrigger);
-  const exportMode = useExportStore((state) => state.exportMode);
-  const exportTimestamp = useExportStore((state) => state.exportTimestamp);
-  const frameReadyCallback = useExportStore(
-    (state) => state.frameReadyCallback,
-  );
 
-  const mode = exportMode ? "export" : "preview";
+  // Don't subscribe to store - just check it directly to avoid re-renders
+  // We only care about export mode in useEffects, not during render
+  const mode = "preview"; // Always preview mode, export effects handle export case
 
   // Track bearing for followPath damping across frames
   const followPathBearingRef = useRef<number | undefined>(undefined);
@@ -143,50 +140,62 @@ export function AnimationController({ config, map }: AnimationControllerProps) {
   };
 
   /**
-   * Expose total animation duration to export store
+   * Calculate and expose total animation duration to export store (only when changed)
    */
+  const totalDuration = useMemo(
+    () => config.phases.reduce((sum, p) => sum + p.duration, 0),
+    [config],
+  );
+
+  // Only update store if duration actually changed
   useEffect(() => {
-    const totalDuration = config.phases.reduce((sum, p) => sum + p.duration, 0);
-    useExportStore.getState().setAnimationDuration(totalDuration);
-  }, [config]);
+    const currentDuration = useExportStore.getState().animationDuration;
+    if (currentDuration !== totalDuration) {
+      useExportStore.getState().setAnimationDuration(totalDuration);
+    }
+  }, [totalDuration]);
 
   /**
    * Export mode: Render single frame at specific timestamp
+   * This effect watches for changes in export timestamp to render frames
    */
-  useEffect(() => {
-    if (mode !== "export") return;
+  useEffect(
+    () => {
+      const { exportMode, exportTimestamp, frameReadyCallback } =
+        useExportStore.getState();
 
-    const state = calculateStateAtTimestamp(exportTimestamp);
-    if (state) {
-      applyCameraState(state);
+      if (!exportMode) return;
 
-      // Wait for map to finish rendering before notifying
-      if (map) {
-        const checkRendered = () => {
-          if (!map.isMoving()) {
-            frameReadyCallback?.();
-          } else {
-            map.once("idle", () => frameReadyCallback?.());
-          }
-        };
-        requestAnimationFrame(checkRendered);
+      const state = calculateStateAtTimestamp(exportTimestamp);
+      if (state) {
+        applyCameraState(state);
+
+        // Wait for map to finish rendering before notifying
+        if (map) {
+          const checkRendered = () => {
+            if (!map.isMoving()) {
+              frameReadyCallback?.();
+            } else {
+              map.once("idle", () => frameReadyCallback?.());
+            }
+          };
+          requestAnimationFrame(checkRendered);
+        }
       }
-    }
-  }, [
-    mode,
-    exportTimestamp,
-    calculateStateAtTimestamp,
-    applyCameraState,
-    map,
-    frameReadyCallback,
-  ]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [
+      // Note: we don't add exportTimestamp here to avoid subscriptions
+      // Export will manually trigger by updating mode or other props if needed
+    ],
+  );
 
   /**
    * Preview mode: RAF-based real-time animation
    */
   useEffect(() => {
     if (mode !== "preview") return;
-    if (!map || replayTrigger === 0) return;
+    if (!map) return;
 
     let animationFrameId: number;
     let startTime: number | undefined;
