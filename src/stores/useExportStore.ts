@@ -10,18 +10,22 @@ interface ExportState {
   animationDuration: number | null;
   asset: AssetType;
   exportMode: boolean;
+  exportProgress: number;
   exportTimestamp: number;
   figureRef: RefObject<HTMLDivElement> | null;
   format: FormatType;
   frameReadyCallback: (() => void) | null;
   handleExport: (activity: { name: string; start_date_local: string }) => void;
+  isExporting: boolean;
   setAnimationDuration: (duration: number | null) => void;
   setAsset: (value: string) => void;
   setExportMode: (mode: boolean) => void;
+  setExportProgress: (progress: number) => void;
   setExportTimestamp: (timestamp: number) => void;
   setFigureRef: (ref: RefObject<HTMLDivElement> | null) => void;
   setFormat: (value: string) => void;
   setFrameReadyCallback: (callback: (() => void) | null) => void;
+  setIsExporting: (isExporting: boolean) => void;
 }
 
 export const useExportStore = create<ExportState>((set, get) => ({
@@ -33,6 +37,8 @@ export const useExportStore = create<ExportState>((set, get) => ({
   exportTimestamp: 0,
   frameReadyCallback: null,
   animationDuration: null,
+  isExporting: false,
+  exportProgress: 0,
 
   // Actions
   setFormat: (value) => {
@@ -65,6 +71,14 @@ export const useExportStore = create<ExportState>((set, get) => ({
     set({ animationDuration: duration });
   },
 
+  setIsExporting: (isExporting) => {
+    set({ isExporting });
+  },
+
+  setExportProgress: (progress) => {
+    set({ exportProgress: progress });
+  },
+
   handleExport: (activity) => {
     const { figureRef, format, asset } = get();
     if (!figureRef?.current || !activity || !asset?.type) return;
@@ -76,11 +90,15 @@ export const useExportStore = create<ExportState>((set, get) => ({
       type: asset.type,
     });
 
+    set({ isExporting: true, exportProgress: 0 });
+
     void exportNode({
       node: figureRef.current,
       name,
       format,
       type: asset.type as ExportFormat,
+    }).finally(() => {
+      set({ isExporting: false, exportProgress: 0 });
     });
   },
 }));

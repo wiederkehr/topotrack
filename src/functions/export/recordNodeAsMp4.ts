@@ -101,10 +101,11 @@ export async function recordNodeAsMp4({
     const timestamp = (frame / fps) * 1000; // Convert frame number to milliseconds
     const progress = Math.round((frame / totalFrames) * 100);
 
-    // Report progress
+    // Report progress to callback and store
     if (onProgress) {
       onProgress(progress);
     }
+    useExportStore.getState().setExportProgress(progress);
 
     if (frame < totalFrames) {
       // Set up callback for when frame is ready
