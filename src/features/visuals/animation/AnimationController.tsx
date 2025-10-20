@@ -151,7 +151,8 @@ export function AnimationController({ config, map }: AnimationControllerProps) {
   useEffect(() => {
     const totalDuration = config.phases.reduce((sum, p) => sum + p.duration, 0);
     setAnimationDuration(totalDuration);
-  }, [config, setAnimationDuration]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config]); // setAnimationDuration is stable (Zustand setter)
 
   /**
    * Export mode: Render single frame at specific timestamp
