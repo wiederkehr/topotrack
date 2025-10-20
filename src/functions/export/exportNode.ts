@@ -48,8 +48,8 @@ const exportConfigs: Record<ExportFormat, ExportConfig> = {
           width: options.canvasWidth,
           height: options.canvasHeight,
         },
-        duration: 10000, // 10 seconds to match full animation
         fps: 30,
+        useFrameByFrame: true, // Use frame-by-frame for perfect sync
       }),
     mimeType: "video/mp4",
   },

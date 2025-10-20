@@ -7,13 +7,21 @@ import { formatFilename } from "@/functions/format";
 import type { AssetType, FormatType } from "@/types";
 
 interface ExportState {
+  animationDuration: number | null;
   asset: AssetType;
+  exportMode: boolean;
+  exportTimestamp: number;
   figureRef: RefObject<HTMLDivElement> | null;
   format: FormatType;
+  frameReadyCallback: (() => void) | null;
   handleExport: (activity: { name: string; start_date_local: string }) => void;
+  setAnimationDuration: (duration: number | null) => void;
   setAsset: (value: string) => void;
+  setExportMode: (mode: boolean) => void;
+  setExportTimestamp: (timestamp: number) => void;
   setFigureRef: (ref: RefObject<HTMLDivElement> | null) => void;
   setFormat: (value: string) => void;
+  setFrameReadyCallback: (callback: (() => void) | null) => void;
 }
 
 export const useExportStore = create<ExportState>((set, get) => ({
@@ -21,6 +29,10 @@ export const useExportStore = create<ExportState>((set, get) => ({
   format: formats[0]!,
   asset: assets[0]!,
   figureRef: null,
+  exportMode: false,
+  exportTimestamp: 0,
+  frameReadyCallback: null,
+  animationDuration: null,
 
   // Actions
   setFormat: (value) => {
@@ -35,6 +47,22 @@ export const useExportStore = create<ExportState>((set, get) => ({
 
   setFigureRef: (ref) => {
     set({ figureRef: ref });
+  },
+
+  setExportMode: (mode) => {
+    set({ exportMode: mode });
+  },
+
+  setExportTimestamp: (timestamp) => {
+    set({ exportTimestamp: timestamp });
+  },
+
+  setFrameReadyCallback: (callback) => {
+    set({ frameReadyCallback: callback });
+  },
+
+  setAnimationDuration: (duration) => {
+    set({ animationDuration: duration });
   },
 
   handleExport: (activity) => {

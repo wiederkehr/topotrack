@@ -1,31 +1,47 @@
 import html2canvas from "html2canvas-pro";
 
+import { useExportStore } from "@/stores";
 import type { FormatType } from "@/types";
 
 type RecordNodeAsMp4Props = {
-  duration?: number;
   format?: FormatType;
   fps?: number;
   node: HTMLElement;
   onProgress?: (progress: number) => void;
+  useFrameByFrame?: boolean;
 };
 
 /**
  * Records an HTML node as an MP4 video using native browser MediaRecorder API.
  * Requires Chrome 126+ (June 2024) or equivalent browser with MP4 support.
  *
- * Uses the same approach as recordNodeAsBlob (WebM) but with MP4 mimetype.
+ * Supports two modes:
+ * 1. Frame-by-frame mode (useFrameByFrame=true): Coordinates with AnimationController via useExportStore
+ *    for perfect frame synchronization. Duration comes from the animation config.
+ * 2. Legacy mode (useFrameByFrame=false): Uses html2canvas with setTimeout for static content.
+ *    Requires explicit duration parameter.
  *
  * @param props - Recording configuration
  * @returns Promise that resolves to a Blob containing the MP4 video
  *
- * @example
+ * @example Frame-by-frame mode (for animations):
  * ```ts
  * const blob = await recordNodeAsMp4({
  *   node: document.getElementById('animation'),
  *   format: { width: 1080, height: 1080, name: 'Square' },
- *   duration: 10000,
  *   fps: 30,
+ *   useFrameByFrame: true,
+ *   onProgress: (progress) => console.log(`${progress}% complete`),
+ * });
+ * ```
+ *
+ * @example Legacy mode (for static content):
+ * ```ts
+ * const blob = await recordNodeAsMp4({
+ *   node: document.getElementById('static'),
+ *   format: { width: 1080, height: 1080, name: 'Square' },
+ *   fps: 30,
+ *   useFrameByFrame: false,
  *   onProgress: (progress) => console.log(`${progress}% complete`),
  * });
  * ```
@@ -33,10 +49,14 @@ type RecordNodeAsMp4Props = {
 export async function recordNodeAsMp4({
   node,
   format,
-  duration = 10000, // 10 seconds to match full animation duration
   fps = 30,
+  useFrameByFrame = false,
   onProgress,
 }: RecordNodeAsMp4Props): Promise<Blob | null> {
+  // Get duration from export store if using frame-by-frame mode
+  const duration = useFrameByFrame
+    ? (useExportStore.getState().animationDuration ?? 10000)
+    : 10000;
   const canvas = document.createElement("canvas");
   const stream = canvas.captureStream(fps);
 
@@ -74,7 +94,43 @@ export async function recordNodeAsMp4({
 
   recorder.start();
 
-  async function renderFrame() {
+  /**
+   * Frame-by-frame rendering mode - coordinates with AnimationController via store
+   */
+  function renderFrameControlled() {
+    const timestamp = (frame / fps) * 1000; // Convert frame number to milliseconds
+    const progress = Math.round((frame / totalFrames) * 100);
+
+    // Report progress
+    if (onProgress) {
+      onProgress(progress);
+    }
+
+    if (frame < totalFrames) {
+      // Set up callback for when frame is ready
+      useExportStore.getState().setFrameReadyCallback(() => {
+        // Once frame is rendered, capture it to canvas
+        void captureNodeToCanvas().then(() => {
+          frame++;
+          // Render next frame
+          void renderFrameControlled();
+        });
+      });
+
+      // Request animation to render at this timestamp
+      useExportStore.getState().setExportTimestamp(timestamp);
+    } else {
+      // Animation complete - cleanup and stop recording
+      useExportStore.getState().setExportMode(false);
+      useExportStore.getState().setFrameReadyCallback(null);
+      recorder.stop();
+    }
+  }
+
+  /**
+   * Legacy rendering mode - uses html2canvas with setTimeout
+   */
+  async function renderFrameLegacy() {
     const bitmap = await html2canvas(node, { width, height });
     ctx.clearRect(0, 0, width, height);
     ctx.drawImage(bitmap, 0, 0);
@@ -89,11 +145,20 @@ export async function recordNodeAsMp4({
 
     if (frame < totalFrames) {
       setTimeout(() => {
-        void renderFrame();
+        void renderFrameLegacy();
       }, 1000 / fps);
     } else {
       recorder.stop();
     }
+  }
+
+  /**
+   * Capture the current node state to canvas using html2canvas
+   */
+  async function captureNodeToCanvas() {
+    const bitmap = await html2canvas(node, { width, height });
+    ctx.clearRect(0, 0, width, height);
+    ctx.drawImage(bitmap, 0, 0);
   }
 
   return new Promise<Blob | null>((resolve) => {
@@ -102,6 +167,14 @@ export async function recordNodeAsMp4({
       resolve(blob);
     };
 
-    void renderFrame();
+    // Choose rendering mode
+    if (useFrameByFrame) {
+      // Enable export mode in store
+      useExportStore.getState().setExportMode(true);
+      useExportStore.getState().setExportTimestamp(0);
+      void renderFrameControlled();
+    } else {
+      void renderFrameLegacy();
+    }
   });
 }

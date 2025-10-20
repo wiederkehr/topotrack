@@ -1,7 +1,7 @@
 import type { Map as MapboxMap } from "mapbox-gl";
 import { useCallback, useEffect, useRef } from "react";
 
-import { useTemplateStore } from "@/stores";
+import { useExportStore, useTemplateStore } from "@/stores";
 
 import {
   calculateFitBoundsState,
@@ -13,10 +13,6 @@ import type { AnimationConfig, CameraState } from "./types";
 type AnimationControllerProps = {
   config: AnimationConfig;
   map: MapboxMap | null;
-  mode?: "preview" | "export";
-  // Export mode props
-  onExportFrameReady?: () => void;
-  timestamp?: number;
 };
 
 /**
@@ -25,15 +21,20 @@ type AnimationControllerProps = {
  * - Export mode: Renders specific frames at exact timestamps for video export
  *
  * This single component handles both modes, eliminating code duplication.
+ * Mode and timestamp are controlled via the useExportStore.
  */
-export function AnimationController({
-  config,
-  map,
-  mode = "preview",
-  timestamp,
-  onExportFrameReady,
-}: AnimationControllerProps) {
+export function AnimationController({ config, map }: AnimationControllerProps) {
   const replayTrigger = useTemplateStore((state) => state.replayTrigger);
+  const exportMode = useExportStore((state) => state.exportMode);
+  const exportTimestamp = useExportStore((state) => state.exportTimestamp);
+  const frameReadyCallback = useExportStore(
+    (state) => state.frameReadyCallback,
+  );
+  const setAnimationDuration = useExportStore(
+    (state) => state.setAnimationDuration,
+  );
+
+  const mode = exportMode ? "export" : "preview";
 
   // Track bearing for followPath damping across frames
   const followPathBearingRef = useRef<number | undefined>(undefined);
@@ -145,12 +146,20 @@ export function AnimationController({
   };
 
   /**
+   * Expose total animation duration to export store
+   */
+  useEffect(() => {
+    const totalDuration = config.phases.reduce((sum, p) => sum + p.duration, 0);
+    setAnimationDuration(totalDuration);
+  }, [config, setAnimationDuration]);
+
+  /**
    * Export mode: Render single frame at specific timestamp
    */
   useEffect(() => {
-    if (mode !== "export" || timestamp === undefined) return;
+    if (mode !== "export") return;
 
-    const state = calculateStateAtTimestamp(timestamp);
+    const state = calculateStateAtTimestamp(exportTimestamp);
     if (state) {
       applyCameraState(state);
 
@@ -158,9 +167,9 @@ export function AnimationController({
       if (map) {
         const checkRendered = () => {
           if (!map.isMoving()) {
-            onExportFrameReady?.();
+            frameReadyCallback?.();
           } else {
-            map.once("idle", () => onExportFrameReady?.());
+            map.once("idle", () => frameReadyCallback?.());
           }
         };
         requestAnimationFrame(checkRendered);
@@ -168,11 +177,11 @@ export function AnimationController({
     }
   }, [
     mode,
-    timestamp,
+    exportTimestamp,
     calculateStateAtTimestamp,
     applyCameraState,
     map,
-    onExportFrameReady,
+    frameReadyCallback,
   ]);
 
   /**

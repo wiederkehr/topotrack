@@ -21,8 +21,6 @@ const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 type MapGLAnimatedProps = {
   data: [number, number][];
-  mode?: "preview" | "export";
-  onExportFrameReady?: () => void;
   padding?: {
     bottom: number;
     left: number;
@@ -32,7 +30,6 @@ type MapGLAnimatedProps = {
   progressColor?: string; // Optional for future progress visualization
   routeColor: string;
   style: string;
-  timestamp?: number;
 };
 
 function MapGLAnimated({
@@ -40,9 +37,6 @@ function MapGLAnimated({
   padding,
   style,
   routeColor,
-  mode = "preview",
-  timestamp,
-  onExportFrameReady,
 }: MapGLAnimatedProps) {
   const routeData = data;
   const startPosition = useMemo<[number, number]>(
@@ -164,9 +158,6 @@ function MapGLAnimated({
         <AnimationController
           config={animationConfig}
           map={mapRef.current?.getMap() ?? null}
-          mode={mode}
-          timestamp={timestamp}
-          onExportFrameReady={onExportFrameReady}
         />
       </MapGL>
     </div>
