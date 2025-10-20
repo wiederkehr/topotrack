@@ -227,7 +227,8 @@ export function AnimationController({ config, map }: AnimationControllerProps) {
       console.log("[AnimationController] Unsubscribing from export mode");
       unsubscribe();
     };
-  }, [calculateStateAtTimestamp, applyCameraState, map]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map]); // Only re-subscribe if map instance changes, callbacks are stable via refs
 
   /**
    * Preview mode: RAF-based real-time animation
