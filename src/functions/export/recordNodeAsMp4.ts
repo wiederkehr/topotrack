@@ -154,6 +154,7 @@ export async function recordNodeAsMp4({
       console.log("[recordNodeAsMp4] All frames rendered, stopping recorder");
       // Animation complete - cleanup and stop recording
       useExportStore.getState().setExportMode(false);
+      useExportStore.getState().setExportTimestamp(-1); // Reset to initial value
       useExportStore.getState().setFrameReadyCallback(null);
       recorder.stop();
     }

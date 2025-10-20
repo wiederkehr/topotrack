@@ -34,7 +34,7 @@ export const useExportStore = create<ExportState>((set, get) => ({
   asset: assets[0]!,
   figureRef: null,
   exportMode: false,
-  exportTimestamp: 0,
+  exportTimestamp: -1, // Initialize to -1 so first frame (0) triggers a change
   frameReadyCallback: null,
   animationDuration: null,
   isExporting: false,
