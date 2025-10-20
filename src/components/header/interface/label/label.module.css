@@ -1,0 +1,10 @@
+.label {
+  color: var(--gray-9);
+  display: block;
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  text-transform: uppercase;
+  margin: 0 0 var(--space-2) 0;
+  user-select: none;
+}

@@ -1,0 +1,91 @@
+.presetSelectTrigger {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-2);
+  padding: var(--space-3);
+  line-height: 1;
+  gap: var(--space-1);
+  background-color: var(--color-control-background);
+  color: var(--gray-12);
+  border: 1px solid var(--color-control-border);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.presetSelectTrigger:hover {
+  border-color: var(--color-control-border-hover);
+}
+
+.presetSelectTrigger:focus {
+  border-color: var(--color-control-border-focus);
+  box-shadow: none;
+}
+
+.presetSelectValue {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex: 1;
+}
+
+.presetSelectContent {
+  overflow: hidden;
+  background-color: var(--color-panel-solid);
+  border-radius: var(--radius-2);
+  box-shadow: var(--shadow-4);
+}
+
+.presetSelectViewport {
+  padding: var(--space-2);
+}
+
+.presetSelectItem {
+  color: var(--gray-12);
+  font-size: var(--font-size-regular);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-5);
+  position: relative;
+  user-select: none;
+  border-radius: var(--radius-1);
+}
+
+.presetSelectItem:hover {
+  background-color: var(--gray-3);
+}
+
+.presetSelectItem[data-disabled] {
+  color: var(--gray-9);
+  pointer-events: none;
+}
+
+.presetSelectItem[data-highlighted] {
+  outline: none;
+}
+
+.presetSelectItemText {
+  flex: 1;
+}
+
+.presetSelectItemIndicator {
+  position: absolute;
+  left: 0;
+  width: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.presetSelectScrollButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.5rem;
+  background-color: var(--color-control-background);
+  color: var(--gray-12);
+  cursor: default;
+}
