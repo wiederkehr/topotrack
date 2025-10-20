@@ -192,6 +192,7 @@ export function AnimationController({ config, map }: AnimationControllerProps) {
 
   /**
    * Preview mode: RAF-based real-time animation
+   * Only runs on initial mount and when replayTrigger changes
    */
   useEffect(() => {
     if (mode !== "preview") return;
@@ -226,13 +227,13 @@ export function AnimationController({ config, map }: AnimationControllerProps) {
         cancelAnimationFrame(animationFrameId);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    mode,
+    // Only re-run when these specific values change
     map,
-    config,
     replayTrigger,
-    calculateStateAtTimestamp,
-    applyCameraState,
+    // Note: we don't include calculateStateAtTimestamp or applyCameraState
+    // to avoid re-running animation when those callbacks are recreated
   ]);
 
   // This component only manages animation state, renders nothing
