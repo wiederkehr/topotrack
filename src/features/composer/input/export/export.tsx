@@ -1,8 +1,8 @@
-import { Callout, Progress, Text } from "@radix-ui/themes";
-import { InfoIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Progress, Text } from "@radix-ui/themes";
+import { useMemo } from "react";
 
 import { Button } from "@/components/interface/button";
+import { Callout } from "@/components/interface/callout";
 import { Module, Submodule } from "@/components/interface/module";
 import { Select } from "@/components/interface/select";
 import { checkMp4Support } from "@/functions/export";
@@ -22,13 +22,11 @@ export function Export({
   onAssetChange,
   onAssetExport,
 }: ExportProps) {
-  const [mp4Supported, setMp4Supported] = useState(true);
   const isExporting = useExportStore((state) => state.isExporting);
   const exportProgress = useExportStore((state) => state.exportProgress);
 
-  useEffect(() => {
-    setMp4Supported(checkMp4Support());
-  }, []);
+  // Check MP4 support once and memoize
+  const mp4Supported = useMemo(() => checkMp4Support(), []);
 
   const showMp4Warning = asset.type === "mp4" && !mp4Supported;
   const showProgress = isExporting && asset.type === "mp4";
@@ -51,14 +49,7 @@ export function Export({
 
       {showMp4Warning && (
         <Submodule>
-          <Callout.Root color="orange" size="1">
-            <Callout.Icon>
-              <InfoIcon size={16} />
-            </Callout.Icon>
-            <Callout.Text size="1">
-              MP4 export requires Chrome 126+ or equivalent
-            </Callout.Text>
-          </Callout.Root>
+          <Callout>MP4 export requires Chrome 126+ or equivalent</Callout>
         </Submodule>
       )}
 
