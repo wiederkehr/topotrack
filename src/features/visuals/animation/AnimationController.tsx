@@ -157,38 +157,35 @@ export function AnimationController({ config, map }: AnimationControllerProps) {
 
   /**
    * Export mode: Render single frame at specific timestamp
-   * This effect watches for changes in export timestamp to render frames
+   * Subscribe to export store to detect when we need to render a frame
    */
-  useEffect(
-    () => {
-      const { exportMode, exportTimestamp, frameReadyCallback } =
-        useExportStore.getState();
+  useEffect(() => {
+    // Subscribe to export store to detect when we need to render a frame
+    const unsubscribe = useExportStore.subscribe((state, prevState) => {
+      // Only act when exportTimestamp changes in export mode
+      if (
+        state.exportMode &&
+        state.exportTimestamp !== prevState.exportTimestamp
+      ) {
+        const frameState = calculateStateAtTimestamp(state.exportTimestamp);
+        if (frameState && map) {
+          applyCameraState(frameState);
 
-      if (!exportMode) return;
-
-      const state = calculateStateAtTimestamp(exportTimestamp);
-      if (state) {
-        applyCameraState(state);
-
-        // Wait for map to finish rendering before notifying
-        if (map) {
+          // Wait for map to finish rendering before notifying
           const checkRendered = () => {
             if (!map.isMoving()) {
-              frameReadyCallback?.();
+              state.frameReadyCallback?.();
             } else {
-              map.once("idle", () => frameReadyCallback?.());
+              map.once("idle", () => state.frameReadyCallback?.());
             }
           };
           requestAnimationFrame(checkRendered);
         }
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    },
-    [
-      // Note: we don't add exportTimestamp here to avoid subscriptions
-      // Export will manually trigger by updating mode or other props if needed
-    ],
-  );
+    });
+
+    return () => unsubscribe();
+  }, [calculateStateAtTimestamp, applyCameraState, map]);
 
   /**
    * Preview mode: RAF-based real-time animation
