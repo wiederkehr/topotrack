@@ -160,57 +160,26 @@ export function AnimationController({ config, map }: AnimationControllerProps) {
    * Subscribe to export store to detect when we need to render a frame
    */
   useEffect(() => {
-    console.log("[AnimationController] Setting up export mode subscription");
-
     // Subscribe to export store to detect when we need to render a frame
     const unsubscribe = useExportStore.subscribe((state, prevState) => {
-      console.log("[AnimationController] Store state changed", {
-        exportMode: state.exportMode,
-        exportTimestamp: state.exportTimestamp,
-        prevTimestamp: prevState.exportTimestamp,
-        hasCallback: !!state.frameReadyCallback,
-      });
-
       // Only act when exportTimestamp changes in export mode
       if (
         state.exportMode &&
         state.exportTimestamp !== prevState.exportTimestamp
       ) {
-        console.log(
-          "[AnimationController] Rendering frame at timestamp:",
-          state.exportTimestamp,
-        );
         const frameState = calculateStateAtTimestamp(state.exportTimestamp);
-        console.log(
-          "[AnimationController] Frame state calculated:",
-          frameState,
-        );
 
         if (frameState && map) {
-          console.log("[AnimationController] Applying camera state to map");
           applyCameraState(frameState);
 
           // Wait for map to finish rendering before notifying
           const checkRendered = () => {
-            console.log(
-              "[AnimationController] Checking if map is rendered, isMoving:",
-              map.isMoving(),
-            );
             if (!map.isMoving()) {
-              console.log(
-                "[AnimationController] Map is idle, calling frameReadyCallback",
-              );
               // Get latest callback from store in case it changed
               const callback = useExportStore.getState().frameReadyCallback;
               callback?.();
             } else {
-              console.log(
-                "[AnimationController] Map is moving, waiting for idle event",
-              );
               map.once("idle", () => {
-                console.log(
-                  "[AnimationController] Map idle event fired, calling frameReadyCallback",
-                );
                 // Get latest callback from store in case it changed
                 const callback = useExportStore.getState().frameReadyCallback;
                 callback?.();
@@ -218,17 +187,11 @@ export function AnimationController({ config, map }: AnimationControllerProps) {
             }
           };
           requestAnimationFrame(checkRendered);
-        } else {
-          console.log("[AnimationController] Cannot render frame:", {
-            hasFrameState: !!frameState,
-            hasMap: !!map,
-          });
         }
       }
     });
 
     return () => {
-      console.log("[AnimationController] Unsubscribing from export mode");
       unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
