@@ -200,7 +200,9 @@ export function AnimationController({ config, map }: AnimationControllerProps) {
               console.log(
                 "[AnimationController] Map is idle, calling frameReadyCallback",
               );
-              state.frameReadyCallback?.();
+              // Get latest callback from store in case it changed
+              const callback = useExportStore.getState().frameReadyCallback;
+              callback?.();
             } else {
               console.log(
                 "[AnimationController] Map is moving, waiting for idle event",
@@ -209,7 +211,9 @@ export function AnimationController({ config, map }: AnimationControllerProps) {
                 console.log(
                   "[AnimationController] Map idle event fired, calling frameReadyCallback",
                 );
-                state.frameReadyCallback?.();
+                // Get latest callback from store in case it changed
+                const callback = useExportStore.getState().frameReadyCallback;
+                callback?.();
               });
             }
           };
