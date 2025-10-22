@@ -5,6 +5,7 @@ import { useMemo, useRef } from "react";
 import MapGL, { MapRef } from "react-map-gl";
 
 import {
+  type AnimationConfig,
   AnimationControllerPreview,
   DEFAULT_ANIMATION_SETTINGS,
   ExportAnimationController,
@@ -63,20 +64,27 @@ function MapGLAnimated({
     return simplified.geometry.coordinates as [number, number][];
   }, [routeData]);
 
-  // Pre-calculate all animation data at setup time
+  // Pre-calculate all animation data for export
   const preCalculated = useMemo<PreCalculatedAnimation | null>(() => {
     if (routeData.length < 2) return null;
 
     try {
       return preCalculateAnimation(routeData, {
         ...DEFAULT_ANIMATION_SETTINGS,
-        // Override with padding if provided
       });
     } catch (error) {
       console.error("Failed to pre-calculate animation:", error);
       return null;
     }
   }, [routeData]);
+
+  // Build animation config for preview mode (real-time calculation)
+  const animationConfig = useMemo<AnimationConfig | null>(() => {
+    if (routeData.length < 2 || !preCalculated) return null;
+
+    // Reuse the config from pre-calculated data
+    return preCalculated.config;
+  }, [routeData, preCalculated]);
 
   // Initial map config from first keyframe if available
   const mapConfig = useMemo(() => {
@@ -125,9 +133,9 @@ function MapGLAnimated({
         />
 
         {/* Preview animation controller - handles real-time playback */}
-        {preCalculated && (
+        {animationConfig && (
           <AnimationControllerPreview
-            preCalculated={preCalculated}
+            config={animationConfig}
             map={mapRef.current?.getMap() ?? null}
           />
         )}

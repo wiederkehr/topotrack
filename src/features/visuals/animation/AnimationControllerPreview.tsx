@@ -2,30 +2,31 @@
  * Animation Controller - Preview Mode Only
  *
  * Simplified controller that handles real-time animation playback.
- * - Uses pre-calculated keyframes for smooth interpolation
- * - Single RAF loop with no per-frame calculations
+ * - Calculates camera state in real-time per RAF frame (like original)
+ * - No per-frame calculations overhead (uses config, not keyframes)
+ * - Handles smooth bearing damping across frames
  * - Export mode handled by separate ExportAnimationController
  *
- * Key design: Let Mapbox GL do what it does best (smooth interpolation)
- * by feeding it gradual updates instead of fighting its native animations.
+ * Key design: Calculate positions at exact animation timestamps for smooth
+ * 60fps motion. Export uses pre-calculated keyframes for deterministic output.
  */
 
-import { lineString } from "@turf/turf";
+import { along, length, lineString } from "@turf/turf";
 import type { Map as MapboxMap } from "mapbox-gl";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import { useTemplateStore } from "@/stores";
 
 import {
-  interpolateCameraKeyframes,
-  interpolateProgressKeypoints,
-  type PreCalculatedAnimation,
-} from "./preCalculator";
-import type { FitBoundsParams } from "./types";
+  calculateFitBoundsState,
+  calculateFlyToState,
+  calculateFollowPathState,
+} from "./phaseCalculators";
+import type { AnimationConfig, CameraState, FitBoundsParams } from "./types";
 
 type AnimationControllerPreviewProps = {
+  config: AnimationConfig;
   map: MapboxMap | null;
-  preCalculated: PreCalculatedAnimation;
 };
 
 /**
@@ -35,11 +36,12 @@ type AnimationControllerPreviewProps = {
  * Architecture:
  * - Subscribes to animation state changes (play/pause/stop)
  * - Uses RAF to drive animation at screen refresh rate
- * - Interpolates between pre-calculated keyframes
- * - Updates map camera and progress indicators smoothly
+ * - Calculates camera state in real-time for exact timestamp positioning
+ * - Tracks bearing across frames for smooth damping
+ * - Updates progress visualization in sync with camera
  */
 export function AnimationControllerPreview({
-  preCalculated,
+  config,
   map,
 }: AnimationControllerPreviewProps) {
   // Get animation state and position from template store
@@ -51,22 +53,11 @@ export function AnimationControllerPreview({
     (state) => state.updateAnimationPosition,
   );
 
-  // Extract just the followPath phase keyframes (what we animate with)
-  const followPathKeyframes = useMemo(() => {
-    return preCalculated.cameraKeyframes;
-  }, [preCalculated.cameraKeyframes]);
-
-  const followPathProgressKeypoints = useMemo(() => {
-    return preCalculated.progressKeypoints;
-  }, [preCalculated.progressKeypoints]);
-
-  const totalDuration = useMemo(() => {
-    return preCalculated.totalDuration;
-  }, [preCalculated.totalDuration]);
+  // Track bearing for followPath damping across frames
+  const followPathBearingRef = useRef<number | undefined>(undefined);
 
   /**
    * Convert altitude to Mapbox zoom level.
-   * Used to translate camera altitude into zoom parameter.
    */
   const altitudeToZoom = useCallback(
     (altitude: number, latitude: number): number => {
@@ -79,88 +70,244 @@ export function AnimationControllerPreview({
   );
 
   /**
+   * Calculate camera state at a specific timestamp.
+   * Real-time calculation based on animation phase and progress.
+   */
+  const calculateStateAtTimestamp = useCallback(
+    (ts: number): CameraState | null => {
+      let elapsed = 0;
+      let phaseIndex = 0;
+
+      // Find which phase we're in
+      for (let i = 0; i < config.phases.length; i++) {
+        const phase = config.phases[i]!;
+        const phaseDuration = phase.duration;
+
+        if (ts < elapsed + phaseDuration) {
+          phaseIndex = i;
+          break;
+        }
+
+        elapsed += phaseDuration;
+      }
+
+      const phase = config.phases[phaseIndex];
+      if (!phase) {
+        return null;
+      }
+
+      const phaseTimestamp = ts - elapsed;
+
+      // Calculate state based on phase type
+      if (phase.type === "flyTo") {
+        const params = phase.params as import("./types").FlyToParams;
+        return calculateFlyToState(phaseTimestamp, phase.duration, params);
+      } else if (phase.type === "followPath") {
+        const params = phase.params as import("./types").FollowPathParams;
+        const result = calculateFollowPathState(
+          phaseTimestamp,
+          phase.duration,
+          params,
+          followPathBearingRef.current,
+        );
+        // Store bearing for next frame damping
+        followPathBearingRef.current = result.nextBearing;
+        return result;
+      } else if (phase.type === "fitBounds") {
+        // For fitBounds, get previous state as starting point
+        const prevState = calculateStateAtTimestamp(elapsed - 1);
+        if (!prevState) return null;
+        const params = phase.params as FitBoundsParams;
+        return calculateFitBoundsState(
+          phaseTimestamp,
+          phase.duration,
+          params,
+          prevState,
+        );
+      }
+
+      return null;
+    },
+    [config],
+  );
+
+  /**
    * Apply camera state to Mapbox map.
-   * Uses easeTo for smooth interpolation between keyframes.
+   * Uses jumpTo for immediate positioning since we control timing externally.
    */
   const applyCameraState = useCallback(
-    (state: ReturnType<typeof interpolateCameraKeyframes>) => {
+    (state: CameraState) => {
       if (!map) return;
 
-      // Use easeTo with 50ms duration for smooth sub-frame interpolation
-      // This bridges the gap between keyframes (which are 50ms apart)
-      map.easeTo({
+      // Use jumpTo for immediate positioning
+      // RAF timing ensures smooth playback at screen refresh rate
+      map.jumpTo({
         center: [state.lng, state.lat],
         zoom: altitudeToZoom(state.altitude, state.lat),
         bearing: state.bearing,
         pitch: state.pitch,
-        duration: 50,
-        easing: (t) => t, // Linear easing for predictable motion
-        essential: true,
       });
     },
     [map, altitudeToZoom],
   );
 
   /**
-   * Update progress route and position marker.
-   * Uses pre-calculated progress data for smooth visualization.
+   * Update progress visualization based on animation progress.
+   * Calculates which part of the route has been "covered" by the animation.
    */
   const updateProgressVisualization = useCallback(
-    (progress: ReturnType<typeof interpolateProgressKeypoints>) => {
+    (elapsed: number) => {
       if (!map) return;
 
-      // Update progress route (the line showing completed path)
-      const progressSource = map.getSource("route-source-progress");
-      if (progressSource && progressSource.type === "geojson") {
-        progressSource.setData(lineString(progress.routeCoordinates));
+      // Find followPath phase
+      let phaseElapsed = 0;
+      let followPathPhaseInfo: {
+        duration: number;
+        startTime: number;
+      } | null = null;
+
+      for (const phase of config.phases) {
+        if (phase.type === "followPath") {
+          followPathPhaseInfo = {
+            startTime: phaseElapsed,
+            duration: phase.duration,
+          };
+          break;
+        }
+        phaseElapsed += phase.duration;
       }
 
-      // Update position marker (current location on route)
+      if (!followPathPhaseInfo) return;
+
+      // Calculate progress within followPath phase
+      const followPathStart = followPathPhaseInfo.startTime;
+      const followPathEnd = followPathStart + followPathPhaseInfo.duration;
+
+      let routeProgress = 0;
+      if (elapsed < followPathStart) {
+        routeProgress = 0;
+      } else if (elapsed >= followPathEnd) {
+        routeProgress = 1;
+      } else {
+        routeProgress =
+          (elapsed - followPathStart) / followPathPhaseInfo.duration;
+      }
+
+      // Get route data from followPath params
+      const followPathPhase = config.phases.find(
+        (p) => p.type === "followPath",
+      );
+      if (!followPathPhase) return;
+
+      const params =
+        followPathPhase.params as import("./types").FollowPathParams;
+      const routeFeature = params.path;
+      if (!routeFeature) return;
+
+      const routeCoords = routeFeature.geometry.coordinates as [
+        number,
+        number,
+      ][];
+      if (routeCoords.length < 2) return;
+
+      // Calculate cumulative distances
+      const cumulativeDistances: number[] = [0];
+      let accumulatedDistance = 0;
+
+      for (let i = 1; i < routeCoords.length; i++) {
+        const segment = lineString([routeCoords[i - 1]!, routeCoords[i]!]);
+        const segmentDistance = length(segment);
+        accumulatedDistance += segmentDistance;
+        cumulativeDistances.push(accumulatedDistance);
+      }
+
+      const totalDistance = accumulatedDistance;
+      const currentDistance = totalDistance * routeProgress;
+
+      // Find which points are in the progress line
+      const progressCoordinates: [number, number][] = [];
+      for (let i = 0; i < cumulativeDistances.length; i++) {
+        if (cumulativeDistances[i]! <= currentDistance) {
+          progressCoordinates.push(routeCoords[i]!);
+        } else {
+          break;
+        }
+      }
+
+      // Add interpolated point for exact progress
+      if (progressCoordinates.length > 0 && routeProgress > 0) {
+        const lastIndex = progressCoordinates.length - 1;
+        if (lastIndex < routeCoords.length - 1) {
+          const prevDist = cumulativeDistances[lastIndex]!;
+          const nextDist = cumulativeDistances[lastIndex + 1]!;
+
+          if (nextDist > prevDist && currentDistance > prevDist) {
+            const segmentProgress =
+              (currentDistance - prevDist) / (nextDist - prevDist);
+            const prev = routeCoords[lastIndex]!;
+            const next = routeCoords[lastIndex + 1]!;
+
+            const interpolated: [number, number] = [
+              prev[0] + (next[0] - prev[0]) * segmentProgress,
+              prev[1] + (next[1] - prev[1]) * segmentProgress,
+            ];
+            progressCoordinates.push(interpolated);
+          }
+        }
+      }
+
+      // Get current position
+      const currentPoint = along(routeFeature, currentDistance);
+      const position = currentPoint.geometry.coordinates as [number, number];
+
+      // Update progress route
+      const progressSource = map.getSource("route-source-progress");
+      if (
+        progressSource &&
+        progressSource.type === "geojson" &&
+        progressCoordinates.length >= 1
+      ) {
+        progressSource.setData(lineString(progressCoordinates));
+      }
+
+      // Update position marker
       const positionSource = map.getSource("position-source");
       if (positionSource && positionSource.type === "geojson") {
         positionSource.setData({
           type: "Feature",
           geometry: {
             type: "Point",
-            coordinates: progress.position,
+            coordinates: position,
           },
           properties: {},
         });
       }
     },
-    [map],
+    [map, config],
   );
 
   /**
    * Reset animation to initial state.
    */
   const resetAnimation = useCallback(() => {
-    if (!map || followPathKeyframes.length === 0) return;
+    if (!map) return;
 
-    // Jump to first keyframe position
-    const firstKeyframe = followPathKeyframes[0]!;
+    const initialState = calculateStateAtTimestamp(0);
+    if (!initialState) return;
 
     map.jumpTo({
-      center: [firstKeyframe.lng, firstKeyframe.lat],
-      zoom: altitudeToZoom(firstKeyframe.altitude, firstKeyframe.lat),
-      bearing: firstKeyframe.bearing,
-      pitch: firstKeyframe.pitch,
+      center: [initialState.lng, initialState.lat],
+      zoom: altitudeToZoom(initialState.altitude, initialState.lat),
+      bearing: initialState.bearing,
+      pitch: initialState.pitch,
     });
 
-    // Reset progress visualization to start
-    if (followPathProgressKeypoints.length > 0) {
-      const firstKeypoint = followPathProgressKeypoints[0]!;
-      updateProgressVisualization({
-        routeCoordinates: firstKeypoint.routeCoordinates,
-        position: firstKeypoint.position,
-      });
-    }
-
+    // Reset progress to start
+    updateProgressVisualization(0);
     updateAnimationPosition(0);
   }, [
     map,
-    followPathKeyframes,
-    followPathProgressKeypoints,
+    calculateStateAtTimestamp,
     altitudeToZoom,
     updateAnimationPosition,
     updateProgressVisualization,
@@ -168,10 +315,8 @@ export function AnimationControllerPreview({
 
   /**
    * Main RAF animation loop for preview mode.
-   * Drives animation by interpolating keyframes at screen refresh rate.
    */
   useEffect(() => {
-    // Only animate in preview mode, not in export mode
     if (animationState === "stopped") {
       resetAnimation();
       return;
@@ -182,7 +327,8 @@ export function AnimationControllerPreview({
     }
 
     if (!map) return;
-    if (followPathKeyframes.length === 0) return;
+
+    const totalDuration = config.phases.reduce((sum, p) => sum + p.duration, 0);
 
     let animationFrameId: number;
     let lastFrameTime: number | undefined;
@@ -194,7 +340,6 @@ export function AnimationControllerPreview({
         if (!isPaused) {
           isPaused = true;
         }
-        // Keep requesting frames to detect resume
         animationFrameId = requestAnimationFrame(animate);
         return;
       }
@@ -202,7 +347,7 @@ export function AnimationControllerPreview({
       // Handle resume from pause
       if (isPaused && animationState === "playing") {
         isPaused = false;
-        lastFrameTime = undefined; // Reset timing
+        lastFrameTime = undefined;
       }
 
       // Initialize timing on first frame or after resume
@@ -213,70 +358,26 @@ export function AnimationControllerPreview({
       const elapsed = currentTime - lastFrameTime;
 
       if (elapsed < totalDuration) {
-        // Determine which phase we're in and interpolate accordingly
-        let phaseElapsed = 0;
-
-        // Phases: 0=flyTo, 1=followPath, 2=fitBounds
-        for (const phase of preCalculated.config.phases) {
-          if (elapsed < phaseElapsed + phase.duration) {
-            // We're in this phase
-            const phaseTimestamp = elapsed - phaseElapsed;
-
-            if (phase.type === "followPath") {
-              // Interpolate camera from pre-calculated keyframes
-              const cameraState = interpolateCameraKeyframes(
-                followPathKeyframes,
-                phaseTimestamp,
-              );
-              applyCameraState(cameraState);
-
-              // Update progress visualization
-              const progress = interpolateProgressKeypoints(
-                followPathProgressKeypoints,
-                phaseTimestamp,
-              );
-              updateProgressVisualization(progress);
-            } else if (phase.type === "fitBounds") {
-              // For fitBounds, use native Mapbox method once
-              if (phaseTimestamp < 50) {
-                // First frame of phase
-                const params = phase.params as FitBoundsParams;
-                map.fitBounds(
-                  [
-                    [params.boundsWest, params.boundsSouth],
-                    [params.boundsEast, params.boundsNorth],
-                  ],
-                  {
-                    padding: {
-                      top: params.paddingTop,
-                      bottom: params.paddingBottom,
-                      left: params.paddingLeft,
-                      right: params.paddingRight,
-                    },
-                    bearing: params.bearing,
-                    pitch: params.pitch,
-                    duration: phase.duration,
-                    essential: true,
-                  },
-                );
-              }
-              // Let Mapbox handle the animation from here
-            } else if (phase.type === "flyTo") {
-              // FlyTo is handled by initial setup, just continue
-              // (could add interpolation here if needed)
-            }
-
-            break;
-          }
-
-          phaseElapsed += phase.duration;
+        // Calculate and apply camera state
+        const state = calculateStateAtTimestamp(elapsed);
+        if (state) {
+          applyCameraState(state);
         }
 
+        // Update progress visualization
+        updateProgressVisualization(elapsed);
+
+        // Update store
         updateAnimationPosition(elapsed);
+
         animationFrameId = requestAnimationFrame(animate);
       } else {
-        // Animation complete - update to final position
+        // Animation complete
         updateAnimationPosition(totalDuration);
+        const finalState = calculateStateAtTimestamp(totalDuration - 1);
+        if (finalState) {
+          applyCameraState(finalState);
+        }
       }
     };
 
@@ -288,8 +389,7 @@ export function AnimationControllerPreview({
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map, animationState, animationPosition]);
+  }, [map, animationState, animationPosition, config]);
 
-  // This component only manages animation state, renders nothing
   return null;
 }
