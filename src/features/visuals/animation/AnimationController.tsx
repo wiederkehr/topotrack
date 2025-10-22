@@ -24,7 +24,13 @@ type AnimationControllerProps = {
  * Mode and timestamp are controlled via the useExportStore.
  */
 export function AnimationController({ config, map }: AnimationControllerProps) {
-  const replayTrigger = useTemplateStore((state) => state.replayTrigger);
+  const animationState = useTemplateStore((state) => state.animationState);
+  const animationPosition = useTemplateStore(
+    (state) => state.animationPosition,
+  );
+  const updateAnimationPosition = useTemplateStore(
+    (state) => state.updateAnimationPosition,
+  );
 
   // Don't subscribe to store - just check it directly to avoid re-renders
   // We only care about export mode in useEffects, not during render
@@ -110,20 +116,20 @@ export function AnimationController({ config, map }: AnimationControllerProps) {
     (state: CameraState) => {
       if (!map) return;
 
-      // Use Mapbox's easeTo for smooth transitions in preview mode
-      // In export mode, we want instant updates (duration: 0)
-      const duration = mode === "preview" ? 50 : 0;
-
+      // Use easeTo with RAF-interval duration for sub-frame smoothing
+      // 16ms matches typical RAF interval (60fps), providing interpolation between frames
+      // This smooths out bearing changes while avoiding animation conflicts
       map.easeTo({
         center: [state.lng, state.lat],
         zoom: altitudeToZoom(state.altitude, state.lat),
         bearing: state.bearing,
         pitch: state.pitch,
-        duration,
+        duration: 16, // One frame at 60fps
+        easing: (t) => t, // Linear easing for predictable motion
         essential: true,
       });
     },
-    [map, mode],
+    [map],
   );
 
   /**
@@ -156,6 +162,68 @@ export function AnimationController({ config, map }: AnimationControllerProps) {
   }, [totalDuration]);
 
   /**
+   * Helper to determine which phase we're in and handle fitBounds specially
+   */
+  const applyAnimationAtTimestamp = useCallback(
+    (elapsed: number) => {
+      if (!map) return;
+
+      // Find which phase we're in
+      let phaseElapsed = 0;
+      let currentPhase = null;
+      let phaseTimestamp = 0;
+
+      for (const phase of config.phases) {
+        if (elapsed < phaseElapsed + phase.duration) {
+          currentPhase = phase;
+          phaseTimestamp = elapsed - phaseElapsed;
+          break;
+        }
+        phaseElapsed += phase.duration;
+      }
+
+      if (!currentPhase) return;
+
+      // Handle fitBounds phase using native Mapbox method
+      if (currentPhase.type === "fitBounds") {
+        const params = currentPhase.params as import("./types").FitBoundsParams;
+
+        // Only call fitBounds once at the very start of the phase
+        if (phaseTimestamp === 0 || phaseTimestamp < 16) {
+          // First frame only (~16ms = one frame at 60fps)
+          map.fitBounds(
+            [
+              [params.boundsWest, params.boundsSouth],
+              [params.boundsEast, params.boundsNorth],
+            ],
+            {
+              padding: {
+                top: params.paddingTop,
+                bottom: params.paddingBottom,
+                left: params.paddingLeft,
+                right: params.paddingRight,
+              },
+              bearing: params.bearing,
+              pitch: params.pitch,
+              duration: currentPhase.duration,
+              essential: true,
+            },
+          );
+        }
+        // During fitBounds, let Mapbox handle the animation
+        // Don't call applyCameraState as it would interfere
+      } else {
+        // For other phases, use calculated state
+        const state = calculateStateAtTimestamp(elapsed);
+        if (state) {
+          applyCameraState(state);
+        }
+      }
+    },
+    [map, config, calculateStateAtTimestamp, applyCameraState],
+  );
+
+  /**
    * Export mode: Render single frame at specific timestamp
    * Subscribe to export store to detect when we need to render a frame
    */
@@ -167,10 +235,9 @@ export function AnimationController({ config, map }: AnimationControllerProps) {
         state.exportMode &&
         state.exportTimestamp !== prevState.exportTimestamp
       ) {
-        const frameState = calculateStateAtTimestamp(state.exportTimestamp);
-
-        if (frameState && map) {
-          applyCameraState(frameState);
+        if (map) {
+          // Use the same helper that handles fitBounds
+          applyAnimationAtTimestamp(state.exportTimestamp);
 
           // Wait for map to finish rendering before notifying
           const checkRendered = () => {
@@ -195,37 +262,136 @@ export function AnimationController({ config, map }: AnimationControllerProps) {
       unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map]); // Only re-subscribe if map instance changes, callbacks are stable via refs
+  }, [map, applyAnimationAtTimestamp]); // Only re-subscribe if map instance changes
 
   /**
-   * Preview mode: RAF-based real-time animation
-   * Only runs on initial mount and when replayTrigger changes
+   * Reset/Stopped mode: Reset map to initial state
+   */
+  useEffect(() => {
+    if (!map) return;
+    if (animationState !== "stopped") return;
+
+    // Calculate initial state (timestamp 0)
+    const initialState = calculateStateAtTimestamp(0);
+
+    if (initialState) {
+      // Reset bearing reference
+      followPathBearingRef.current = undefined;
+
+      // Apply initial state to map immediately using jumpTo
+      map.jumpTo({
+        center: [initialState.lng, initialState.lat],
+        zoom: altitudeToZoom(initialState.altitude, initialState.lat),
+        bearing: initialState.bearing,
+        pitch: initialState.pitch,
+      });
+    }
+  }, [animationState, map, calculateStateAtTimestamp]);
+
+  /**
+   * Preview mode: RAF-based real-time animation with play/pause support
    */
   useEffect(() => {
     if (mode !== "preview") return;
     if (!map) return;
+    if (animationState === "stopped") return; // Don't animate if stopped
 
     let animationFrameId: number;
-    let startTime: number | undefined;
+    let lastFrameTime: number | undefined;
+    let isPaused = animationState === "paused";
 
     // Calculate total duration
     const totalDuration = config.phases.reduce((sum, p) => sum + p.duration, 0);
 
     const animate = (currentTime: number) => {
-      if (!startTime) startTime = currentTime;
-      const elapsed = currentTime - startTime;
+      // Handle pause state
+      if (animationState === "paused") {
+        if (!isPaused) {
+          // Just paused - update position and stop
+          isPaused = true;
+        }
+        // While paused, keep requesting frames to detect resume
+        animationFrameId = requestAnimationFrame(animate);
+        return;
+      }
+
+      // Handle resume from pause
+      if (isPaused && animationState === "playing") {
+        isPaused = false;
+        lastFrameTime = undefined; // Reset timing
+      }
+
+      // Initialize timing on first frame or after resume
+      if (!lastFrameTime) {
+        lastFrameTime = currentTime - animationPosition;
+      }
+
+      const elapsed = currentTime - lastFrameTime;
 
       if (elapsed < totalDuration) {
-        const state = calculateStateAtTimestamp(elapsed);
-        if (state) {
-          applyCameraState(state);
+        // Find which phase we're in and apply camera state
+        let phaseElapsed = 0;
+        let currentPhase = null;
+        let phaseTimestamp = 0;
+
+        for (const phase of config.phases) {
+          if (elapsed < phaseElapsed + phase.duration) {
+            currentPhase = phase;
+            phaseTimestamp = elapsed - phaseElapsed;
+            break;
+          }
+          phaseElapsed += phase.duration;
         }
+
+        if (currentPhase) {
+          // Handle fitBounds phase using native Mapbox method
+          if (currentPhase.type === "fitBounds") {
+            const params =
+              currentPhase.params as import("./types").FitBoundsParams;
+
+            // Only call fitBounds once at the start of the phase
+            if (phaseTimestamp < 16) {
+              map.fitBounds(
+                [
+                  [params.boundsWest, params.boundsSouth],
+                  [params.boundsEast, params.boundsNorth],
+                ],
+                {
+                  padding: {
+                    top: params.paddingTop,
+                    bottom: params.paddingBottom,
+                    left: params.paddingLeft,
+                    right: params.paddingRight,
+                  },
+                  bearing: params.bearing,
+                  pitch: params.pitch,
+                  duration: currentPhase.duration,
+                  essential: true,
+                },
+              );
+            }
+            // During fitBounds, let Mapbox handle the animation
+          } else {
+            // For other phases, use calculated state
+            const state = calculateStateAtTimestamp(elapsed);
+            if (state) {
+              applyCameraState(state);
+            }
+          }
+        }
+
+        updateAnimationPosition(elapsed);
         animationFrameId = requestAnimationFrame(animate);
+      } else {
+        // Animation completed - update final position
+        updateAnimationPosition(totalDuration);
       }
     };
 
-    // Reset bearing reference for new animation
-    followPathBearingRef.current = undefined;
+    // Reset bearing reference when animation restarts from position 0
+    if (animationPosition === 0) {
+      followPathBearingRef.current = undefined;
+    }
 
     animationFrameId = requestAnimationFrame(animate);
 
@@ -236,9 +402,9 @@ export function AnimationController({ config, map }: AnimationControllerProps) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    // Only re-run when these specific values change
     map,
-    replayTrigger,
+    animationState,
+    animationPosition,
     // Note: we don't include calculateStateAtTimestamp or applyCameraState
     // to avoid re-running animation when those callbacks are recreated
   ]);

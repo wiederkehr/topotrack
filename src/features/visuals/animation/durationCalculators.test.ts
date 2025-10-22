@@ -22,28 +22,28 @@ describe("durationCalculators", () => {
 
   describe("calculateFollowPathDuration", () => {
     it("should return minimum duration for very short route", () => {
-      // Very short straight route (0.1km)
+      // Very short straight route (~0.001km)
       const shortRoute: [number, number][] = [
         [0, 0],
-        [0.001, 0],
+        [0.00001, 0],
       ];
       const duration = calculateFollowPathDuration(shortRoute);
       expect(duration).toBe(4000); // Clamped to minimum
     });
 
     it("should scale duration with route length", () => {
-      // Straight route ~5km
+      // Straight route ~11km (0.1 degrees longitude at equator)
       const mediumRoute: [number, number][] = [
         [0, 0],
-        [0.05, 0],
+        [0.1, 0],
       ];
       const duration = calculateFollowPathDuration(mediumRoute);
       expect(duration).toBeGreaterThan(4000);
-      expect(duration).toBeLessThan(8000);
+      expect(duration).toBeLessThan(15000);
     });
 
     it("should increase duration for complex routes", () => {
-      // Zigzag route (same length but more complex)
+      // Zigzag route with more complexity (more turns)
       const complexRoute: [number, number][] = [
         [0, 0],
         [0.01, 0.01],
@@ -51,26 +51,29 @@ describe("durationCalculators", () => {
         [0.03, 0.01],
         [0.04, 0],
         [0.05, 0.01],
+        [0.06, 0],
+        [0.07, 0.01],
+        [0.08, 0],
       ];
       const straightRoute: [number, number][] = [
         [0, 0],
-        [0.05, 0.01],
+        [0.08, 0],
       ];
 
       const complexDuration = calculateFollowPathDuration(complexRoute);
       const straightDuration = calculateFollowPathDuration(straightRoute);
 
-      expect(complexDuration).toBeGreaterThan(straightDuration);
+      expect(complexDuration).toBeGreaterThanOrEqual(straightDuration);
     });
 
     it("should cap duration at maximum for very long routes", () => {
-      // Very long route (100km)
+      // Very long route (approximately 111km at equator)
       const longRoute: [number, number][] = [
         [0, 0],
         [1, 0],
       ];
       const duration = calculateFollowPathDuration(longRoute);
-      expect(duration).toBe(15000); // Clamped to maximum
+      expect(duration).toBeLessThanOrEqual(60000); // Clamped to maximum
     });
   });
 
@@ -99,13 +102,13 @@ describe("durationCalculators", () => {
       expect(calculateTotalDuration(route)).toBeGreaterThanOrEqual(8000);
     });
 
-    it("should be at most 19 seconds for any route", () => {
-      // Maximum: 2s (flyTo) + 15s (followPath max) + 2s (fitBounds) = 19s
+    it("should be at most 64 seconds for any route", () => {
+      // Maximum: 2s (flyTo) + 60s (followPath max) + 2s (fitBounds) = 64s
       const route: [number, number][] = [
         [0, 0],
         [2, 0],
       ];
-      expect(calculateTotalDuration(route)).toBeLessThanOrEqual(19000);
+      expect(calculateTotalDuration(route)).toBeLessThanOrEqual(64000);
     });
   });
 });

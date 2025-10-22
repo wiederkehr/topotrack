@@ -52,14 +52,89 @@ export function calculateFlyToDuration(): number {
 }
 
 /**
+ * Duration curve configuration for route animations.
+ * Adjust these values to fine-tune animation timing across different route lengths.
+ */
+const DURATION_CURVE = {
+  // Reference points: [distance in km, ideal duration in seconds]
+  shortRoute: { km: 10, seconds: 4 },
+  averageRoute: { km: 25, seconds: 10 },
+  longRoute: { km: 130, seconds: 60 },
+
+  // Clamping bounds
+  minDuration: 4000, // 4 seconds minimum
+  maxDuration: 60000, // 1 minute maximum
+
+  // Complexity multiplier range
+  complexityImpact: 0.3, // 0-30% extra time for complex routes
+};
+
+/**
+ * Calculate ideal duration using a smooth curve based on route length.
+ * Uses logarithmic interpolation for natural scaling across wide distance ranges.
+ *
+ * @param routeLength - Route length in kilometers
+ * @returns Duration in milliseconds (before complexity adjustment)
+ */
+function calculateCurveDuration(routeLength: number): number {
+  const { shortRoute, averageRoute, longRoute } = DURATION_CURVE;
+
+  // Handle edge cases
+  if (routeLength <= shortRoute.km) {
+    // For very short routes, use linear interpolation from 0 to short
+    const ratio = routeLength / shortRoute.km;
+    return ratio * shortRoute.seconds * 1000;
+  }
+
+  if (routeLength >= longRoute.km) {
+    // For very long routes, use linear interpolation beyond long point
+    const ratio = Math.min(
+      (routeLength - longRoute.km) / (longRoute.km * 0.5),
+      1,
+    );
+    return longRoute.seconds * 1000 + ratio * (longRoute.seconds * 1000 * 0.2);
+  }
+
+  // For routes between short and long, use logarithmic curve
+  // This provides smooth acceleration through the middle ranges
+  if (routeLength <= averageRoute.km) {
+    // Curve from short to average
+    const logRange = Math.log(averageRoute.km / shortRoute.km);
+    const logPosition = Math.log(routeLength / shortRoute.km);
+    const t = logPosition / logRange;
+
+    // Smooth interpolation using smoothstep
+    const easedT = t * t * (3 - 2 * t);
+    return (
+      (shortRoute.seconds +
+        easedT * (averageRoute.seconds - shortRoute.seconds)) *
+      1000
+    );
+  } else {
+    // Curve from average to long
+    const logRange = Math.log(longRoute.km / averageRoute.km);
+    const logPosition = Math.log(routeLength / averageRoute.km);
+    const t = logPosition / logRange;
+
+    // Smooth interpolation using smoothstep
+    const easedT = t * t * (3 - 2 * t);
+    return (
+      (averageRoute.seconds +
+        easedT * (longRoute.seconds - averageRoute.seconds)) *
+      1000
+    );
+  }
+}
+
+/**
  * Duration calculator for followPath phase.
- * Dynamic duration based on route length and complexity.
+ * Dynamic duration based on route length and complexity using a configurable curve.
  *
  * Longer routes get more time to showcase the path.
  * More complex routes (more turns) get additional time.
  *
  * @param routeData - Array of [lng, lat] coordinates
- * @returns Duration in milliseconds (4-15 seconds)
+ * @returns Duration in milliseconds (4-60 seconds)
  */
 export function calculateFollowPathDuration(
   routeData: [number, number][],
@@ -71,18 +146,20 @@ export function calculateFollowPathDuration(
   // Calculate route complexity (0-1 score)
   const complexity = calculateRouteComplexity(routeData);
 
-  // Base duration: 1 second per kilometer
-  const baseDuration = routeLength * 1000;
+  // Get base duration from curve
+  const baseDuration = calculateCurveDuration(routeLength);
 
-  // Complexity multiplier: complex routes get 20-50% more time
-  const complexityMultiplier = 1 + complexity * 0.3;
+  // Complexity multiplier: complex routes get extra time
+  const complexityMultiplier = 1 + complexity * DURATION_CURVE.complexityImpact;
 
-  // Apply multiplier and clamp to reasonable range
+  // Apply multiplier
   const duration = baseDuration * complexityMultiplier;
 
-  // Minimum 4 seconds (short routes still need time to be visible)
-  // Maximum 15 seconds (long routes shouldn't drag on)
-  return Math.min(Math.max(duration, 4000), 15000);
+  // Clamp to reasonable range
+  return Math.min(
+    Math.max(duration, DURATION_CURVE.minDuration),
+    DURATION_CURVE.maxDuration,
+  );
 }
 
 /**

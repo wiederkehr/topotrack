@@ -1,3 +1,5 @@
+import chroma from "chroma-js";
+
 import { Layer } from "@/features/visuals/layer";
 import { MapGLAnimated } from "@/features/visuals/map";
 import {
@@ -19,10 +21,13 @@ export function Visual({ activityData, variables, format }: VisualType) {
   const {
     foreground = colors.mono.white,
     middleground = colors.light.indigo,
+    background = colors.dark.indigo,
     map = mapStyleOptions[0],
   } = destructureVariables(variables);
   const { lnglat } = destructureActivityData(activityData);
   const padding = getPadding(format.name);
+  const routeForeground = chroma(foreground).mix(middleground, 0.2).hex();
+  const routeBackground = chroma(middleground).mix(background, 0.6).hex();
   return (
     <Layer>
       <MapGLAnimated
@@ -30,8 +35,8 @@ export function Visual({ activityData, variables, format }: VisualType) {
         data={lnglat}
         padding={padding}
         style={mapStyle({ mapShade: map as MapShadeType })}
-        routeColor={middleground}
-        progressColor={foreground}
+        routeColor={routeBackground}
+        progressColor={routeForeground}
       />
     </Layer>
   );

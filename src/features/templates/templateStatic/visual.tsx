@@ -78,8 +78,18 @@ export function Visual({
             backgroundColor: background,
           })}
         >
-          <Route data={lnglat} lineColor={routeBackground} lineWidth={16} />
-          <Route data={lnglat} lineColor={routeForeground} lineWidth={2} />
+          <Route
+            id="background"
+            data={lnglat}
+            lineColor={routeBackground}
+            lineWidth={16}
+          />
+          <Route
+            id="foreground"
+            data={lnglat}
+            lineColor={routeForeground}
+            lineWidth={2}
+          />
         </MapGLStatic>
       </Layer>
       <Layer>

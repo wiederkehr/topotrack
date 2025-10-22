@@ -4,6 +4,7 @@ import { create } from "zustand";
 import { assets, formats } from "@/features/composer/composer.settings";
 import { type ExportFormat, exportNode } from "@/functions/export";
 import { formatFilename } from "@/functions/format";
+import { useTemplateStore } from "@/stores/useTemplateStore";
 import type { AssetType, FormatType } from "@/types";
 
 interface ExportState {
@@ -90,15 +91,39 @@ export const useExportStore = create<ExportState>((set, get) => ({
       type: asset.type,
     });
 
-    set({ isExporting: true, exportProgress: 0 });
+    // Stop and reset animation before export (for MP4 exports)
+    if (asset.type === "mp4") {
+      useTemplateStore.getState().stopAndResetAnimation();
 
-    void exportNode({
-      node: figureRef.current,
-      name,
-      format,
-      type: asset.type as ExportFormat,
-    }).finally(() => {
-      set({ isExporting: false, exportProgress: 0 });
-    });
+      // Wait for map to reset to initial state before starting export
+      // This ensures the export captures from the beginning
+      setTimeout(() => {
+        const node = figureRef.current;
+        if (!node) return;
+
+        set({ isExporting: true, exportProgress: 0 });
+
+        void exportNode({
+          node,
+          name,
+          format,
+          type: asset.type as ExportFormat,
+        }).finally(() => {
+          set({ isExporting: false, exportProgress: 0 });
+        });
+      }, 200);
+    } else {
+      // For non-animated exports (PNG), proceed immediately
+      set({ isExporting: true, exportProgress: 0 });
+
+      void exportNode({
+        node: figureRef.current,
+        name,
+        format,
+        type: asset.type as ExportFormat,
+      }).finally(() => {
+        set({ isExporting: false, exportProgress: 0 });
+      });
+    }
   },
 }));

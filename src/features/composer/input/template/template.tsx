@@ -1,9 +1,5 @@
-import { RotateCw } from "lucide-react";
-
-import { Button } from "@/components/interface/button";
 import { Module, Submodule } from "@/components/interface/module";
 import { Select } from "@/components/interface/select";
-import { useTemplateStore } from "@/stores";
 
 type TemplateProps = {
   onTemplateChange: (value: string) => void;
@@ -21,7 +17,6 @@ export function Template({
   templates,
   onTemplateChange,
 }: TemplateProps) {
-  const triggerReplay = useTemplateStore((state) => state.triggerReplay);
   return (
     <Module label="Template">
       <Submodule>
@@ -31,14 +26,6 @@ export function Template({
           options={templates.map(({ name }) => name)}
         />
       </Submodule>
-      {template.isAnimated && (
-        <Submodule>
-          <Button onClick={triggerReplay}>
-            <RotateCw size={16} />
-            Replay
-          </Button>
-        </Submodule>
-      )}
     </Module>
   );
 }

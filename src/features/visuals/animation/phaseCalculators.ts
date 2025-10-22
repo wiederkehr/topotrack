@@ -146,13 +146,16 @@ export function calculateFollowPathState(
 
 /**
  * Calculate camera state during fitBounds phase.
- * Camera zooms out to show entire route with specified padding.
+ *
+ * NOTE: This is a simplified version used only for progress tracking and export.
+ * The actual fitBounds animation is handled by Mapbox's native fitBounds() method
+ * in AnimationController, which correctly calculates zoom, padding, and transitions.
  *
  * @param timestamp - Milliseconds elapsed in this phase (0 to duration)
  * @param duration - Total duration of this phase in milliseconds
  * @param params - FitBounds parameters
  * @param startState - Camera state at start of this phase
- * @returns Camera state at the given timestamp
+ * @returns Camera state at the given timestamp (position and angles only)
  */
 export function calculateFitBoundsState(
   timestamp: number,
@@ -167,15 +170,9 @@ export function calculateFitBoundsState(
   const centerLng = (params.boundsWest + params.boundsEast) / 2;
   const centerLat = (params.boundsSouth + params.boundsNorth) / 2;
 
-  // Calculate zoom level needed to fit bounds
-  // This is a simplified calculation - Mapbox will handle precise zoom in practice
-  const boundsWidth = params.boundsEast - params.boundsWest;
-  const boundsHeight = params.boundsNorth - params.boundsSouth;
-  const maxBounds = Math.max(boundsWidth, boundsHeight);
-
-  // Approximate altitude calculation (simplified)
-  // Higher altitude for larger bounds
-  const targetAltitude = maxBounds * 100000; // Rough approximation
+  // Use a high altitude for zoom-out effect
+  // Actual zoom level is handled by native fitBounds()
+  const targetAltitude = 20000; // Approximate high altitude for overview
 
   return {
     altitude: lerp(startState.altitude, targetAltitude, easedProgress),

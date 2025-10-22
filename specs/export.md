@@ -723,9 +723,908 @@ L **Not Met**
 - [html-to-image repository](https://github.com/bubkoo/html-to-image)
 - [Mapbox GL JS preserveDrawingBuffer](https://docs.mapbox.com/mapbox-gl-js/api/map/#map-parameters)
 
+## Critical Review: Current Implementation (2025-10-21)
+
+### Executive Summary
+
+The current animation and export implementation demonstrates **excellent architectural design** with strong separation of concerns and a unified approach to animation control. The system successfully implements frame-by-frame export synchronization using pure phase calculators and store-based coordination.
+
+However, **critical production issues** exist that must be addressed:
+
+1. Race condition in export initialization (HIGH)
+2. Missing error boundaries and cleanup logic (HIGH)
+3. Hard-coded duration estimates vs. actual values (MEDIUM)
+4. Potential memory leaks on export failure (MEDIUM)
+
+### Implementation Review
+
+#### Architectural Strengths
+
+**1. Unified Animation Controller** ([AnimationController.tsx](../src/features/visuals/animation/AnimationController.tsx))
+
+The single-component approach elegantly handles both preview and export modes:
+
+```typescript
+// Preview mode: RAF-based real-time playback
+useEffect(() => {
+  const animate = (currentTime: number) => {
+    const state = calculateStateAtTimestamp(elapsed);
+    applyCameraState(state);
+    requestAnimationFrame(animate);
+  };
+}, [replayTrigger]);
+
+// Export mode: Frame-by-frame rendering at precise timestamps
+useEffect(() => {
+  const unsubscribe = useExportStore.subscribe((state, prevState) => {
+    if (
+      state.exportMode &&
+      state.exportTimestamp !== prevState.exportTimestamp
+    ) {
+      const frameState = calculateStateAtTimestamp(state.exportTimestamp);
+      applyCameraState(frameState);
+      // Wait for render, then notify export system
+    }
+  });
+}, [map]);
+```
+
+**Benefits:**
+
+- No code duplication between preview and export
+- Single source of truth for animation logic
+- Easy to test and maintain
+
+**2. Pure Phase Calculators** ([phaseCalculators.ts](../src/features/visuals/animation/phaseCalculators.ts))
+
+Stateless functions calculate camera state at any timestamp:
+
+```typescript
+export function calculateFlyToState(
+  timestamp: number,
+  duration: number,
+  params: FlyToParams,
+): CameraState {
+  const progress = Math.min(timestamp / duration, 1);
+  const easedProgress = easeCubicOut(progress);
+
+  return {
+    altitude: lerp(params.startAltitude, params.stopAltitude, easedProgress),
+    bearing: lerpAngle(params.startBearing, params.stopBearing, easedProgress),
+    pitch: lerp(params.startPitch, params.stopPitch, easedProgress),
+    lng: params.targetLng,
+    lat: params.targetLat,
+  };
+}
+```
+
+**Benefits:**
+
+- Deterministic rendering (same timestamp = same state)
+- Testable without DOM or Mapbox dependencies
+- Enables perfect frame-by-frame export
+- No drift between preview and export
+
+**3. Dynamic Duration Calculation** ([durationCalculators.ts](../src/features/visuals/animation/durationCalculators.ts))
+
+Intelligent duration based on route characteristics:
+
+```typescript
+export function calculateFollowPathDuration(
+  routeData: [number, number][],
+): number {
+  const routeLength = length(lineString(routeData)); // kilometers
+  const complexity = calculateRouteComplexity(routeData); // 0-1 score
+
+  const baseDuration = routeLength * 1000; // 1 second per km
+  const complexityMultiplier = 1 + complexity * 0.3; // +20-50% for complex routes
+
+  return Math.min(Math.max(baseDuration * complexityMultiplier, 4000), 15000);
+}
+```
+
+**Benefits:**
+
+- No hard-coded animation durations
+- Adapts to route length and complexity
+- Consistent pacing across different activities
+
+**4. Store-Based Coordination** ([useExportStore.ts](../src/stores/useExportStore.ts))
+
+Clean separation of concerns via Zustand:
+
+```typescript
+interface ExportState {
+  // Export control
+  exportMode: boolean; // Preview vs. export mode
+  exportTimestamp: number; // Current frame timestamp
+  exportProgress: number; // Progress percentage
+  isExporting: boolean; // UI state
+
+  // Export coordination
+  frameReadyCallback: (() => void) | null; // Called when frame rendered
+  animationDuration: number | null; // Total animation duration
+
+  // Export configuration
+  format: FormatType;
+  asset: AssetType;
+  figureRef: RefObject<HTMLDivElement> | null;
+}
+```
+
+**Benefits:**
+
+- Reactive updates across components
+- No prop drilling
+- Clear state ownership
+
+#### Critical Issues
+
+**Issue #1: Race Condition in Export Initialization (HIGH PRIORITY)**
+
+**Location:** [recordNodeAsMp4.ts:174-178](../src/functions/export/recordNodeAsMp4.ts#L174-L178)
+
+**Problem:**
+
+```typescript
+// Enable export mode in store
+useExportStore.getState().setExportMode(true);
+useExportStore.getState().setExportTimestamp(0);
+void renderFrameControlled();
+```
+
+The export system immediately sets `exportTimestamp` to 0 after enabling export mode. However, the `AnimationController`'s subscription to the export store (line 164) may not be active yet, especially if:
+
+- Component just mounted
+- React is batching updates
+- Subscription callback hasn't fired
+
+**Impact:**
+
+- First frame (timestamp 0) may be skipped
+- Export starts from frame 1 instead of frame 0
+- Video missing initial state
+
+**Reproduction:**
+
+1. Navigate to composer page
+2. Load animated template
+3. Immediately click "Download" before animation plays
+4. First frame may be wrong or skipped
+
+**Fix:**
+Add initialization delay to ensure subscription is ready:
+
+```typescript
+if (useFrameByFrame) {
+  useExportStore.getState().setExportMode(true);
+
+  // Wait for next tick to ensure AnimationController subscription is active
+  await new Promise((resolve) => setTimeout(resolve, 0));
+
+  useExportStore.getState().setExportTimestamp(0);
+  void renderFrameControlled();
+}
+```
+
+**Issue #2: Missing Error Boundaries and Cleanup (HIGH PRIORITY)**
+
+**Location:** [recordNodeAsMp4.ts:49-183](../src/functions/export/recordNodeAsMp4.ts#L49-L183), [exportNode.ts:61-87](../src/functions/export/exportNode.ts#L61-L87)
+
+**Problem:**
+No try-catch blocks in critical export paths. If any error occurs:
+
+- `html2canvas` fails to capture frame
+- MediaRecorder encoding fails
+- Out of memory
+- Mapbox GL rendering error
+
+The export store is left in a dirty state:
+
+```typescript
+// Store state after failed export:
+{
+  exportMode: true,        // Still in export mode!
+  isExporting: true,       // UI shows "Exporting..."
+  exportTimestamp: 1234,   // Stuck at failed frame
+  frameReadyCallback: fn   // Callback never cleared
+}
+```
+
+**Impact:**
+
+- User sees "Exporting..." spinner forever
+- Cannot retry export (already "exporting")
+- Preview animation broken (stuck in export mode)
+- Memory leak from uncleaned callbacks
+
+**Fix:**
+Wrap export logic in comprehensive error handling:
+
+```typescript
+export async function recordNodeAsMp4({
+  node,
+  format,
+  fps = 30,
+  useFrameByFrame = false,
+  onProgress,
+}: RecordNodeAsMp4Props): Promise<Blob | null> {
+  try {
+    // ... existing setup code ...
+
+    return new Promise<Blob | null>((resolve, reject) => {
+      recorder.onstop = () => {
+        try {
+          const blob = new Blob(chunks, { type: "video/mp4" });
+          resolve(blob);
+        } catch (error) {
+          reject(error);
+        } finally {
+          // Always cleanup export state
+          if (useFrameByFrame) {
+            cleanupExportState();
+          }
+        }
+      };
+
+      recorder.onerror = (event) => {
+        cleanupExportState();
+        reject(new Error(`MediaRecorder error: ${event.error?.message}`));
+      };
+
+      // ... rendering code ...
+    });
+  } catch (error) {
+    cleanupExportState();
+    throw error;
+  }
+}
+
+function cleanupExportState() {
+  const store = useExportStore.getState();
+  store.setExportMode(false);
+  store.setExportTimestamp(-1);
+  store.setFrameReadyCallback(null);
+  store.setExportProgress(0);
+}
+```
+
+In `exportNode.ts`:
+
+```typescript
+export async function exportNode({
+  node,
+  name,
+  format,
+  type,
+}: ExportOptions): Promise<void> {
+  const config = exportConfigs[type];
+  if (!config) {
+    console.error(`Unsupported export type: ${type}`);
+    return;
+  }
+
+  try {
+    const canvasWidth = format?.width ?? node.offsetWidth;
+    const canvasHeight = format?.height ?? node.offsetHeight;
+
+    const data = await config.generate(node, { canvasWidth, canvasHeight });
+
+    if (data) {
+      download(data, name, config.mimeType);
+    } else {
+      throw new Error(`Failed to generate ${type.toUpperCase()} data.`);
+    }
+  } catch (error) {
+    // Log error with context
+    console.error(`Error exporting ${type.toUpperCase()}:`, {
+      error,
+      format,
+      type,
+      nodeSize: { width: node.offsetWidth, height: node.offsetHeight },
+    });
+
+    // Show user-friendly error message (could use toast notification)
+    alert(
+      `Export failed: ${error instanceof Error ? error.message : "Unknown error"}. Please try again.`,
+    );
+
+    throw error; // Re-throw for caller to handle
+  }
+}
+```
+
+**Issue #3: Stale Duration Estimate (MEDIUM PRIORITY)**
+
+**Location:** [export.tsx:35-38](../src/features/composer/input/export/export.tsx#L35-L38)
+
+**Problem:**
+
+```typescript
+const estimatedTimeRemaining =
+  showProgress && exportProgress < 100
+    ? Math.ceil(((100 - exportProgress) / 100) * 10) // Hard-coded 10s!
+    : 0;
+```
+
+The actual animation duration is available in the export store (`animationDuration`) but is not used. This causes:
+
+- Inaccurate time estimates for user
+- Shows "~5s remaining" when export actually finishes in 2s
+- Shows "~2s remaining" when export takes 8s more
+
+**Impact:**
+
+- Poor user experience (confusing progress indicator)
+- Undermines trust in the application
+
+**Fix:**
+Use actual animation duration from store:
+
+```typescript
+const animationDuration = useExportStore((state) => state.animationDuration);
+
+const estimatedTimeRemaining =
+  showProgress && exportProgress < 100 && animationDuration
+    ? Math.ceil(((100 - exportProgress) / 100) * (animationDuration / 1000))
+    : 0;
+```
+
+**Issue #4: Incomplete Cleanup on Export Completion (MEDIUM PRIORITY)**
+
+**Location:** [recordNodeAsMp4.ts:124-130](../src/functions/export/recordNodeAsMp4.ts#L124-L130)
+
+**Problem:**
+Cleanup only happens in success path of frame-by-frame rendering:
+
+```typescript
+if (frame >= totalFrames) {
+  // Animation complete - cleanup and stop recording
+  useExportStore.getState().setExportMode(false);
+  useExportStore.getState().setExportTimestamp(-1);
+  useExportStore.getState().setFrameReadyCallback(null);
+  recorder.stop();
+}
+```
+
+If export fails mid-frame (e.g., html2canvas throws error), cleanup never runs. State remains dirty.
+
+**Fix:**
+Use finally blocks and centralized cleanup:
+
+```typescript
+function renderFrameControlled() {
+  try {
+    const timestamp = (frame / fps) * 1000;
+    const progress = Math.round((frame / totalFrames) * 100);
+
+    if (onProgress) onProgress(progress);
+    useExportStore.getState().setExportProgress(progress);
+
+    if (frame < totalFrames) {
+      useExportStore.getState().setFrameReadyCallback(() => {
+        void captureNodeToCanvas()
+          .then(() => {
+            frame++;
+            void renderFrameControlled();
+          })
+          .catch((error) => {
+            console.error("Frame capture failed:", error);
+            cleanupExportState();
+            recorder.stop();
+          });
+      });
+
+      useExportStore.getState().setExportTimestamp(timestamp);
+    } else {
+      cleanupExportState();
+      recorder.stop();
+    }
+  } catch (error) {
+    console.error("Export rendering error:", error);
+    cleanupExportState();
+    recorder.stop();
+  }
+}
+```
+
+**Issue #5: No Export Cancellation (LOW PRIORITY)**
+
+**Problem:**
+Once export starts, user cannot cancel. Long exports (15+ seconds) lock the UI with no escape.
+
+**Impact:**
+
+- Poor UX for accidental exports
+- User must wait or reload page
+- Wastes computational resources
+
+**Fix:**
+Add cancellation support:
+
+```typescript
+interface ExportState {
+  // ... existing fields ...
+  cancelExport: () => void;
+}
+
+// In recordNodeAsMp4.ts:
+let isCancelled = false;
+
+const cancel = () => {
+  isCancelled = true;
+  recorder.stop();
+  cleanupExportState();
+};
+
+useExportStore.getState().setCancelExport(cancel);
+
+function renderFrameControlled() {
+  if (isCancelled) return;
+  // ... rest of rendering logic ...
+}
+```
+
+UI component:
+
+```tsx
+{
+  showProgress && (
+    <>
+      <Progress value={exportProgress} size="1" />
+      <Button
+        onClick={() => useExportStore.getState().cancelExport()}
+        variant="soft"
+      >
+        Cancel
+      </Button>
+    </>
+  );
+}
+```
+
+#### Architecture Recommendations
+
+**Recommendation #1: Extract Export Orchestration Service**
+
+Currently, export logic is split across:
+
+- `exportNode.ts` - Entry point
+- `recordNodeAsMp4.ts` - MP4 recording
+- `useExportStore.ts` - State management
+- `AnimationController.tsx` - Frame rendering
+
+**Proposal:** Create dedicated export service:
+
+```typescript
+// src/services/ExportService.ts
+export class ExportService {
+  private recorder: MediaRecorder | null = null;
+  private isCancelled = false;
+
+  async exportAsMp4(options: ExportMp4Options): Promise<Blob | null> {
+    try {
+      this.prepare();
+      const blob = await this.record(options);
+      this.validate(blob);
+      return blob;
+    } catch (error) {
+      this.handleError(error);
+      throw error;
+    } finally {
+      this.cleanup();
+    }
+  }
+
+  private prepare() {
+    // Initialize export state
+    // Setup event listeners
+    // Validate prerequisites
+  }
+
+  private async record(options: ExportMp4Options): Promise<Blob> {
+    // Frame-by-frame recording logic
+    // Progress tracking
+    // Cancellation checks
+  }
+
+  private validate(blob: Blob | null) {
+    // Check blob size
+    // Verify codec
+    // Test playback
+  }
+
+  private handleError(error: unknown) {
+    // Log with context
+    // User notification
+    // Telemetry
+  }
+
+  private cleanup() {
+    // Reset store state
+    // Clear callbacks
+    // Free resources
+  }
+
+  cancel() {
+    this.isCancelled = true;
+    this.recorder?.stop();
+    this.cleanup();
+  }
+}
+```
+
+**Benefits:**
+
+- Single responsibility for export operations
+- Easier to test (mock service)
+- Clear lifecycle management
+- Better error handling
+
+**Recommendation #2: Implement Export State Machine**
+
+Current boolean flags (`isExporting`, `exportMode`) don't capture full export lifecycle.
+
+**Proposal:** Use explicit state machine:
+
+```typescript
+type ExportState =
+  | { status: "idle" }
+  | { status: "initializing" }
+  | { status: "recording"; progress: number; estimatedTimeRemaining: number }
+  | { status: "finalizing" }
+  | { status: "completed"; blob: Blob }
+  | { status: "failed"; error: Error }
+  | { status: "cancelled" };
+
+interface ExportStore {
+  state: ExportState;
+
+  startExport: () => void;
+  recordFrame: (progress: number) => void;
+  completeExport: (blob: Blob) => void;
+  failExport: (error: Error) => void;
+  cancelExport: () => void;
+  resetExport: () => void;
+}
+```
+
+**Benefits:**
+
+- Impossible to have inconsistent state (e.g., `isExporting=true` but `exportMode=false`)
+- Clear transitions between states
+- Easier to debug (log state changes)
+- Type-safe state handling
+
+**Recommendation #3: Add Export Validation and Retry**
+
+Currently, no validation of generated MP4 files.
+
+**Proposal:** Add validation step:
+
+```typescript
+async function validateExportedMp4(blob: Blob): Promise<boolean> {
+  // Check blob size (not 0, not suspiciously small)
+  if (blob.size < 10000) {
+    // Less than 10KB is suspicious
+    console.error("Export validation failed: blob too small", blob.size);
+    return false;
+  }
+
+  // Check MIME type
+  if (!blob.type.includes("video")) {
+    console.error("Export validation failed: invalid MIME type", blob.type);
+    return false;
+  }
+
+  // Test playback (create video element, load blob, check if playable)
+  try {
+    const video = document.createElement("video");
+    const url = URL.createObjectURL(blob);
+
+    return new Promise((resolve) => {
+      video.onloadedmetadata = () => {
+        URL.revokeObjectURL(url);
+        resolve(video.duration > 0);
+      };
+
+      video.onerror = () => {
+        URL.revokeObjectURL(url);
+        resolve(false);
+      };
+
+      video.src = url;
+    });
+  } catch (error) {
+    console.error("Export validation failed:", error);
+    return false;
+  }
+}
+```
+
+Add retry logic:
+
+```typescript
+async function exportWithRetry(
+  options: ExportOptions,
+  maxRetries = 2,
+): Promise<Blob | null> {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const blob = await recordNodeAsMp4(options);
+
+      if (blob && (await validateExportedMp4(blob))) {
+        return blob;
+      }
+
+      console.warn(`Export validation failed on attempt ${attempt + 1}`);
+
+      if (attempt < maxRetries) {
+        // Wait before retry with exponential backoff
+        await new Promise((resolve) =>
+          setTimeout(resolve, 1000 * Math.pow(2, attempt)),
+        );
+      }
+    } catch (error) {
+      console.error(`Export attempt ${attempt + 1} failed:`, error);
+
+      if (attempt === maxRetries) {
+        throw error;
+      }
+    }
+  }
+
+  return null;
+}
+```
+
+**Recommendation #4: Add Telemetry and Monitoring**
+
+Track export success/failure rates to identify issues in production.
+
+**Proposal:** Add export telemetry:
+
+```typescript
+interface ExportTelemetry {
+  exportId: string;
+  templateName: string;
+  format: string;
+  assetType: string;
+  animationDuration: number;
+  startTime: number;
+  endTime?: number;
+  status: "success" | "failed" | "cancelled";
+  error?: string;
+  framesRendered?: number;
+  totalFrames?: number;
+  blobSize?: number;
+}
+
+function trackExport(telemetry: ExportTelemetry) {
+  // Log to console in development
+  console.log("[Export Telemetry]", telemetry);
+
+  // Send to analytics in production
+  if (process.env.NODE_ENV === "production") {
+    // analytics.track('export_completed', telemetry);
+  }
+
+  // Could also store in IndexedDB for debugging
+  // await db.exportLogs.add(telemetry);
+}
+```
+
+Usage:
+
+```typescript
+const exportId = crypto.randomUUID();
+const startTime = Date.now();
+
+try {
+  const blob = await recordNodeAsMp4(options);
+
+  trackExport({
+    exportId,
+    templateName: template.name,
+    format: format.name,
+    assetType: "mp4",
+    animationDuration: duration,
+    startTime,
+    endTime: Date.now(),
+    status: "success",
+    framesRendered: totalFrames,
+    totalFrames,
+    blobSize: blob?.size,
+  });
+} catch (error) {
+  trackExport({
+    exportId,
+    templateName: template.name,
+    format: format.name,
+    assetType: "mp4",
+    animationDuration: duration,
+    startTime,
+    endTime: Date.now(),
+    status: "failed",
+    error: error instanceof Error ? error.message : "Unknown error",
+  });
+}
+```
+
+### Testing Strategy
+
+**Current State:**
+
+- ✅ Unit tests exist for phase calculators ([durationCalculators.test.ts](../src/features/visuals/animation/durationCalculators.test.ts))
+- ❌ No integration tests for export flow
+- ❌ No E2E tests for animation export
+
+**Recommended Test Coverage:**
+
+**1. Unit Tests** (Existing ✅)
+
+```typescript
+// Test phase calculators
+describe("calculateFlyToState", () => {
+  it("returns start state at timestamp 0", () => {
+    const state = calculateFlyToState(0, 2000, params);
+    expect(state.altitude).toBe(params.startAltitude);
+  });
+
+  it("returns end state at duration", () => {
+    const state = calculateFlyToState(2000, 2000, params);
+    expect(state.altitude).toBe(params.stopAltitude);
+  });
+
+  it("interpolates state at midpoint", () => {
+    const state = calculateFlyToState(1000, 2000, params);
+    expect(state.altitude).toBeCloseTo(
+      (params.startAltitude + params.stopAltitude) / 2,
+      1,
+    );
+  });
+});
+```
+
+**2. Integration Tests** (Need to Add ❌)
+
+```typescript
+// Test export flow coordination
+describe('MP4 Export', () => {
+  it('completes export successfully', async () => {
+    const mockNode = createMockNode();
+    const format = { name: 'Square', width: 1080, height: 1080 };
+
+    const blob = await recordNodeAsMp4({
+      node: mockNode,
+      format,
+      fps: 30,
+      useFrameByFrame: true,
+    });
+
+    expect(blob).toBeTruthy();
+    expect(blob?.type).toBe('video/mp4');
+    expect(blob?.size).toBeGreaterThan(0);
+  });
+
+  it('cleans up state on export failure', async () => {
+    const mockNode = createMockNodeThatFails();
+
+    await expect(recordNodeAsMp4({ node: mockNode })).rejects.toThrow();
+
+    // Verify cleanup
+    const state = useExportStore.getState();
+    expect(state.exportMode).toBe(false);
+    expect(state.frameReadyCallback).toBe(null);
+    expect(state.isExporting).toBe(false);
+  });
+
+  it('handles cancellation correctly', async () => {
+    const exportPromise = recordNodeAsMp4({ ... });
+
+    // Cancel mid-export
+    setTimeout(() => {
+      useExportStore.getState().cancelExport();
+    }, 500);
+
+    const result = await exportPromise;
+    expect(result).toBe(null);
+
+    // Verify cleanup
+    const state = useExportStore.getState();
+    expect(state.exportMode).toBe(false);
+  });
+});
+```
+
+**3. E2E Tests** (Need to Add ❌)
+
+```typescript
+// Test full animation export flow
+describe("Animation Export E2E", () => {
+  it("exports animated template as MP4", async () => {
+    await page.goto("/composer");
+
+    // Select animated template
+    await page.click('[data-testid="template-select"]');
+    await page.click('[data-testid="template-animation"]');
+
+    // Wait for animation to load
+    await page.waitForSelector('[data-testid="map-loaded"]');
+
+    // Start export
+    const downloadPromise = page.waitForEvent("download");
+    await page.click('[data-testid="export-download"]');
+
+    // Verify progress shown
+    await expect(page.locator('[data-testid="export-progress"]')).toBeVisible();
+
+    // Wait for download
+    const download = await downloadPromise;
+    expect(download.suggestedFilename()).toMatch(/\.mp4$/);
+
+    // Verify file
+    const path = await download.path();
+    const stats = fs.statSync(path);
+    expect(stats.size).toBeGreaterThan(10000); // At least 10KB
+  });
+
+  it("shows error message on export failure", async () => {
+    // Mock MediaRecorder to fail
+    await page.addInitScript(() => {
+      window.MediaRecorder = class {
+        start() {
+          throw new Error("MediaRecorder failed");
+        }
+      };
+    });
+
+    await page.goto("/composer");
+    await page.click('[data-testid="export-download"]');
+
+    // Verify error shown
+    await expect(page.locator('[role="alert"]')).toContainText("Export failed");
+  });
+});
+```
+
+### Implementation Priority
+
+**Phase 1: Critical Bugs (Week 1)**
+
+1. ✅ Fix race condition with initialization delay
+2. ✅ Add comprehensive error handling and cleanup
+3. ✅ Use actual duration for progress estimates
+
+**Phase 2: Robustness (Week 2)** 4. ✅ Implement export validation 5. ✅ Add retry logic 6. ✅ Implement cancellation
+
+**Phase 3: Architecture (Week 3)** 7. Extract ExportService 8. Implement state machine 9. Add telemetry
+
+**Phase 4: Testing (Week 4)** 10. Write integration tests 11. Write E2E tests 12. Add visual regression tests for exports
+
+### Success Metrics
+
+**Reliability:**
+
+- Export success rate > 95%
+- Zero dirty state after failed exports
+- Zero race conditions in initialization
+
+**Performance:**
+
+- Export time < 3x animation duration
+- Progress indicator accuracy ±5%
+- No memory leaks during export
+
+**User Experience:**
+
+- Clear error messages for all failure modes
+- Accurate time remaining estimates
+- Ability to cancel long-running exports
+
 ---
 
-**Document Version**: 2.0 (Target Implementation)
-**Last Updated**: 2025-10-20
+**Document Version**: 2.1 (Current Implementation Review)
+**Last Updated**: 2025-10-21
 **Author**: System Documentation
-**Status**: Design specification for simplified two-format system (PNG + MP4)
+**Status**: Production review with critical findings and recommendations
