@@ -5,6 +5,7 @@ import { useActivityStore, useExportStore, useTemplateStore } from "@/stores";
 
 import { assets, formats } from "../composer.settings";
 import { Activities } from "./activities";
+import { AnimationControls } from "./animation-controls";
 import { Controls } from "./controls";
 import { Export } from "./export";
 import { Format } from "./format";
@@ -77,6 +78,7 @@ export function Input({
             templates={templates}
             onTemplateChange={setTemplate}
           />
+          {template.isAnimated && <AnimationControls />}
           <Preset
             preset={preset}
             presets={presets}

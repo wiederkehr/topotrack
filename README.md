@@ -1,3 +1,32 @@
+## TopoTrack
+
+TopoTrack is a web application for visualizing Strava activities with customizable templates and high-quality export capabilities.
+
+### Features
+
+- **Strava Integration**: OAuth authentication with activity data import
+- **Animated Visualizations**: Dynamic map animations showing activity routes
+- **Customizable Templates**: Choose from multiple visual styles and presets
+- **High-Quality Exports**:
+  - **PNG**: Static image export for all templates
+  - **MP4**: Frame-perfect video export for animated templates with dynamic duration (8-19s based on route characteristics)
+- **Browser Support**: MP4 export requires Chrome 126+ (June 2024) or equivalent browser with MediaRecorder MP4 support
+
+### Export System Architecture
+
+The export system uses a frame-by-frame rendering approach for perfect synchronization:
+
+1. **Animation Duration**: Automatically calculated from route characteristics
+
+   - Fly-in: 2 seconds
+   - Route following: 4-15 seconds (based on route length and complexity)
+   - Zoom-out: 2 seconds
+   - Total: 8-19 seconds
+
+2. **Frame-by-Frame Export**: Renders each frame at exact timestamps (30 fps) using Zustand store coordination between export function and AnimationController
+
+3. **Progress Tracking**: Real-time progress indicator with estimated time remaining during export
+
 ## Development
 
 ### Running the Development Server

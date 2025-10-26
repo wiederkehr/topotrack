@@ -1,17 +1,19 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 
-import { bbox, lineString } from "@turf/turf";
-import { LngLatBoundsLike } from "mapbox-gl";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { lineString, simplify } from "@turf/turf";
+import { useMemo, useRef } from "react";
 import MapGL, { MapRef } from "react-map-gl";
 
-import { useTemplateStore } from "@/stores";
+import {
+  type AnimationConfig,
+  AnimationControllerPreview,
+  DEFAULT_ANIMATION_SETTINGS,
+  ExportAnimationController,
+  preCalculateAnimation,
+  type PreCalculatedAnimation,
+} from "@/features/visuals/animation";
 
 import { altitudeToZoom } from "./functions/altitudeToZoom";
-import { resetCameraPositionState } from "./functions/computeCameraPosition";
-import { flyToPoint } from "./functions/flyToPoint";
-import { followPath } from "./functions/followPath";
-import { getInitialBearing } from "./functions/getInitialBearing";
 import styles from "./map.module.css";
 import { Position } from "./position";
 import { Route } from "./route";
@@ -26,198 +28,129 @@ type MapGLAnimatedProps = {
     right: number;
     top: number;
   };
-  progressColor: string;
+  progressColor?: string;
   routeColor: string;
   style: string;
 };
 
+/**
+ * MapGLAnimated - Route animation visualization with Mapbox GL.
+ *
+ * Architecture:
+ * 1. Pre-calculates all animation data at setup (one-time)
+ * 2. Renders simplified route for display
+ * 3. Mounts AnimationControllerPreview for smooth preview playback
+ * 4. Mounts ExportAnimationController for frame-by-frame export
+ * Both controllers use identical pre-calculated keyframes → zero drift
+ */
 function MapGLAnimated({
   data,
-  padding,
   style,
-  progressColor,
   routeColor,
+  progressColor,
 }: MapGLAnimatedProps) {
-  // Data
-  // //////////////////////////////
   const routeData = data;
-  const startPosition = useMemo<[number, number]>(
-    () => routeData[0] || ([0, 0] as [number, number]),
-    [routeData],
-  );
-
-  // Layout
-  // //////////////////////////////
-  const paddingTop = padding?.top ?? 0;
-  const paddingBottom = padding?.bottom ?? 0;
-  const paddingLeft = padding?.left ?? 0;
-  const paddingRight = padding?.right ?? 0;
-
-  // State
-  // //////////////////////////////
-  const [currentPosition, setCurrentPosition] = useState<[number, number]>([
-    0, 0,
-  ]);
-  const [progressData, setProgressData] = useState<[number, number][]>([]);
-
-  // Animation parameters
-  // //////////////////////////////
-  const startAltitude = 10000;
-  const stopAltitude = 4000;
-  const startBearing = 0;
-  const startPitch = 0;
-  const stopPitch = 60;
-  const lookAheadDistance = 0.5; // Look-ahead distance for both bearing calculation and followPath
-
-  // Calculate initial zoom from startAltitude to avoid flicker
-  const startZoom = useMemo(
-    () => altitudeToZoom(startAltitude, startPosition[1]),
-    [startAltitude, startPosition],
-  );
-
-  // Map
-  // //////////////////////////////
   const mapRef = useRef<MapRef>(null);
-  const mapConfig = {
-    longitude: startPosition[0],
-    latitude: startPosition[1],
-    bearing: startBearing,
-    pitch: startPitch,
-    zoom: startZoom,
-  };
 
-  // Replay trigger
-  // //////////////////////////////
-  const replayTrigger = useTemplateStore((state) => state.replayTrigger);
+  // Simplify route for display (keep original for precise calculations)
+  const simplifiedRouteData = useMemo(() => {
+    if (routeData.length < 100) return routeData;
 
-  // Animate Route
-  // //////////////////////////////
-  const animateRoute = useCallback(async () => {
-    if (!mapRef.current) return;
-    const map = mapRef.current.getMap();
-
-    // Reset camera position state for smooth new animation sequence
-    resetCameraPositionState();
-
-    // Initialize progress tracking with 2 points (minimum for lineString)
-    setCurrentPosition(startPosition);
-    setProgressData([startPosition, startPosition]);
-
-    // Prepare route data
-    // //////////////////////////////
-    const routeLineString = lineString(routeData);
-
-    // Calculate initial bearing for followPath to align flyTo animation
-    // //////////////////////////////
-    const stopBearing = getInitialBearing({
-      path: routeLineString,
-      lookAheadDistance: lookAheadDistance,
+    const line = lineString(routeData);
+    const simplified = simplify(line, {
+      tolerance: 0.0001,
+      highQuality: false,
     });
+    return simplified.geometry.coordinates as [number, number][];
+  }, [routeData]);
 
-    // Phase 1: Fly to start point
-    // //////////////////////////////
-    const flyToPointDuration = 2000;
-    const afterFlyInPosition = await flyToPoint({
-      map: map,
-      targetPosition: {
-        lng: startPosition[0],
-        lat: startPosition[1],
-      },
-      duration: flyToPointDuration,
-      startAltitude: startAltitude,
-      stopAltitude: stopAltitude,
-      startBearing: startBearing,
-      stopBearing: stopBearing,
-      startPitch: startPitch,
-      stopPitch: stopPitch,
-    });
+  // Pre-calculate all animation data for export
+  const preCalculated = useMemo<PreCalculatedAnimation | null>(() => {
+    if (routeData.length < 2) return null;
 
-    // Phase 2: Follow the path
-    // //////////////////////////////
-    const followPathDuration = 6000;
-    await followPath({
-      map: map,
-      duration: followPathDuration,
-      path: routeLineString,
-      altitude: afterFlyInPosition.altitude,
-      pitch: afterFlyInPosition.pitch,
-      lookAheadDistance: lookAheadDistance,
-      bearingDamping: 0.95,
-      onUpdate: (pointData) => {
-        setCurrentPosition([pointData.lng, pointData.lat]);
-        setProgressData((prev) => [...prev, [pointData.lng, pointData.lat]]);
-      },
-    });
+    try {
+      return preCalculateAnimation(routeData, {
+        ...DEFAULT_ANIMATION_SETTINGS,
+      });
+    } catch (error) {
+      console.error("Failed to pre-calculate animation:", error);
+      return null;
+    }
+  }, [routeData]);
 
-    // Phase 3: Zoom out to show entire route
-    // //////////////////////////////
-    const fitBoundsDuration = 2000;
-    const routeBboxArray = bbox(routeLineString);
-    const routeBbox: LngLatBoundsLike = [
-      routeBboxArray[0],
-      routeBboxArray[1],
-      routeBboxArray[2],
-      routeBboxArray[3],
-    ];
-    map.fitBounds(routeBbox, {
-      duration: fitBoundsDuration,
+  // Build animation config for preview mode (real-time calculation)
+  const animationConfig = useMemo<AnimationConfig | null>(() => {
+    if (routeData.length < 2 || !preCalculated) return null;
+
+    // Reuse the config from pre-calculated data
+    return preCalculated.config;
+  }, [routeData, preCalculated]);
+
+  // Initial map config from first keyframe if available
+  const mapConfig = useMemo(() => {
+    const startPosition = routeData[0] || [0, 0];
+    const startAltitude = 10000;
+
+    return {
+      longitude: startPosition[0],
+      latitude: startPosition[1],
       bearing: 0,
       pitch: 0,
-      padding: {
-        top: paddingTop,
-        bottom: paddingBottom,
-        left: paddingLeft,
-        right: paddingRight,
-      },
-    });
-  }, [
-    routeData,
-    startPosition,
-    startBearing,
-    startPitch,
-    startAltitude,
-    stopAltitude,
-    stopPitch,
-    lookAheadDistance,
-    paddingTop,
-    paddingBottom,
-    paddingLeft,
-    paddingRight,
-  ]);
-
-  // Watch for replay trigger changes
-  // //////////////////////////////
-  useEffect(() => {
-    if (replayTrigger > 0) {
-      void animateRoute();
-    }
-  }, [replayTrigger, animateRoute]);
+      zoom: altitudeToZoom(startAltitude, startPosition[1]),
+    };
+  }, [routeData]);
 
   return (
     <div className={styles.mapContainer}>
       <MapGL
         ref={mapRef}
-        onLoad={() => void animateRoute()}
         mapStyle={style}
         mapboxAccessToken={MAPBOX_TOKEN}
         initialViewState={mapConfig}
         attributionControl={false}
         interactive={false}
       >
+        {/* Full route - background (simplified for performance) */}
         <Route
-          data={routeData}
-          lineColor={routeColor ?? "#FFF"}
-          lineWidth={2}
+          data={simplifiedRouteData}
+          line={{
+            id: "full",
+            lineColor: routeColor ?? "#FFF",
+            lineWidth: 8,
+          }}
         />
-        {progressData.length >= 2 && (
-          <>
-            <Route
-              data={progressData}
-              lineColor={progressColor ?? "#FFF"}
-              lineWidth={2}
-            />
-            <Position data={currentPosition} color={progressColor} />
-          </>
+
+        {/* Progress route - updated by controllers, starts empty */}
+        <Route
+          data={simplifiedRouteData.slice(0, 2)}
+          line={{
+            id: "progress",
+            lineColor: progressColor ?? "#FFF",
+            lineWidth: 2,
+          }}
+        />
+
+        {/* Current position marker - updated by controllers */}
+        <Position
+          id="progress-position"
+          data={routeData[0] || [0, 0]}
+          circleColor={progressColor ?? "#FFF"}
+        />
+
+        {/* Preview animation controller - handles real-time playback */}
+        {animationConfig && (
+          <AnimationControllerPreview
+            config={animationConfig}
+            map={mapRef.current?.getMap() ?? null}
+          />
+        )}
+
+        {/* Export animation controller - handles frame-by-frame export */}
+        {preCalculated && (
+          <ExportAnimationController
+            preCalculated={preCalculated}
+            map={mapRef.current?.getMap() ?? null}
+          />
         )}
       </MapGL>
     </div>

@@ -1,12 +1,12 @@
 import download from "downloadjs";
-import { toPng as htmlToPng, toSvg as htmlToSvg } from "html-to-image";
+import { toPng as htmlToPng } from "html-to-image";
 
 import type { FormatType } from "@/types";
 
-import { recordNodeAsBlob } from "./recordNodeAsBlob";
+import { recordNodeAsMp4 } from "./recordNodeAsMp4";
 
 // Shared types for all export operations
-export type ExportFormat = "png" | "svg" | "webm";
+export type ExportFormat = "png" | "mp4";
 
 export type ExportOptions = {
   format?: FormatType;
@@ -39,29 +39,24 @@ const exportConfigs: Record<ExportFormat, ExportConfig> = {
       }),
     mimeType: "image/png",
   },
-  svg: {
-    generate: async (node, options) => htmlToSvg(node, options),
-    mimeType: "image/svg+xml",
-  },
-  webm: {
+  mp4: {
     generate: async (node, options) =>
-      recordNodeAsBlob({
+      recordNodeAsMp4({
         node,
         format: {
           name: "Custom",
           width: options.canvasWidth,
           height: options.canvasHeight,
         },
-        duration: 6000,
         fps: 30,
+        useFrameByFrame: true, // Use frame-by-frame for perfect sync
       }),
-    mimeType: "video/webm",
+    mimeType: "video/mp4",
   },
 };
 
 /**
- * Unified export function that handles multiple output formats
- * Consolidates toPng, toSvg, and toWebM into a single API
+ * Unified export function that handles PNG and MP4 output formats
  */
 export async function exportNode({
   node,

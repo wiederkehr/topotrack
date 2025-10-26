@@ -1,28 +1,18 @@
-import chroma from "chroma-js";
-import type { BackgroundLayer, LineLayer, Style } from "mapbox-gl";
+import type { Style } from "mapbox-gl";
 
 type MapStyleProps = {
   backgroundColor?: string;
-  lineColor?: string;
-  lineOpacity?: number;
-  lineWidth?: number;
+  contourColor?: string;
+  contourOpacity?: number;
+  contourWidth?: number;
 };
-
-export function getContourColor(color: string = "#fff"): string {
-  const colorLuminance = chroma(color).luminance();
-  if (colorLuminance <= 0.5) {
-    return chroma(color).brighten(0.4).hex();
-  } else {
-    return chroma(color).darken(0.4).hex();
-  }
-}
 
 export function mapStyle(options?: MapStyleProps): Style {
   const {
     backgroundColor = "#000",
-    lineColor = "#fff",
-    lineWidth = 1,
-    lineOpacity = 1,
+    contourColor = "#fff",
+    contourWidth = 1,
+    contourOpacity = 1,
   } = options || {};
 
   return {
@@ -33,18 +23,18 @@ export function mapStyle(options?: MapStyleProps): Style {
         paint: {
           "background-color": backgroundColor,
         },
-      } as BackgroundLayer,
+      },
       {
         id: "contour",
         type: "line",
         source: "mapbox-terrain",
         "source-layer": "contour",
         paint: {
-          "line-color": lineColor,
-          "line-width": lineWidth,
-          "line-opacity": lineOpacity,
+          "line-color": contourColor,
+          "line-width": contourWidth,
+          "line-opacity": contourOpacity,
         },
-      } as LineLayer,
+      },
     ],
     sources: {
       "mapbox-terrain": {

@@ -8,9 +8,8 @@ const formats: FormatType[] = [
 ];
 
 const assets: AssetType[] = [
-  { name: "Static PNG", type: "png" },
-  { name: "Static SVG", type: "svg" },
-  { name: "Animated WebM", type: "webm" },
+  { name: "PNG", type: "png" },
+  { name: "MP4", type: "mp4" },
 ];
 
 const defaultPreset: PresetType = { name: "Custom" };

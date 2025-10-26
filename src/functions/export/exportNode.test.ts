@@ -9,12 +9,11 @@ vi.mock("downloadjs", () => ({
 
 vi.mock("html-to-image", () => ({
   toPng: vi.fn(() => Promise.resolve("data:image/png;base64,mock")),
-  toSvg: vi.fn(() => Promise.resolve("data:image/svg+xml;base64,mock")),
 }));
 
-vi.mock("./recordNodeAsBlob", () => ({
-  recordNodeAsBlob: vi.fn(() =>
-    Promise.resolve(new Blob(["mock"], { type: "video/webm" })),
+vi.mock("./recordNodeAsMp4", () => ({
+  recordNodeAsMp4: vi.fn(() =>
+    Promise.resolve(new Blob(["mock"], { type: "video/mp4" })),
   ),
 }));
 
@@ -36,22 +35,11 @@ describe("exportNode", () => {
     expect(true).toBe(true);
   });
 
-  it("should export as SVG", async () => {
+  it("should export as MP4", async () => {
     await exportNode({
       node: mockNode,
-      name: "test.svg",
-      type: "svg",
-    });
-
-    // Test passes if no error is thrown
-    expect(true).toBe(true);
-  });
-
-  it("should export as WebM", async () => {
-    await exportNode({
-      node: mockNode,
-      name: "test.webm",
-      type: "webm",
+      name: "test.mp4",
+      type: "mp4",
     });
 
     // Test passes if no error is thrown

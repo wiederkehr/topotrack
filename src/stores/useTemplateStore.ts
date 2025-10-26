@@ -9,21 +9,27 @@ import type {
   VariableType,
 } from "@/types";
 
+type AnimationState = "playing" | "paused" | "stopped";
+
 interface TemplateState {
+  animationPosition: number; // Current timestamp in ms
+  animationState: AnimationState;
   initializeTemplate: () => void;
   overrides: OverrideType[];
+  pauseAnimation: () => void;
+  playAnimation: () => void;
   preset: PresetType;
   presets: PresetType[];
-  replayTrigger: number;
+  replayAnimation: () => void;
+  resetAnimation: () => void;
   setOverride: (override: { name: string; value: string }) => void;
   setPreset: (value: string) => void;
-
-  // Actions
   setTemplate: (value: string) => void;
   setVariable: (variable: { name: string; value: string }) => void;
+  stopAndResetAnimation: () => void;
   template: TemplateType;
   triggerReplay: () => void;
-  // State
+  updateAnimationPosition: (position: number) => void;
   variables: VariableType[];
 }
 
@@ -54,7 +60,8 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
     templates[0]!.presets[0] || defaultPreset,
   ),
   overrides: getOverrides(templates[0]!),
-  replayTrigger: 0,
+  animationState: "playing",
+  animationPosition: 0,
 
   // Actions
   setTemplate: (value) => {
@@ -136,7 +143,45 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
     });
   },
 
+  // Animation control actions
+  playAnimation: () => {
+    set({ animationState: "playing" });
+  },
+
+  pauseAnimation: () => {
+    set({ animationState: "paused" });
+  },
+
+  replayAnimation: () => {
+    set({
+      animationState: "playing",
+      animationPosition: 0,
+    });
+  },
+
+  resetAnimation: () => {
+    set({
+      animationState: "stopped",
+      animationPosition: 0,
+    });
+  },
+
+  updateAnimationPosition: (position: number) => {
+    set({ animationPosition: position });
+  },
+
+  // Legacy actions (keep for backwards compatibility during transition)
   triggerReplay: () => {
-    set((state) => ({ replayTrigger: state.replayTrigger + 1 }));
+    set({
+      animationState: "playing",
+      animationPosition: 0,
+    });
+  },
+
+  stopAndResetAnimation: () => {
+    set({
+      animationState: "stopped",
+      animationPosition: 0,
+    });
   },
 }));

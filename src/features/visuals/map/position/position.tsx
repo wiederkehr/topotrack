@@ -1,22 +1,40 @@
 import { point } from "@turf/turf";
-import { Layer, Source } from "react-map-gl";
+import { memo, useMemo } from "react";
+
+import { Circle } from "@/features/visuals/map/circle";
 
 type PositionProps = {
-  color: string;
+  circleColor?: string;
+  circleRadius?: number;
   data: [number, number];
+  id: string;
+  strokeColor?: string;
+  strokeWidth?: number;
 };
 
-function Position({ data, color }: PositionProps) {
+/**
+ * Position component for rendering a position point on the map.
+ */
+function PositionComponent({
+  data,
+  circleColor = "#FFF",
+  circleRadius = 6,
+  id,
+  strokeColor = "#FFF",
+  strokeWidth = 2,
+}: PositionProps) {
+  const pointData = useMemo(() => point(data), [data]);
   return (
-    <Source type="geojson" data={point(data)}>
-      <Layer
-        type="circle"
-        paint={{
-          "circle-color": color,
-        }}
-      />
-    </Source>
+    <Circle
+      id={id}
+      data={pointData}
+      circleColor={circleColor}
+      circleRadius={circleRadius}
+      strokeColor={strokeColor}
+      strokeWidth={strokeWidth}
+    />
   );
 }
 
+const Position = memo(PositionComponent);
 export { Position };
