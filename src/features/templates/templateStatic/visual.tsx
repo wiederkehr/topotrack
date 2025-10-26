@@ -1,13 +1,12 @@
+import { lineString } from "@turf/turf";
 import chroma from "chroma-js";
 import { ArrowRight, ArrowUp, Calendar, MapPin, Timer } from "lucide-react";
 
 import { Layer } from "@/features/visuals/layer";
 import { MapGLStatic } from "@/features/visuals/map";
-import { Route } from "@/features/visuals/map/route";
-import {
-  getContourColor,
-  mapStyle,
-} from "@/features/visuals/map/styles/contours";
+import { Line } from "@/features/visuals/map/line";
+import { mapStyle } from "@/features/visuals/map/styles/contours";
+import { getContourColor } from "@/features/visuals/map/styles/getContourColor";
 import { Overlay } from "@/features/visuals/overlay";
 import {
   footerHeight,
@@ -74,19 +73,19 @@ export function Visual({
           data={lnglat}
           padding={routePadding}
           mapStyle={mapStyle({
-            lineColor: contourColor,
+            contourColor: contourColor,
             backgroundColor: background,
           })}
         >
-          <Route
+          <Line
             id="background"
-            data={lnglat}
+            data={lineString(lnglat)}
             lineColor={routeBackground}
             lineWidth={16}
           />
-          <Route
+          <Line
             id="foreground"
-            data={lnglat}
+            data={lineString(lnglat)}
             lineColor={routeForeground}
             lineWidth={2}
           />

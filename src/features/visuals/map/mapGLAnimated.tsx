@@ -112,24 +112,29 @@ function MapGLAnimated({
       >
         {/* Full route - background (simplified for performance) */}
         <Route
-          id="full"
           data={simplifiedRouteData}
-          lineColor={routeColor ?? "#FFF"}
-          lineWidth={8}
+          line={{
+            id: "full",
+            lineColor: routeColor ?? "#FFF",
+            lineWidth: 8,
+          }}
         />
 
         {/* Progress route - updated by controllers, starts empty */}
         <Route
-          id="progress"
           data={simplifiedRouteData.slice(0, 2)}
-          lineColor={progressColor ?? "#FFF"}
-          lineWidth={2}
+          line={{
+            id: "progress",
+            lineColor: progressColor ?? "#FFF",
+            lineWidth: 2,
+          }}
         />
 
         {/* Current position marker - updated by controllers */}
         <Position
+          id="progress-position"
           data={routeData[0] || [0, 0]}
-          color={progressColor ?? "#FFF"}
+          circleColor={progressColor ?? "#FFF"}
         />
 
         {/* Preview animation controller - handles real-time playback */}

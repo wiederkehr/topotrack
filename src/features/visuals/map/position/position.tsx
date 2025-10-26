@@ -1,33 +1,40 @@
 import { point } from "@turf/turf";
 import { memo, useMemo } from "react";
-import { Layer, Source } from "react-map-gl";
+
+import { Circle } from "@/features/visuals/map/circle";
 
 type PositionProps = {
-  color: string;
+  circleColor?: string;
+  circleRadius?: number;
   data: [number, number];
+  id: string;
+  strokeColor?: string;
+  strokeWidth?: number;
 };
 
-function PositionComponent({ data, color }: PositionProps) {
-  // Memoize GeoJSON to avoid recreating on every render
-  const geojson = useMemo(() => point(data), [data]);
-
+/**
+ * Position component for rendering a position point on the map.
+ */
+function PositionComponent({
+  data,
+  circleColor = "#FFF",
+  circleRadius = 6,
+  id,
+  strokeColor = "#FFF",
+  strokeWidth = 2,
+}: PositionProps) {
+  const pointData = useMemo(() => point(data), [data]);
   return (
-    <Source id="position-source" type="geojson" data={geojson}>
-      <Layer
-        id="position-layer"
-        type="circle"
-        paint={{
-          "circle-color": color,
-          "circle-radius": 6,
-          "circle-stroke-width": 2,
-          "circle-stroke-color": "#FFF",
-        }}
-      />
-    </Source>
+    <Circle
+      id={id}
+      data={pointData}
+      circleColor={circleColor}
+      circleRadius={circleRadius}
+      strokeColor={strokeColor}
+      strokeWidth={strokeWidth}
+    />
   );
 }
 
-// Memoize the component to prevent unnecessary re-renders when color doesn't change
 const Position = memo(PositionComponent);
-
 export { Position };

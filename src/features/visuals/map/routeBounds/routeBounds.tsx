@@ -1,17 +1,15 @@
 import { bbox, bboxPolygon, lineString } from "@turf/turf";
+import { memo, useMemo } from "react";
 import { Layer, Source } from "react-map-gl";
 
 type RouteBoundsProps = {
   data: [number, number][];
 };
 
-function RouteBounds({ data }: RouteBoundsProps) {
-  const routeLineString = lineString(data);
-  const routeBbox = bbox(routeLineString);
-  const boundsPolygon = bboxPolygon(routeBbox);
-
+function RouteBoundsComponent({ data }: RouteBoundsProps) {
+  const boundsData = useMemo(() => bboxPolygon(bbox(lineString(data))), [data]);
   return (
-    <Source type="geojson" data={boundsPolygon}>
+    <Source type="geojson" data={boundsData}>
       <Layer
         type="line"
         layout={{
@@ -26,5 +24,5 @@ function RouteBounds({ data }: RouteBoundsProps) {
     </Source>
   );
 }
-
+const RouteBounds = memo(RouteBoundsComponent);
 export { RouteBounds };
