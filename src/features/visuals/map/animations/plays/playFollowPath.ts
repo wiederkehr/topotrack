@@ -166,66 +166,70 @@ export async function playFollowPath(
   const bearingCalculator = new BearingCalculator();
   let lastFrameTime: number | null = null;
 
-  return createRAFAnimation((currentTime, progress) => {
-    // Check if abort was requested
-    if (signal?.aborted) {
-      throw new DOMException("Aborted", "AbortError");
-    }
+  return createRAFAnimation(
+    (currentTime, progress) => {
+      // Check if abort was requested
+      if (signal?.aborted) {
+        throw new DOMException("Aborted", "AbortError");
+      }
 
-    // Calculate delta time for this frame
-    const deltaTime =
-      lastFrameTime !== null ? currentTime - lastFrameTime : 16.67;
-    lastFrameTime = currentTime;
+      // Calculate delta time for this frame
+      const deltaTime =
+        lastFrameTime !== null ? currentTime - lastFrameTime : 16.67;
+      lastFrameTime = currentTime;
 
-    // Calculate distance for this progress point
-    const distance = routeDistance * progress;
+      // Calculate distance for this progress point
+      const distance = routeDistance * progress;
 
-    // Ensure distance is valid and within bounds
-    if (!isFinite(distance) || distance < 0) {
-      console.warn("Invalid distance calculated:", {
-        distance,
-        routeDistance,
+      // Ensure distance is valid and within bounds
+      if (!isFinite(distance) || distance < 0) {
+        console.warn("Invalid distance calculated:", {
+          distance,
+          routeDistance,
+          progress,
+        });
+        return;
+      }
+
+      // Calculate camera position along the route
+      const positionPoint = turfAlong(lineString, distance);
+      if (
+        !positionPoint ||
+        !positionPoint.geometry ||
+        !positionPoint.geometry.coordinates
+      ) {
+        console.warn("Invalid positionPoint returned from turfAlong");
+        return;
+      }
+
+      const coords = positionPoint.geometry.coordinates as [number, number];
+
+      // Validate coords before using them
+      if (!validateCoordinates(coords)) {
+        console.warn("Invalid coordinates from turfAlong:", coords);
+        return;
+      }
+
+      // Calculate bearing based on bearing mode
+      const currentBearing = bearingCalculator.calculateBearing(
+        map,
+        options.bearingOptions,
         progress,
+        routeDistance,
+        coords,
+        lineString,
+        deltaTime,
+      );
+
+      // Move camera to position
+      map.easeTo({
+        center: coords,
+        duration: 0,
+        bearing: currentBearing,
+        pitch: options.pitch ?? map.getPitch(),
       });
-      return;
-    }
-
-    // Calculate camera position along the route
-    const positionPoint = turfAlong(lineString, distance);
-    if (
-      !positionPoint ||
-      !positionPoint.geometry ||
-      !positionPoint.geometry.coordinates
-    ) {
-      console.warn("Invalid positionPoint returned from turfAlong");
-      return;
-    }
-
-    const coords = positionPoint.geometry.coordinates as [number, number];
-
-    // Validate coords before using them
-    if (!validateCoordinates(coords)) {
-      console.warn("Invalid coordinates from turfAlong:", coords);
-      return;
-    }
-
-    // Calculate bearing based on bearing mode
-    const currentBearing = bearingCalculator.calculateBearing(
-      map,
-      options.bearingOptions,
-      progress,
-      routeDistance,
-      coords,
-      lineString,
-      deltaTime,
-    );
-
-    // Move camera to position
-    map.easeTo({
-      center: coords,
-      duration: 0,
-      bearing: currentBearing,
-      pitch: options.pitch ?? map.getPitch(),
-    });
-  }, options.duration);
+    },
+    options.duration,
+    signal,
+  );
 }

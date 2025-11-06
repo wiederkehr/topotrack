@@ -14,7 +14,6 @@ type AnimationState = "playing" | "paused" | "stopped";
 
 interface TemplateState {
   animationController?: AnimationController;
-  animationPosition: number; // Current timestamp in ms
   animationState: AnimationState;
   clearAnimationController: () => void;
   initializeTemplate: () => void;
@@ -29,7 +28,6 @@ interface TemplateState {
   setTemplate: (value: string) => void;
   setVariable: (variable: { name: string; value: string }) => void;
   template: TemplateType;
-  updateAnimationPosition: (position: number) => void;
   variables: VariableType[];
 }
 
@@ -61,7 +59,6 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
   ),
   overrides: getOverrides(templates[0]!),
   animationState: "stopped",
-  animationPosition: 0,
   animationController: undefined,
 
   // Actions
@@ -84,7 +81,6 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
         variables,
         overrides,
         animationState: "stopped",
-        animationPosition: 0,
       });
     }
   },
@@ -162,7 +158,7 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
       animationController.stop();
     }
     // Reset state to start playing again
-    set({ animationState: "playing", animationPosition: 0 });
+    set({ animationState: "playing" });
   },
 
   resetAnimation: () => {
@@ -170,14 +166,9 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
     console.log("[useTemplateStore] resetAnimation called");
     set({
       animationState: "stopped",
-      animationPosition: 0,
     });
     // Stop and reset animation via controller
     animationController?.stop();
-  },
-
-  updateAnimationPosition: (position: number) => {
-    set({ animationPosition: position });
   },
 
   setAnimationController: (controller: AnimationController) => {

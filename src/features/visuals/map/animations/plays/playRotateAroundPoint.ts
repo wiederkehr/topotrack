@@ -34,20 +34,24 @@ export async function playRotateAroundPoint(
   return new Promise((resolve, reject) => {
     const timeoutId = setTimeout(resolve, options.duration + 100); // Fallback timeout
 
-    createRAFAnimation((currentTime, progress) => {
-      // Check if abort was requested during animation
-      if (signal?.aborted) {
-        clearTimeout(timeoutId);
-        reject(new DOMException("Aborted", "AbortError"));
-        return;
-      }
+    createRAFAnimation(
+      (currentTime, progress) => {
+        // Check if abort was requested during animation
+        if (signal?.aborted) {
+          clearTimeout(timeoutId);
+          reject(new DOMException("Aborted", "AbortError"));
+          return;
+        }
 
-      // Calculate current bearing based on progress
-      const currentBearing = startBearing + options.degrees * progress;
+        // Calculate current bearing based on progress
+        const currentBearing = startBearing + options.degrees * progress;
 
-      // Update map bearing
-      map.rotateTo(currentBearing, { duration: 0 });
-    }, options.duration)
+        // Update map bearing
+        map.rotateTo(currentBearing, { duration: 0 });
+      },
+      options.duration,
+      signal,
+    )
       .then(() => {
         clearTimeout(timeoutId);
         resolve();

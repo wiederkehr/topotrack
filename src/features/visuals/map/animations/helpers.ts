@@ -104,16 +104,38 @@ export function createMapboxAnimationPromise(
  * Creates a RAF-based animation loop that calls a frame function
  * @param frameFn - Function called on each frame with (currentTime, progress)
  * @param duration - Total animation duration in milliseconds
+ * @param signal - Optional AbortSignal for cancellation
  * @returns Promise that resolves when animation completes
  */
 export function createRAFAnimation(
   frameFn: (currentTime: number, progress: number) => void,
   duration: number,
+  signal?: AbortSignal,
 ): Promise<void> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     let startTime: number | null = null;
 
+    // Check if abort was requested before starting
+    if (signal?.aborted) {
+      reject(new DOMException("Aborted", "AbortError"));
+      return;
+    }
+
+    // Listen for abort events
+    const handleAbort = () => {
+      reject(new DOMException("Aborted", "AbortError"));
+    };
+
+    signal?.addEventListener("abort", handleAbort);
+
     const animate = (currentTime: number) => {
+      // Check if abort was requested
+      if (signal?.aborted) {
+        signal?.removeEventListener("abort", handleAbort);
+        reject(new DOMException("Aborted", "AbortError"));
+        return;
+      }
+
       // Initialize startTime on first frame
       if (startTime === null) {
         startTime = currentTime;
@@ -125,13 +147,23 @@ export function createRAFAnimation(
       try {
         frameFn(currentTime, progress);
       } catch (error) {
-        console.error("Error during RAF animation:", error);
+        // Only log non-abort errors
+        if (!(error instanceof DOMException && error.name === "AbortError")) {
+          console.error("Error during RAF animation:", error);
+        }
+        signal?.removeEventListener("abort", handleAbort);
+        if (error instanceof Error) {
+          reject(error);
+        } else {
+          reject(new Error(String(error)));
+        }
         return;
       }
 
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
+        signal?.removeEventListener("abort", handleAbort);
         resolve();
       }
     };
