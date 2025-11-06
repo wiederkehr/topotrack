@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { calculateBearing, dampBearing } from "./bearing";
+import { calculateBearing, dampBearing } from "../utilities/bearing";
 
 describe("bearing utilities", () => {
   describe("calculateBearing", () => {

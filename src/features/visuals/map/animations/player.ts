@@ -5,8 +5,8 @@ import {
 } from "@turf/turf";
 import type { Map as MapboxGLMap } from "mapbox-gl";
 
+import { calculateBearing, dampBearing } from "../utilities/bearing";
 import { calculateLineDistance } from "../utilities/distance";
-import { calculateBearing, dampBearing } from "./bearing";
 import { normalizedRoutePoints } from "./routeCalculations";
 import type {
   AnimatePathOptions,

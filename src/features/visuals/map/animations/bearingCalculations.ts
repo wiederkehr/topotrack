@@ -4,7 +4,7 @@ import {
   lineString as turfLineString,
 } from "@turf/turf";
 
-import { calculateBearing } from "./bearing";
+import { calculateBearing } from "../utilities/bearing";
 
 /**
  * Calculate the bearing that followPath will use at its start position

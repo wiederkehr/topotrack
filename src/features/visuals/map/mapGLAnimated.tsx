@@ -10,7 +10,7 @@ import {
   playAnimation,
 } from "@/features/visuals/map/animations";
 
-import { altitudeToZoom } from "./functions/altitudeToZoom";
+import { altitudeToZoom } from "./conversions/altitudeToZoom";
 import styles from "./map.module.css";
 import { Position } from "./position";
 import { Route } from "./route";
