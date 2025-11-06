@@ -6,7 +6,7 @@ import { bearing as turfBearing } from "@turf/turf";
  *
  * @param from - Starting coordinate [lng, lat]
  * @param to - Ending coordinate [lng, lat]
- * @returns Bearing in degrees (0-360)
+ * @returns Bearing in degrees (may be negative, caller should normalize to 0-360 if needed)
  */
 export function calculateBearing(
   from: [number, number],

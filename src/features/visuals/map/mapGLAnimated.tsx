@@ -1,22 +1,18 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 
-import { lineString, simplify } from "@turf/turf";
-import { useMemo, useRef } from "react";
+import { bbox, lineString, simplify } from "@turf/turf";
+import { useEffect, useMemo, useRef } from "react";
 import MapGL, { MapRef } from "react-map-gl";
 
 import {
-  type AnimationConfig,
-  AnimationControllerPreview,
-  DEFAULT_ANIMATION_SETTINGS,
-  ExportAnimationController,
-  preCalculateAnimation,
-  type PreCalculatedAnimation,
-} from "@/features/visuals/animation";
+  calculateFollowBearing,
+  mapAnimations,
+  playAnimation,
+} from "@/features/visuals/map/animations";
 
-import { altitudeToZoom } from "./functions/altitudeToZoom";
+import { altitudeToZoom } from "./conversions/altitudeToZoom";
+import { Position, Route } from "./elements";
 import styles from "./map.module.css";
-import { Position } from "./position";
-import { Route } from "./route";
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
@@ -36,12 +32,11 @@ type MapGLAnimatedProps = {
 /**
  * MapGLAnimated - Route animation visualization with Mapbox GL.
  *
- * Architecture:
- * 1. Pre-calculates all animation data at setup (one-time)
- * 2. Renders simplified route for display
- * 3. Mounts AnimationControllerPreview for smooth preview playback
- * 4. Mounts ExportAnimationController for frame-by-frame export
- * Both controllers use identical pre-calculated keyframes → zero drift
+ * Uses the new real-time animation system:
+ * 1. Renders simplified route for display
+ * 2. Uses mapAnimations to create animation sequence
+ * 3. Executes animation via playAnimation() on map load
+ * 4. Real-time calculation supports both preview and frame-by-frame export
  */
 function MapGLAnimated({
   data,
@@ -64,29 +59,13 @@ function MapGLAnimated({
     return simplified.geometry.coordinates as [number, number][];
   }, [routeData]);
 
-  // Pre-calculate all animation data for export
-  const preCalculated = useMemo<PreCalculatedAnimation | null>(() => {
+  // Calculate bounds for fitBounds animation
+  const bounds = useMemo(() => {
     if (routeData.length < 2) return null;
-
-    try {
-      return preCalculateAnimation(routeData, {
-        ...DEFAULT_ANIMATION_SETTINGS,
-      });
-    } catch (error) {
-      console.error("Failed to pre-calculate animation:", error);
-      return null;
-    }
+    return bbox(lineString(routeData));
   }, [routeData]);
 
-  // Build animation config for preview mode (real-time calculation)
-  const animationConfig = useMemo<AnimationConfig | null>(() => {
-    if (routeData.length < 2 || !preCalculated) return null;
-
-    // Reuse the config from pre-calculated data
-    return preCalculated.config;
-  }, [routeData, preCalculated]);
-
-  // Initial map config from first keyframe if available
+  // Initial map config
   const mapConfig = useMemo(() => {
     const startPosition = routeData[0] || [0, 0];
     const startAltitude = 10000;
@@ -99,6 +78,72 @@ function MapGLAnimated({
       zoom: altitudeToZoom(startAltitude, startPosition[1]),
     };
   }, [routeData]);
+
+  // Play animation on map load
+  useEffect(() => {
+    if (!mapRef.current || routeData.length < 2) return;
+
+    const map = mapRef.current.getMap();
+    if (!map) return;
+
+    const playMapAnimation = async () => {
+      try {
+        const startPosition = routeData[0] as [number, number];
+
+        // Calculate initial bearing for seamless transition from flyTo to followPath
+        const initialBearing = calculateFollowBearing(
+          startPosition,
+          routeData,
+          0.15, // 15% look-ahead
+        );
+
+        // Create animation sequence
+        const animation = mapAnimations.sequence(
+          // Fly to start of route with calculated bearing
+          mapAnimations.flyTo({
+            center: startPosition,
+            bearing: initialBearing,
+            zoom: 13,
+            duration: 1000,
+          }),
+
+          // Follow the route with dynamic bearing
+          mapAnimations.followPath({
+            route: routeData,
+            duration: 5000, // 5 second route playback
+            bearingOptions: {
+              type: "dynamic",
+              bearing: initialBearing,
+              lookAhead: 0.15,
+              damping: 0.7,
+            },
+          }),
+
+          // Fit to bounds at end
+          bounds
+            ? mapAnimations.fitBounds({
+                bounds: bounds as Parameters<
+                  typeof mapAnimations.fitBounds
+                >[0]["bounds"],
+                duration: 1000,
+              })
+            : mapAnimations.wait(100),
+        );
+
+        // Execute animation
+        await playAnimation(map, animation);
+      } catch (error) {
+        console.error("Animation failed:", error);
+      }
+    };
+
+    // Start animation with a small delay to allow map to render
+    const timeout = setTimeout(() => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      playMapAnimation();
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [routeData, bounds]);
 
   return (
     <div className={styles.mapContainer}>
@@ -120,7 +165,7 @@ function MapGLAnimated({
           }}
         />
 
-        {/* Progress route - updated by controllers, starts empty */}
+        {/* Progress route - starts empty, updated during animation */}
         <Route
           data={simplifiedRouteData.slice(0, 2)}
           line={{
@@ -130,28 +175,12 @@ function MapGLAnimated({
           }}
         />
 
-        {/* Current position marker - updated by controllers */}
+        {/* Current position marker - starts at beginning */}
         <Position
           id="progress-position"
           data={routeData[0] || [0, 0]}
           circleColor={progressColor ?? "#FFF"}
         />
-
-        {/* Preview animation controller - handles real-time playback */}
-        {animationConfig && (
-          <AnimationControllerPreview
-            config={animationConfig}
-            map={mapRef.current?.getMap() ?? null}
-          />
-        )}
-
-        {/* Export animation controller - handles frame-by-frame export */}
-        {preCalculated && (
-          <ExportAnimationController
-            preCalculated={preCalculated}
-            map={mapRef.current?.getMap() ?? null}
-          />
-        )}
       </MapGL>
     </div>
   );

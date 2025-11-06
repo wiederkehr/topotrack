@@ -1,10 +1,7 @@
-import {
-  along as turfAlong,
-  length as turfLength,
-  lineString as turfLineString,
-} from "@turf/turf";
+import { along as turfAlong, lineString as turfLineString } from "@turf/turf";
 
-import { calculateBearing } from "./bearing";
+import { calculateBearing } from "../utilities/bearing";
+import { calculateLineDistance } from "../utilities/distance";
 
 /**
  * Calculate the bearing that followPath will use at its start position
@@ -41,8 +38,9 @@ export function calculateFollowBearing(
     // Create line string from route
     const lineString = turfLineString(route);
 
-    // Calculate total route distance using Turf.js (in kilometers)
-    const totalDistance = turfLength(lineString);
+    // Calculate total route distance using custom implementation (in kilometers)
+    // Uses same Haversine algorithm as Turf but with better performance for animations
+    const totalDistance = calculateLineDistance(lineString);
 
     // Current position is at distance 0 (start)
     const currentDistance = 0;
