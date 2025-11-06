@@ -48,6 +48,7 @@ function MapGLAnimated({
   const routeData = data;
   const mapRef = useRef<MapRef>(null);
   const controllerRef = useRef<AnimationController | null>(null);
+  const hasInitializedRef = useRef(false);
 
   // Get store actions and state
   const setAnimationController = useTemplateStore(
@@ -92,87 +93,94 @@ function MapGLAnimated({
     };
   }, [routeData]);
 
-  // Play animation on map load
+  // Initialize animation controller and create animation sequence once per route
   useEffect(() => {
-    if (!mapRef.current || routeData.length < 2) return;
+    // Only initialize once per route
+    if (hasInitializedRef.current || !mapRef.current || routeData.length < 2) {
+      return;
+    }
 
     const map = mapRef.current.getMap();
     if (!map) return;
 
-    const playMapAnimation = async () => {
-      try {
-        const startPosition = routeData[0] as [number, number];
+    hasInitializedRef.current = true;
 
-        // Calculate initial bearing for seamless transition from flyTo to followPath
-        const initialBearing = calculateFollowBearing(
-          startPosition,
-          routeData,
-          0.15, // 15% look-ahead
-        );
+    const startPosition = routeData[0] as [number, number];
 
-        // Create animation sequence
-        const animation = mapAnimations.sequence(
-          // Fly to start of route with calculated bearing
-          mapAnimations.flyTo({
-            center: startPosition,
-            bearing: initialBearing,
-            zoom: 13,
+    // Calculate initial bearing for seamless transition from flyTo to followPath
+    const initialBearing = calculateFollowBearing(
+      startPosition,
+      routeData,
+      0.15, // 15% look-ahead
+    );
+
+    // Create animation sequence - reusable for play/pause/replay
+    const animation = mapAnimations.sequence(
+      // Fly to start of route with calculated bearing
+      mapAnimations.flyTo({
+        center: startPosition,
+        bearing: initialBearing,
+        zoom: 13,
+        duration: 1000,
+      }),
+
+      // Follow the route with dynamic bearing
+      mapAnimations.followPath({
+        route: routeData,
+        duration: 5000, // 5 second route playback
+        bearingOptions: {
+          type: "dynamic",
+          bearing: initialBearing,
+          lookAhead: 0.15,
+          damping: 0.7,
+        },
+      }),
+
+      // Fit to bounds at end
+      bounds
+        ? mapAnimations.fitBounds({
+            bounds: bounds as Parameters<
+              typeof mapAnimations.fitBounds
+            >[0]["bounds"],
             duration: 1000,
-          }),
+          })
+        : mapAnimations.wait(100),
+    );
 
-          // Follow the route with dynamic bearing
-          mapAnimations.followPath({
-            route: routeData,
-            duration: 5000, // 5 second route playback
-            bearingOptions: {
-              type: "dynamic",
-              bearing: initialBearing,
-              lookAhead: 0.15,
-              damping: 0.7,
-            },
-          }),
-
-          // Fit to bounds at end
-          bounds
-            ? mapAnimations.fitBounds({
-                bounds: bounds as Parameters<
-                  typeof mapAnimations.fitBounds
-                >[0]["bounds"],
-                duration: 1000,
-              })
-            : mapAnimations.wait(100),
-        );
-
-        // Create animation controller and wire it to store
-        const controller = new AnimationController(map);
-        controllerRef.current = controller;
-        setAnimationController(controller);
-
-        // Set up progress callback to track elapsed time
-        await controller.play(animation, (elapsedTime) => {
-          updateAnimationPosition(elapsedTime);
-        });
-
-        // Animation completed
-        updateAnimationPosition(0);
-      } catch (error) {
-        // Ignore abort errors - they're expected when stopping/pausing
-        if (error instanceof DOMException && error.name === "AbortError") {
-          return;
-        }
-        console.error("Animation failed:", error);
-      }
-    };
+    // Create animation controller and wire it to store
+    const controller = new AnimationController(map);
+    controllerRef.current = controller;
+    setAnimationController(controller);
 
     // Start animation with a small delay to allow map to render
     const timeout = setTimeout(() => {
+      const startPlayback = async () => {
+        try {
+          // Set up progress callback to track elapsed time
+          await controller.play(animation, (elapsedTime) => {
+            updateAnimationPosition(elapsedTime);
+          });
+
+          // Animation completed naturally
+          updateAnimationPosition(0);
+        } catch (error) {
+          // Ignore abort errors - they're expected when pausing
+          // (stopping causes different flow via controllerRef cleanup)
+          if (error instanceof DOMException && error.name === "AbortError") {
+            return;
+          }
+          console.error("Animation failed:", error);
+        }
+      };
+
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      playMapAnimation();
+      startPlayback();
     }, 500);
 
-    // Cleanup: clear controller from store on unmount or route change
+    // Cleanup: only reset refs and controller on route change
     return () => {
       clearTimeout(timeout);
+      hasInitializedRef.current = false;
       controllerRef.current?.stop();
       clearAnimationController();
     };

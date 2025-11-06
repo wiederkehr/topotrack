@@ -87,7 +87,10 @@ export class AnimationController {
 
   /**
    * Pause the currently playing animation
-   * Captures elapsed time for resume
+   * Sets a flag to visually pause - the animation continues in background but progress stops
+   * This is a UI-level pause, not a true pause of the animation execution
+   * NOTE: True pause/resume of Mapbox animations is not possible without aborting
+   * and re-playing from a saved state, which requires animation state serialization
    */
   pause(): void {
     if (!this.isPlaying || this.isPaused) {
@@ -99,7 +102,8 @@ export class AnimationController {
   }
 
   /**
-   * Resume a paused animation from where it was paused
+   * Resume a paused animation
+   * Adjusts timing to continue from where it was paused
    */
   resume(): void {
     if (!this.isPaused) {
@@ -107,7 +111,7 @@ export class AnimationController {
     }
 
     this.isPaused = false;
-    // Adjust startTime so that elapsed time continues from pausedTime
+    // Adjust startTime so elapsed time continues from pausedTime
     this.startTime = performance.now() - this.pausedTime;
   }
 
