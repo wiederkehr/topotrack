@@ -1,5 +1,10 @@
 import { along as turfAlong, lineString as turfLineString } from "@turf/turf";
 
+import {
+  calculateLineDistance,
+  calculateSegmentDistance,
+} from "../utilities/distance";
+
 /**
  * Coordinate sequence for live-update animations
  * Contains individual coordinates to be added incrementally during animation
@@ -52,58 +57,6 @@ export function generateCoordinateSequence(
     path: simplifiedRoute,
     points: pointCoordinates,
   };
-}
-
-/**
- * Calculate total distance of a LineString in kilometers
- */
-function calculateLineDistance(
-  lineString: ReturnType<typeof turfLineString>,
-): number {
-  let distance = 0;
-  const coords = lineString.geometry.coordinates as Array<[number, number]>;
-
-  for (let i = 0; i < coords.length - 1; i++) {
-    const currentCoord = coords[i];
-    const nextCoord = coords[i + 1];
-    if (
-      currentCoord &&
-      nextCoord &&
-      currentCoord.length === 2 &&
-      nextCoord.length === 2
-    ) {
-      distance += calculateSegmentDistance(
-        [currentCoord[0], currentCoord[1]],
-        [nextCoord[0], nextCoord[1]],
-      );
-    }
-  }
-
-  return distance;
-}
-
-/**
- * Calculate distance between two coordinates in kilometers
- */
-function calculateSegmentDistance(
-  coord1: [number, number],
-  coord2: [number, number],
-): number {
-  const [lon1, lat1] = coord1;
-  const [lon2, lat2] = coord2;
-
-  const R = 6371; // Earth's radius in km
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-  return R * c;
 }
 
 /**
