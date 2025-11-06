@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 import { defaultPreset } from "@/features/composer/composer.settings";
 import { templates } from "@/features/templates";
+import { AnimationController } from "@/features/visuals/map/animations";
 import type {
   OverrideType,
   PresetType,
@@ -12,8 +13,10 @@ import type {
 type AnimationState = "playing" | "paused" | "stopped";
 
 interface TemplateState {
+  animationController?: AnimationController;
   animationPosition: number; // Current timestamp in ms
   animationState: AnimationState;
+  clearAnimationController: () => void;
   initializeTemplate: () => void;
   overrides: OverrideType[];
   pauseAnimation: () => void;
@@ -22,6 +25,7 @@ interface TemplateState {
   presets: PresetType[];
   replayAnimation: () => void;
   resetAnimation: () => void;
+  setAnimationController: (controller: AnimationController) => void;
   setOverride: (override: { name: string; value: string }) => void;
   setPreset: (value: string) => void;
   setTemplate: (value: string) => void;
@@ -62,9 +66,11 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
   overrides: getOverrides(templates[0]!),
   animationState: "playing",
   animationPosition: 0,
+  animationController: undefined,
 
   // Actions
   setTemplate: (value) => {
+    const { animationController } = get();
     const template = templates.find((template) => template.name === value);
     if (template) {
       const presets = template.presets;
@@ -72,12 +78,17 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
       const variables = getVariables(template, preset);
       const overrides = getOverrides(template);
 
+      // Reset animation when template changes
+      animationController?.stop();
+
       set({
         template,
         presets,
         preset,
         variables,
         overrides,
+        animationState: "stopped",
+        animationPosition: 0,
       });
     }
   },
@@ -145,25 +156,37 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
 
   // Animation control actions
   playAnimation: () => {
+    const { animationController } = get();
     set({ animationState: "playing" });
+    // Resume animation from current position via controller
+    animationController?.resume();
   },
 
   pauseAnimation: () => {
+    const { animationController } = get();
     set({ animationState: "paused" });
+    // Pause animation at current position via controller
+    animationController?.pause();
   },
 
   replayAnimation: () => {
+    const { animationController } = get();
     set({
       animationState: "playing",
       animationPosition: 0,
     });
+    // Replay from start via controller
+    void animationController?.replay();
   },
 
   resetAnimation: () => {
+    const { animationController } = get();
     set({
       animationState: "stopped",
       animationPosition: 0,
     });
+    // Stop and reset animation via controller
+    animationController?.stop();
   },
 
   updateAnimationPosition: (position: number) => {
@@ -183,5 +206,13 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
       animationState: "stopped",
       animationPosition: 0,
     });
+  },
+
+  setAnimationController: (controller: AnimationController) => {
+    set({ animationController: controller });
+  },
+
+  clearAnimationController: () => {
+    set({ animationController: undefined });
   },
 }));

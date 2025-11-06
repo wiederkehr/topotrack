@@ -1,4 +1,5 @@
 /* eslint-disable simple-import-sort/exports */
+export { AnimationController } from "./controller";
 export { calculateFollowBearing } from "./bearingCalculations";
 export {
   generateCoordinateSequence,

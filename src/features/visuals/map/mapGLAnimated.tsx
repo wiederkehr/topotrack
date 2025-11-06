@@ -5,10 +5,11 @@ import { useEffect, useMemo, useRef } from "react";
 import MapGL, { MapRef } from "react-map-gl";
 
 import {
+  AnimationController,
   calculateFollowBearing,
   mapAnimations,
-  playAnimation,
 } from "@/features/visuals/map/animations";
+import { useTemplateStore } from "@/stores";
 
 import { altitudeToZoom } from "./conversions/altitudeToZoom";
 import { Position, Route } from "./elements";
@@ -46,6 +47,18 @@ function MapGLAnimated({
 }: MapGLAnimatedProps) {
   const routeData = data;
   const mapRef = useRef<MapRef>(null);
+  const controllerRef = useRef<AnimationController | null>(null);
+
+  // Get store actions and state
+  const setAnimationController = useTemplateStore(
+    (state) => state.setAnimationController,
+  );
+  const clearAnimationController = useTemplateStore(
+    (state) => state.clearAnimationController,
+  );
+  const updateAnimationPosition = useTemplateStore(
+    (state) => state.updateAnimationPosition,
+  );
 
   // Simplify route for display (keep original for precise calculations)
   const simplifiedRouteData = useMemo(() => {
@@ -130,9 +143,23 @@ function MapGLAnimated({
             : mapAnimations.wait(100),
         );
 
-        // Execute animation
-        await playAnimation(map, animation);
+        // Create animation controller and wire it to store
+        const controller = new AnimationController(map);
+        controllerRef.current = controller;
+        setAnimationController(controller);
+
+        // Set up progress callback to track elapsed time
+        await controller.play(animation, (elapsedTime) => {
+          updateAnimationPosition(elapsedTime);
+        });
+
+        // Animation completed
+        updateAnimationPosition(0);
       } catch (error) {
+        // Ignore abort errors - they're expected when stopping/pausing
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return;
+        }
         console.error("Animation failed:", error);
       }
     };
@@ -142,8 +169,20 @@ function MapGLAnimated({
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       playMapAnimation();
     }, 500);
-    return () => clearTimeout(timeout);
-  }, [routeData, bounds]);
+
+    // Cleanup: clear controller from store on unmount or route change
+    return () => {
+      clearTimeout(timeout);
+      controllerRef.current?.stop();
+      clearAnimationController();
+    };
+  }, [
+    routeData,
+    bounds,
+    setAnimationController,
+    clearAnimationController,
+    updateAnimationPosition,
+  ]);
 
   return (
     <div className={styles.mapContainer}>
