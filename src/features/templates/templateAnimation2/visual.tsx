@@ -20,6 +20,7 @@ import {
   destructureActivityData,
   destructureVariables,
 } from "@/functions/destructure";
+import { useTemplateStore } from "@/stores";
 import { colors } from "@/styles/constants";
 import { VisualType } from "@/types";
 
@@ -63,6 +64,12 @@ export function Visual({
   const progressRouteID = "progressRoute";
   const progressPositionID = "progressPosition";
 
+  // Store subscription for animation control
+  const animationState = useTemplateStore((state) => state.animationState);
+  const updateAnimationPosition = useTemplateStore(
+    (state) => state.updateAnimationPosition,
+  );
+
   // Animation on Map Load and Data Change
   // //////////////////////////////
   useEffect(() => {
@@ -70,7 +77,7 @@ export function Visual({
 
     const map = mapRef.current.getMap();
 
-    // eslint-disable-next-line @typescript-eslint/require-await
+    // eslint-disable-next-line @typescript-eslint/require-await,@typescript-eslint/no-unused-vars
     async function playMapAnimation() {
       try {
         // Calculate initial bearing for seamless transition from flyTo to followPath
@@ -166,14 +173,96 @@ export function Visual({
       }
     }
 
+    // Trigger animation when map loads for the first time
     if (map.loaded()) {
-      void playMapAnimation();
+      // Map already loaded, animation will be triggered by animationState effect below
     } else {
       map.once("idle", () => {
-        void playMapAnimation();
+        // Map just loaded, animation will be triggered by animationState effect below
       });
     }
   }, [bounds, startPosition, midPosition, padding, lnglat, fullRoute]);
+
+  // Handle animation state changes from Play/Stop buttons
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    const map = mapRef.current.getMap();
+    if (!map.isStyleLoaded()) return;
+
+    if (animationState === "playing") {
+      console.log("[templateAnimation2] Starting animation from state change");
+      const startPlayback = async () => {
+        try {
+          // Calculate initial bearing for seamless transition from flyTo to followPath
+          const lookAhead = 0.1;
+          const initialBearing = calculateFollowBearing(
+            startPosition,
+            fullRoute,
+            lookAhead,
+          );
+
+          const animationSequence = mapAnimations.sequence(
+            mapAnimations.wait(500),
+            mapAnimations.flyTo({
+              center: startPosition,
+              duration: 2000,
+              zoom: 13,
+              pitch: 40,
+              bearing: initialBearing,
+            }),
+            mapAnimations.wait(500),
+            mapAnimations.sync(
+              mapAnimations.animateRoute({
+                lineSourceId: progressRouteID,
+                pointSourceId: progressPositionID,
+                duration: 16000,
+                route: fullRoute,
+              }),
+              mapAnimations.followPath({
+                duration: 16000,
+                route: fullRoute,
+                bearingOptions: {
+                  type: "dynamic",
+                  bearing: initialBearing,
+                  damping: 1,
+                  lookAhead: lookAhead,
+                },
+              }),
+            ),
+            mapAnimations.wait(500),
+            mapAnimations.fitBounds({
+              bounds: bounds,
+              duration: 2000,
+              padding: padding ?? undefined,
+            }),
+          );
+
+          await playAnimation(map, animationSequence);
+          console.log("[templateAnimation2] Animation completed naturally");
+          updateAnimationPosition(0);
+        } catch (error) {
+          if (error instanceof DOMException && error.name === "AbortError") {
+            console.log("[templateAnimation2] Animation was aborted");
+            return;
+          }
+          console.error("Animation error:", error);
+        }
+      };
+
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      startPlayback();
+    }
+  }, [
+    animationState,
+    startPosition,
+    fullRoute,
+    bounds,
+    padding,
+    progressRouteID,
+    progressPositionID,
+    updateAnimationPosition,
+  ]);
 
   return (
     <Layer>

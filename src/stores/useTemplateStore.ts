@@ -60,7 +60,7 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
     templates[0]!.presets[0] || defaultPreset,
   ),
   overrides: getOverrides(templates[0]!),
-  animationState: "playing",
+  animationState: "stopped",
   animationPosition: 0,
   animationController: undefined,
 
@@ -153,6 +153,10 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
   // Animation control actions
   playAnimation: () => {
     const { animationController } = get();
+    console.log(
+      "[useTemplateStore] playAnimation called, isRunning:",
+      animationController?.isRunning(),
+    );
     // To play from the beginning, first stop any running animation
     if (animationController?.isRunning()) {
       animationController.stop();
@@ -163,6 +167,7 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
 
   resetAnimation: () => {
     const { animationController } = get();
+    console.log("[useTemplateStore] resetAnimation called");
     set({
       animationState: "stopped",
       animationPosition: 0,

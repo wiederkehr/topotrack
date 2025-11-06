@@ -76,9 +76,13 @@ export function createMapboxAnimationPromise(
     // Listen for abort events - stop the Mapbox animation immediately
     const handleAbort = () => {
       if (!completed) {
+        console.log(
+          "[createMapboxAnimationPromise] Abort signal received, calling map.stop()",
+        );
         completed = true;
         clearTimeout(timeoutId);
         map.stop(); // Stop the underlying Mapbox animation
+        console.log("[createMapboxAnimationPromise] map.stop() called");
         reject(new DOMException("Aborted", "AbortError"));
       }
     };

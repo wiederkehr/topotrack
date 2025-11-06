@@ -86,8 +86,13 @@ export class AnimationController {
    * Aborts the current animation and cleans up state
    */
   stop(): void {
+    console.log(
+      "[AnimationController] Stopping animation, isPlaying:",
+      this.isPlaying,
+    );
     // Abort the animation
     if (!this.abortController.signal.aborted) {
+      console.log("[AnimationController] Aborting signal");
       this.abortController.abort();
     }
 
