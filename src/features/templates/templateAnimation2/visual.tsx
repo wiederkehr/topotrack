@@ -11,7 +11,7 @@ import {
   mapAnimations,
   playAnimation,
 } from "@/features/visuals/map/animations";
-import { Route } from "@/features/visuals/map/route";
+import { Route } from "@/features/visuals/map/elements";
 import { getContourColor } from "@/features/visuals/map/styles/getContourColor";
 import { mapStyle } from "@/features/visuals/map/styles/terrain";
 import { getPadding } from "@/features/visuals/padding";

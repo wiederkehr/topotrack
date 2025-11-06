@@ -11,9 +11,8 @@ import {
 } from "@/features/visuals/map/animations";
 
 import { altitudeToZoom } from "./conversions/altitudeToZoom";
+import { Position, Route } from "./elements";
 import styles from "./map.module.css";
-import { Position } from "./position";
-import { Route } from "./route";
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 

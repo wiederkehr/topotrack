@@ -4,7 +4,7 @@ import { ArrowRight, ArrowUp, Calendar, MapPin, Timer } from "lucide-react";
 
 import { Layer } from "@/features/visuals/layer";
 import { MapGLStatic } from "@/features/visuals/map";
-import { Line } from "@/features/visuals/map/line";
+import { Line } from "@/features/visuals/map/elements";
 import { mapStyle } from "@/features/visuals/map/styles/contours";
 import { getContourColor } from "@/features/visuals/map/styles/getContourColor";
 import { Overlay } from "@/features/visuals/overlay";

@@ -1,8 +1,8 @@
 import { lineString, point } from "@turf/turf";
 import { memo, useMemo } from "react";
 
-import { Circle } from "@/features/visuals/map/circle";
-import { Line } from "@/features/visuals/map/line";
+import { Circle } from "@/features/visuals/map/elements/primitives/circle";
+import { Line } from "@/features/visuals/map/elements/primitives/line";
 
 type circleProps = {
   circleColor?: string;
