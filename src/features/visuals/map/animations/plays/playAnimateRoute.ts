@@ -1,8 +1,8 @@
 import { lineString as turfLineString, point as turfPoint } from "@turf/turf";
 import type { Map as MapboxGLMap } from "mapbox-gl";
 
-import { normalizedRoutePoints } from "./routeCalculations";
-import type { AnimateRouteOptions } from "./types";
+import { normalizedRoutePoints } from "../routeCalculations";
+import type { AnimateRouteOptions } from "../types";
 
 /**
  * Play animateRoute animation

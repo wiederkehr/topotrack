@@ -1,6 +1,6 @@
 import type { Map as MapboxGLMap } from "mapbox-gl";
 
-import type { AnimationPhase } from "./types";
+import type { AnimationPhase } from "../types";
 
 /**
  * Play synchronized animations in parallel

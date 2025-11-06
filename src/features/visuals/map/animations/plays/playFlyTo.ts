@@ -1,6 +1,6 @@
 import type { Map as MapboxGLMap } from "mapbox-gl";
 
-import { createMapboxAnimationPromise } from "./helpers";
+import { createMapboxAnimationPromise } from "../helpers";
 
 /**
  * Play flyTo animation using native Mapbox GL method

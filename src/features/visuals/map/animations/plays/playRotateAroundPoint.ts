@@ -1,7 +1,7 @@
 import type { Map as MapboxGLMap } from "mapbox-gl";
 
-import { createRAFAnimation } from "./helpers";
-import type { RotateAroundPointOptions } from "./types";
+import { createRAFAnimation } from "../helpers";
+import type { RotateAroundPointOptions } from "../types";
 
 /**
  * Rotate the map around a point

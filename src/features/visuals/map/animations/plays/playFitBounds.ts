@@ -1,7 +1,7 @@
 import type { Map as MapboxGLMap } from "mapbox-gl";
 
-import { createMapboxAnimationPromise } from "./helpers";
-import type { FitBoundsOptions } from "./types";
+import { createMapboxAnimationPromise } from "../helpers";
+import type { FitBoundsOptions } from "../types";
 
 /**
  * Play fitBounds animation using native Mapbox GL method

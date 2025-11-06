@@ -1,14 +1,14 @@
 import { along as turfAlong, lineString as turfLineString } from "@turf/turf";
 import type { Map as MapboxGLMap } from "mapbox-gl";
 
-import { calculateBearing, dampBearing } from "../utilities/bearing";
-import { calculateLineDistance } from "../utilities/distance";
+import { calculateBearing, dampBearing } from "../../utilities/bearing";
+import { calculateLineDistance } from "../../utilities/distance";
 import {
   createRAFAnimation,
   validateCoordinates,
   validateRoute,
-} from "./helpers";
-import type { FollowPathOptions } from "./types";
+} from "../helpers";
+import type { FollowPathOptions } from "../types";
 
 /**
  * Calculate bearing for dynamic bearing mode during followPath animation

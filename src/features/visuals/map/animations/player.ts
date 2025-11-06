@@ -1,15 +1,15 @@
 import type { Map as MapboxGLMap } from "mapbox-gl";
 
-import { playAnimatePath } from "./playAnimatePath";
-import { playAnimatePoint } from "./playAnimatePoint";
-import { playAnimateRoute } from "./playAnimateRoute";
-import { playEaseTo } from "./playEaseTo";
-import { playFitBounds } from "./playFitBounds";
-import { playFlyTo } from "./playFlyTo";
-import { playFollowPath } from "./playFollowPath";
-import { playRotateAroundPoint } from "./playRotateAroundPoint";
-import { playSync } from "./playSync";
-import { playWait } from "./playWait";
+import { playAnimatePath } from "./plays/playAnimatePath";
+import { playAnimatePoint } from "./plays/playAnimatePoint";
+import { playAnimateRoute } from "./plays/playAnimateRoute";
+import { playEaseTo } from "./plays/playEaseTo";
+import { playFitBounds } from "./plays/playFitBounds";
+import { playFlyTo } from "./plays/playFlyTo";
+import { playFollowPath } from "./plays/playFollowPath";
+import { playRotateAroundPoint } from "./plays/playRotateAroundPoint";
+import { playSync } from "./plays/playSync";
+import { playWait } from "./plays/playWait";
 import type { AnimationPhase, AnimationSequence } from "./types";
 
 /**
