@@ -1,4 +1,4 @@
-import { Pause, Play, RotateCcw, RotateCw } from "lucide-react";
+import { Pause, Play, Square } from "lucide-react";
 
 import { Button } from "@/components/interface/button";
 import { Module, Submodule } from "@/components/interface/module";
@@ -8,7 +8,6 @@ export function AnimationControls() {
   const animationState = useTemplateStore((state) => state.animationState);
   const playAnimation = useTemplateStore((state) => state.playAnimation);
   const pauseAnimation = useTemplateStore((state) => state.pauseAnimation);
-  const replayAnimation = useTemplateStore((state) => state.replayAnimation);
   const resetAnimation = useTemplateStore((state) => state.resetAnimation);
 
   const isPlaying = animationState === "playing";
@@ -17,31 +16,24 @@ export function AnimationControls() {
   return (
     <Module label="Animation">
       <Submodule>
-        {/* Play/Pause button */}
-        {isPlaying ? (
-          <Button onClick={pauseAnimation}>
-            <Pause size={16} />
-            Pause
-          </Button>
-        ) : (
-          <Button onClick={playAnimation} disabled={isStopped}>
-            <Play size={16} />
-            Play
-          </Button>
-        )}
-      </Submodule>
-      <Submodule>
-        {/* Replay button */}
-        <Button onClick={replayAnimation}>
-          <RotateCw size={16} />
-          Replay
+        {/* Play button - plays from current position */}
+        <Button onClick={playAnimation} disabled={isPlaying}>
+          <Play size={16} />
+          Play
         </Button>
       </Submodule>
       <Submodule>
-        {/* Reset button */}
+        {/* Pause button - pauses at current position */}
+        <Button onClick={pauseAnimation} disabled={!isPlaying}>
+          <Pause size={16} />
+          Pause
+        </Button>
+      </Submodule>
+      <Submodule>
+        {/* Stop button - stops and resets to start */}
         <Button onClick={resetAnimation} disabled={isStopped}>
-          <RotateCcw size={16} />
-          Reset
+          <Square size={16} />
+          Stop
         </Button>
       </Submodule>
     </Module>
