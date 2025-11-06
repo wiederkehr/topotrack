@@ -30,16 +30,21 @@ export async function playFlyTo(
 
   const duration = options.duration ?? 2000; // Default Mapbox duration
 
-  return createMapboxAnimationPromise(duration, (onComplete) => {
-    const optionsWithCallback = {
-      ...options,
-      complete: () => {
-        // Check abort before calling complete
-        if (!signal?.aborted) {
-          onComplete();
-        }
-      },
-    } as Parameters<MapboxGLMap["flyTo"]>[0] & { complete: () => void };
-    map.flyTo(optionsWithCallback);
-  });
+  return createMapboxAnimationPromise(
+    map,
+    duration,
+    (onComplete) => {
+      const optionsWithCallback = {
+        ...options,
+        complete: () => {
+          // Check abort before calling complete
+          if (!signal?.aborted) {
+            onComplete();
+          }
+        },
+      } as Parameters<MapboxGLMap["flyTo"]>[0] & { complete: () => void };
+      map.flyTo(optionsWithCallback);
+    },
+    signal,
+  );
 }

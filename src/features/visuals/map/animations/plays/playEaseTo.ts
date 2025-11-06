@@ -30,16 +30,21 @@ export async function playEaseTo(
 
   const duration = options.duration ?? 500; // Default Mapbox duration
 
-  return createMapboxAnimationPromise(duration, (onComplete) => {
-    const optionsWithCallback = {
-      ...options,
-      complete: () => {
-        // Check abort before calling complete
-        if (!signal?.aborted) {
-          onComplete();
-        }
-      },
-    } as Parameters<MapboxGLMap["easeTo"]>[0] & { complete: () => void };
-    map.easeTo(optionsWithCallback);
-  });
+  return createMapboxAnimationPromise(
+    map,
+    duration,
+    (onComplete) => {
+      const optionsWithCallback = {
+        ...options,
+        complete: () => {
+          // Check abort before calling complete
+          if (!signal?.aborted) {
+            onComplete();
+          }
+        },
+      } as Parameters<MapboxGLMap["easeTo"]>[0] & { complete: () => void };
+      map.easeTo(optionsWithCallback);
+    },
+    signal,
+  );
 }

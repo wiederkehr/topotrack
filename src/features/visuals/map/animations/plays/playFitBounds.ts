@@ -33,17 +33,22 @@ export async function playFitBounds(
   const { bounds, duration: customDuration, ...restOptions } = fitBoundsOptions;
   const duration = customDuration ?? 1000; // Default Mapbox duration
 
-  return createMapboxAnimationPromise(duration, (onComplete) => {
-    const optionsWithCallback = {
-      ...restOptions,
-      duration: customDuration,
-      complete: () => {
-        // Check abort before calling complete
-        if (!signal?.aborted) {
-          onComplete();
-        }
-      },
-    } as Parameters<MapboxGLMap["fitBounds"]>[1] & { complete: () => void };
-    map.fitBounds(bounds, optionsWithCallback);
-  });
+  return createMapboxAnimationPromise(
+    map,
+    duration,
+    (onComplete) => {
+      const optionsWithCallback = {
+        ...restOptions,
+        duration: customDuration,
+        complete: () => {
+          // Check abort before calling complete
+          if (!signal?.aborted) {
+            onComplete();
+          }
+        },
+      } as Parameters<MapboxGLMap["fitBounds"]>[1] & { complete: () => void };
+      map.fitBounds(bounds, optionsWithCallback);
+    },
+    signal,
+  );
 }

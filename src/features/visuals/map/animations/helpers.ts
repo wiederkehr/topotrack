@@ -45,21 +45,53 @@ export function validateRoute(
 
 /**
  * Creates a promise that wraps a Mapbox native animation
- * Handles both completion callback and timeout fallback
+ * Handles completion callback, timeout fallback, and AbortSignal
  * @param map - Mapbox GL map instance
  * @param duration - Animation duration in milliseconds
  * @param animationFn - Function that initiates the animation with callback
+ * @param signal - Optional AbortSignal for cancellation
  */
 export function createMapboxAnimationPromise(
+  map: MapboxGLMap,
   duration: number,
   animationFn: (onComplete: () => void) => void,
+  signal?: AbortSignal,
 ): Promise<void> {
-  return new Promise((resolve) => {
-    const timeoutId = setTimeout(resolve, duration + 100); // Slight buffer
+  return new Promise((resolve, reject) => {
+    // Check if abort was requested before starting
+    if (signal?.aborted) {
+      reject(new DOMException("Aborted", "AbortError"));
+      return;
+    }
+
+    let completed = false;
+    const timeoutId = setTimeout(() => {
+      if (!completed) {
+        completed = true;
+        signal?.removeEventListener("abort", handleAbort);
+        resolve();
+      }
+    }, duration + 100); // Slight buffer
+
+    // Listen for abort events - stop the Mapbox animation immediately
+    const handleAbort = () => {
+      if (!completed) {
+        completed = true;
+        clearTimeout(timeoutId);
+        map.stop(); // Stop the underlying Mapbox animation
+        reject(new DOMException("Aborted", "AbortError"));
+      }
+    };
+
+    signal?.addEventListener("abort", handleAbort);
 
     animationFn(() => {
-      clearTimeout(timeoutId);
-      resolve();
+      if (!completed) {
+        completed = true;
+        signal?.removeEventListener("abort", handleAbort);
+        clearTimeout(timeoutId);
+        resolve();
+      }
     });
   });
 }
