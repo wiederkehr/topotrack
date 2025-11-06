@@ -9,6 +9,7 @@ import type { AnimationPhase } from "../types";
  * @param map - Mapbox GL map instance
  * @param phases - Array of animation phases to execute in parallel
  * @param playPhase - Function to play a single phase (dependency injection)
+ * @param signal - Optional AbortSignal for cancellation
  * @returns Promise that resolves when all animations complete
  *
  * @example
@@ -20,13 +21,23 @@ import type { AnimationPhase } from "../types";
 export async function playSync(
   map: MapboxGLMap,
   phases: AnimationPhase[],
-  playPhase: (map: MapboxGLMap, phase: AnimationPhase) => Promise<void>,
+  playPhase: (
+    map: MapboxGLMap,
+    phase: AnimationPhase,
+    signal?: AbortSignal,
+  ) => Promise<void>,
+  signal?: AbortSignal,
 ): Promise<void> {
+  // Check if abort was requested before starting
+  if (signal?.aborted) {
+    throw new DOMException("Aborted", "AbortError");
+  }
+
   // Create promises for all child phases and execute them in parallel
   const promises: Promise<void>[] = [];
 
   for (const phase of phases) {
-    promises.push(playPhase(map, phase));
+    promises.push(playPhase(map, phase, signal));
   }
 
   // Wait for all animations to complete

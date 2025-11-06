@@ -117,6 +117,7 @@ class BearingCalculator {
  *
  * @param map - Mapbox GL map instance
  * @param options - FollowPath options (route, duration, bearingOptions, pitch)
+ * @param signal - Optional AbortSignal for cancellation
  * @returns Promise that resolves when animation completes
  *
  * @example
@@ -130,7 +131,13 @@ class BearingCalculator {
 export async function playFollowPath(
   map: MapboxGLMap,
   options: FollowPathOptions,
+  signal?: AbortSignal,
 ): Promise<void> {
+  // Check if abort was requested before starting
+  if (signal?.aborted) {
+    throw new DOMException("Aborted", "AbortError");
+  }
+
   // Validate route
   const validRoute = validateRoute(options.route, 2);
   if (validRoute.length < 2) {
@@ -160,6 +167,11 @@ export async function playFollowPath(
   let lastFrameTime: number | null = null;
 
   return createRAFAnimation((currentTime, progress) => {
+    // Check if abort was requested
+    if (signal?.aborted) {
+      throw new DOMException("Aborted", "AbortError");
+    }
+
     // Calculate delta time for this frame
     const deltaTime =
       lastFrameTime !== null ? currentTime - lastFrameTime : 16.67;
