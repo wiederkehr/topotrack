@@ -19,20 +19,16 @@ interface TemplateState {
   clearAnimationController: () => void;
   initializeTemplate: () => void;
   overrides: OverrideType[];
-  pauseAnimation: () => void;
   playAnimation: () => void;
   preset: PresetType;
   presets: PresetType[];
-  replayAnimation: () => void;
   resetAnimation: () => void;
   setAnimationController: (controller: AnimationController) => void;
   setOverride: (override: { name: string; value: string }) => void;
   setPreset: (value: string) => void;
   setTemplate: (value: string) => void;
   setVariable: (variable: { name: string; value: string }) => void;
-  stopAndResetAnimation: () => void;
   template: TemplateType;
-  triggerReplay: () => void;
   updateAnimationPosition: (position: number) => void;
   variables: VariableType[];
 }
@@ -157,26 +153,12 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
   // Animation control actions
   playAnimation: () => {
     const { animationController } = get();
-    set({ animationState: "playing" });
-    // Resume animation from current position via controller
-    animationController?.resume();
-  },
-
-  pauseAnimation: () => {
-    const { animationController } = get();
-    set({ animationState: "paused" });
-    // Pause animation at current position via controller
-    animationController?.pause();
-  },
-
-  replayAnimation: () => {
-    const { animationController } = get();
-    set({
-      animationState: "playing",
-      animationPosition: 0,
-    });
-    // Replay from start via controller
-    void animationController?.replay();
+    // To play from the beginning, first stop any running animation
+    if (animationController?.isRunning()) {
+      animationController.stop();
+    }
+    // Reset state to start playing again
+    set({ animationState: "playing", animationPosition: 0 });
   },
 
   resetAnimation: () => {
@@ -191,21 +173,6 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
 
   updateAnimationPosition: (position: number) => {
     set({ animationPosition: position });
-  },
-
-  // Legacy actions (keep for backwards compatibility during transition)
-  triggerReplay: () => {
-    set({
-      animationState: "playing",
-      animationPosition: 0,
-    });
-  },
-
-  stopAndResetAnimation: () => {
-    set({
-      animationState: "stopped",
-      animationPosition: 0,
-    });
   },
 
   setAnimationController: (controller: AnimationController) => {

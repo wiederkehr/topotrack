@@ -3,15 +3,13 @@ import type { Map as MapboxGLMap } from "mapbox-gl";
 import type { AnimationPhase, AnimationSequence } from "./types";
 
 /**
- * Manages animation execution with support for play, pause, resume, stop, and replay.
- * Handles AbortSignal for clean cancellation and elapsed time tracking for pause/resume.
+ * Manages animation execution with support for play and stop.
+ * Handles AbortSignal for clean cancellation and progress tracking.
  */
 export class AnimationController {
   private map: MapboxGLMap;
   private abortController: AbortController;
   private isPlaying: boolean = false;
-  private isPaused: boolean = false;
-  private pausedTime: number = 0;
   private startTime: number = 0;
   private currentAnimation: AnimationSequence | AnimationPhase | null = null;
 
@@ -21,11 +19,11 @@ export class AnimationController {
   }
 
   /**
-   * Play an animation sequence or single phase
+   * Play an animation sequence or single phase from the beginning
    * @param animation - Animation to play
-   * @param onProgress - Callback with elapsed time (ms) during animation
+   * @param onProgress - Optional callback with elapsed time (ms) during animation
    * @returns Promise that resolves when animation completes naturally
-   * @throws DOMException with "AbortError" if animation is aborted
+   * @throws DOMException with "AbortError" if animation is aborted via stop()
    */
   async play(
     animation: AnimationSequence | AnimationPhase,
@@ -43,7 +41,6 @@ export class AnimationController {
 
     this.currentAnimation = animation;
     this.isPlaying = true;
-    this.isPaused = false;
     this.startTime = performance.now();
 
     try {
@@ -52,7 +49,7 @@ export class AnimationController {
 
       // Create progress tracking interval
       const progressInterval = setInterval(() => {
-        if (this.isPlaying && !this.isPaused) {
+        if (this.isPlaying) {
           const elapsed = performance.now() - this.startTime;
           onProgress?.(elapsed);
         }
@@ -72,7 +69,6 @@ export class AnimationController {
       this.isPlaying = false;
     } catch (error) {
       this.isPlaying = false;
-      this.isPaused = false;
 
       // Re-throw abort errors
       if (error instanceof DOMException && error.name === "AbortError") {
@@ -86,38 +82,8 @@ export class AnimationController {
   }
 
   /**
-   * Pause the currently playing animation
-   * Sets a flag to visually pause - the animation continues in background but progress stops
-   * This is a UI-level pause, not a true pause of the animation execution
-   * NOTE: True pause/resume of Mapbox animations is not possible without aborting
-   * and re-playing from a saved state, which requires animation state serialization
-   */
-  pause(): void {
-    if (!this.isPlaying || this.isPaused) {
-      return;
-    }
-
-    this.isPaused = true;
-    this.pausedTime = performance.now() - this.startTime;
-  }
-
-  /**
-   * Resume a paused animation
-   * Adjusts timing to continue from where it was paused
-   */
-  resume(): void {
-    if (!this.isPaused) {
-      return;
-    }
-
-    this.isPaused = false;
-    // Adjust startTime so elapsed time continues from pausedTime
-    this.startTime = performance.now() - this.pausedTime;
-  }
-
-  /**
    * Stop the animation and reset everything
-   * Cleans up any pending operations
+   * Aborts the current animation and cleans up state
    */
   stop(): void {
     // Abort the animation
@@ -127,8 +93,6 @@ export class AnimationController {
 
     // Reset state
     this.isPlaying = false;
-    this.isPaused = false;
-    this.pausedTime = 0;
     this.startTime = 0;
     this.currentAnimation = null;
 
@@ -137,38 +101,9 @@ export class AnimationController {
   }
 
   /**
-   * Replay the animation from the beginning
-   * Must be called after animation has completed
+   * Get the current playing status
    */
-  async replay(): Promise<void> {
-    if (!this.currentAnimation) {
-      throw new Error("No animation to replay");
-    }
-
-    this.stop();
-
-    // Replay the same animation
-    return this.play(this.currentAnimation);
-  }
-
-  /**
-   * Get the current status of the animation
-   */
-  getStatus(): {
-    elapsedTime: number;
-    isPaused: boolean;
-    isPlaying: boolean;
-  } {
-    let elapsedTime = this.pausedTime;
-
-    if (this.isPlaying && !this.isPaused) {
-      elapsedTime = performance.now() - this.startTime;
-    }
-
-    return {
-      isPlaying: this.isPlaying,
-      isPaused: this.isPaused,
-      elapsedTime,
-    };
+  isRunning(): boolean {
+    return this.isPlaying;
   }
 }
