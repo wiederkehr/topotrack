@@ -11,7 +11,7 @@
 
 import { along, bbox, length, lineString } from "@turf/turf";
 
-import { calculateBearing } from "../map/functions/calculateBearing";
+import { calculateBearing } from "../map/utilities/bearing";
 import {
   AnimationSettings,
   getFollowStrengthConfig,
@@ -228,10 +228,7 @@ function generateCameraKeyframes(
     ];
 
     // Calculate bearing with damping
-    const targetBearing = calculateBearing(
-      { lng, lat },
-      { lng: nextLng, lat: nextLat },
-    );
+    const targetBearing = calculateBearing([lng, lat], [nextLng, nextLat]);
 
     const bearing =
       previousBearing !== undefined

@@ -1,7 +1,7 @@
 import { along, length } from "@turf/turf";
 import { easeCubicOut } from "d3";
 
-import { calculateBearing } from "../map/functions/calculateBearing";
+import { calculateBearing } from "../map/utilities/bearing";
 import type {
   CameraState,
   FitBoundsParams,
@@ -123,10 +123,7 @@ export function calculateFollowPathState(
   const nextLng = lookAheadPoint.geometry.coordinates[0] as number;
   const nextLat = lookAheadPoint.geometry.coordinates[1] as number;
 
-  const targetBearing = calculateBearing(
-    { lng, lat },
-    { lng: nextLng, lat: nextLat },
-  );
+  const targetBearing = calculateBearing([lng, lat], [nextLng, nextLat]);
 
   // Apply damping to smooth bearing transitions
   const bearing =
