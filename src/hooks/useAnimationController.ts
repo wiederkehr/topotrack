@@ -9,14 +9,14 @@ import { AnimationController } from "@/features/visuals/map/animations";
 import { useTemplateStore } from "@/stores";
 
 /**
- * Animation orchestrator that watches store state and executes animations accordingly
- * Handles the full lifecycle: play, stop, error recovery, and cleanup
+ * Hook for managing map animations with full lifecycle control
+ * Watches animation state from the store and orchestrates play/stop/error recovery
  *
  * @param map - Mapbox GL map instance
  * @param animationConfig - The animation configuration to execute
  * @param initialCameraState - Camera position to reset to when animation stops
  */
-export function useAnimationOrchestrator(
+export function useAnimationController(
   map: MapboxGLMap | null,
   animationConfig: AnimationSequence | AnimationPhase | null,
   initialCameraState: {
@@ -51,19 +51,19 @@ export function useAnimationOrchestrator(
       if (!controller) return;
 
       try {
-        console.log("[useAnimationOrchestrator] Starting animation execution");
+        console.log("[useAnimationController] Starting animation execution");
         await controller.play(animationConfig, (elapsedTime: number) => {
           console.log(
-            `[useAnimationOrchestrator] Animation progress: ${elapsedTime}ms`,
+            `[useAnimationController] Animation progress: ${elapsedTime}ms`,
           );
         });
 
-        console.log("[useAnimationOrchestrator] Animation completed naturally");
+        console.log("[useAnimationController] Animation completed naturally");
         // Reset state after animation completes
         useTemplateStore.setState({ animationState: "stopped" });
       } catch (error) {
         if (error instanceof DOMException && error.name === "AbortError") {
-          console.log("[useAnimationOrchestrator] Animation was aborted");
+          console.log("[useAnimationController] Animation was aborted");
           // Reset camera to initial state
           if (map) {
             map.easeTo({
@@ -76,7 +76,7 @@ export function useAnimationOrchestrator(
           return;
         }
 
-        console.error("[useAnimationOrchestrator] Animation error:", error);
+        console.error("[useAnimationController] Animation error:", error);
         // Set state to stopped on error
         useTemplateStore.setState({ animationState: "stopped" });
       }

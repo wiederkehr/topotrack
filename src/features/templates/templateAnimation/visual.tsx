@@ -19,7 +19,7 @@ import {
   destructureActivityData,
   destructureVariables,
 } from "@/functions/destructure";
-import { useAnimationOrchestrator } from "@/hooks/useAnimationOrchestrator";
+import { useAnimationController } from "@/hooks/useAnimationController";
 import { colors } from "@/styles/constants";
 import { VisualType } from "@/types";
 
@@ -118,9 +118,9 @@ export function Visual({
     progressPositionID,
   ]);
 
-  // Use animation orchestrator to manage playback
+  // Use animation controller to manage playback
   const animationSequence = buildAnimationSequence();
-  useAnimationOrchestrator(mapInstance, animationSequence, {
+  useAnimationController(mapInstance, animationSequence, {
     center: startPosition,
     bearing: 0,
     pitch: 0,
