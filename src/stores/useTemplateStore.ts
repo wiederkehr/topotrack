@@ -2,7 +2,6 @@ import { create } from "zustand";
 
 import { defaultPreset } from "@/features/composer/composer.settings";
 import { templates } from "@/features/templates";
-import { AnimationController } from "@/features/visuals/map/animations";
 import type {
   OverrideType,
   PresetType,
@@ -10,19 +9,16 @@ import type {
   VariableType,
 } from "@/types";
 
-type AnimationState = "playing" | "paused" | "stopped";
+type AnimationState = "playing" | "stopped";
 
 interface TemplateState {
-  animationController?: AnimationController;
   animationState: AnimationState;
-  clearAnimationController: () => void;
   initializeTemplate: () => void;
   overrides: OverrideType[];
   playAnimation: () => void;
   preset: PresetType;
   presets: PresetType[];
   resetAnimation: () => void;
-  setAnimationController: (controller: AnimationController) => void;
   setOverride: (override: { name: string; value: string }) => void;
   setPreset: (value: string) => void;
   setTemplate: (value: string) => void;
@@ -59,20 +55,15 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
   ),
   overrides: getOverrides(templates[0]!),
   animationState: "stopped",
-  animationController: undefined,
 
   // Actions
   setTemplate: (value) => {
-    const { animationController } = get();
     const template = templates.find((template) => template.name === value);
     if (template) {
       const presets = template.presets;
       const preset = template.presets[0] || defaultPreset;
       const variables = getVariables(template, preset);
       const overrides = getOverrides(template);
-
-      // Reset animation when template changes
-      animationController?.stop();
 
       set({
         template,
@@ -148,34 +139,12 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
 
   // Animation control actions
   playAnimation: () => {
-    const { animationController } = get();
-    console.log(
-      "[useTemplateStore] playAnimation called, isRunning:",
-      animationController?.isRunning(),
-    );
-    // To play from the beginning, first stop any running animation
-    if (animationController?.isRunning()) {
-      animationController.stop();
-    }
-    // Reset state to start playing again
+    console.log("[useTemplateStore] playAnimation called");
     set({ animationState: "playing" });
   },
 
   resetAnimation: () => {
-    const { animationController } = get();
     console.log("[useTemplateStore] resetAnimation called");
-    set({
-      animationState: "stopped",
-    });
-    // Stop and reset animation via controller
-    animationController?.stop();
-  },
-
-  setAnimationController: (controller: AnimationController) => {
-    set({ animationController: controller });
-  },
-
-  clearAnimationController: () => {
-    set({ animationController: undefined });
+    set({ animationState: "stopped" });
   },
 }));

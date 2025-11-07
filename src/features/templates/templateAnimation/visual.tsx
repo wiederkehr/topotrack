@@ -1,7 +1,7 @@
 import { bbox, lineString } from "@turf/turf";
 import chroma from "chroma-js";
 import { LngLatBoundsLike } from "mapbox-gl";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
 import type { MapRef } from "react-map-gl";
 
 import { Layer } from "@/features/visuals/layer";
@@ -19,8 +19,7 @@ import {
   destructureActivityData,
   destructureVariables,
 } from "@/functions/destructure";
-import { useAnimationController } from "@/hooks/useAnimationController";
-import { useTemplateStore } from "@/stores";
+import { useAnimationOrchestrator } from "@/hooks/useAnimationOrchestrator";
 import { colors } from "@/styles/constants";
 import { VisualType } from "@/types";
 
@@ -63,10 +62,8 @@ export function Visual({
   const progressRouteID = "progressRoute";
   const progressPositionID = "progressPosition";
 
-  // Get map instance for animation controller
+  // Get map instance
   const mapInstance = mapRef.current?.getMap() ?? null;
-  const { play: playAnimation, stop: stopAnimation } =
-    useAnimationController(mapInstance);
 
   // Create animation sequence builder
   const buildAnimationSequence = useCallback(() => {
@@ -121,63 +118,13 @@ export function Visual({
     progressPositionID,
   ]);
 
-  // Store the async play handler in a ref so buttons can access it
-  const playHandlerRef = useRef<(() => Promise<void>) | null>(null);
-
-  // Create play handler
-  useEffect(() => {
-    playHandlerRef.current = async () => {
-      console.log("[templateAnimation] Play button clicked");
-      if (!mapRef.current) return;
-
-      const animationSequence = buildAnimationSequence();
-
-      try {
-        await playAnimation(animationSequence, (elapsedTime: number) => {
-          console.log(
-            `[templateAnimation] Animation progress: ${elapsedTime}ms`,
-          );
-        });
-        console.log("[templateAnimation] Animation completed naturally");
-        // Reset animation state when animation completes
-        useTemplateStore.setState({ animationState: "stopped" });
-      } catch (error) {
-        if (error instanceof DOMException && error.name === "AbortError") {
-          console.log("[templateAnimation] Animation was aborted");
-          // Reset camera to start position
-          if (mapRef.current) {
-            const map = mapRef.current.getMap();
-            map.easeTo({
-              center: startPosition,
-              duration: 0,
-              bearing: 0,
-              pitch: 0,
-            });
-          }
-          // Make sure state is set to stopped
-          useTemplateStore.setState({ animationState: "stopped" });
-          return;
-        }
-        console.error("Animation error:", error);
-      }
-    };
-  }, [buildAnimationSequence, playAnimation, startPosition]);
-
-  // Register synchronous wrappers with store for buttons to call
-  useEffect(() => {
-    useTemplateStore.setState({
-      playAnimation: () => {
-        // Set state to playing first
-        useTemplateStore.setState({ animationState: "playing" });
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        playHandlerRef.current?.();
-      },
-      resetAnimation: () => {
-        console.log("[templateAnimation] Stop button clicked");
-        stopAnimation();
-      },
-    });
-  }, [stopAnimation]);
+  // Use animation orchestrator to manage playback
+  const animationSequence = buildAnimationSequence();
+  useAnimationOrchestrator(mapInstance, animationSequence, {
+    center: startPosition,
+    bearing: 0,
+    pitch: 0,
+  });
 
   return (
     <Layer>
