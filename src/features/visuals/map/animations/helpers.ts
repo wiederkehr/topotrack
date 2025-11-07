@@ -45,21 +45,57 @@ export function validateRoute(
 
 /**
  * Creates a promise that wraps a Mapbox native animation
- * Handles both completion callback and timeout fallback
+ * Handles completion callback, timeout fallback, and AbortSignal
  * @param map - Mapbox GL map instance
  * @param duration - Animation duration in milliseconds
  * @param animationFn - Function that initiates the animation with callback
+ * @param signal - Optional AbortSignal for cancellation
  */
 export function createMapboxAnimationPromise(
+  map: MapboxGLMap,
   duration: number,
   animationFn: (onComplete: () => void) => void,
+  signal?: AbortSignal,
 ): Promise<void> {
-  return new Promise((resolve) => {
-    const timeoutId = setTimeout(resolve, duration + 100); // Slight buffer
+  return new Promise((resolve, reject) => {
+    // Check if abort was requested before starting
+    if (signal?.aborted) {
+      reject(new DOMException("Aborted", "AbortError"));
+      return;
+    }
+
+    let completed = false;
+    const timeoutId = setTimeout(() => {
+      if (!completed) {
+        completed = true;
+        signal?.removeEventListener("abort", handleAbort);
+        resolve();
+      }
+    }, duration + 100); // Slight buffer
+
+    // Listen for abort events - stop the Mapbox animation immediately
+    const handleAbort = () => {
+      if (!completed) {
+        console.log(
+          "[createMapboxAnimationPromise] Abort signal received, calling map.stop()",
+        );
+        completed = true;
+        clearTimeout(timeoutId);
+        map.stop(); // Stop the underlying Mapbox animation
+        console.log("[createMapboxAnimationPromise] map.stop() called");
+        reject(new DOMException("Aborted", "AbortError"));
+      }
+    };
+
+    signal?.addEventListener("abort", handleAbort);
 
     animationFn(() => {
-      clearTimeout(timeoutId);
-      resolve();
+      if (!completed) {
+        completed = true;
+        signal?.removeEventListener("abort", handleAbort);
+        clearTimeout(timeoutId);
+        resolve();
+      }
     });
   });
 }
@@ -68,16 +104,38 @@ export function createMapboxAnimationPromise(
  * Creates a RAF-based animation loop that calls a frame function
  * @param frameFn - Function called on each frame with (currentTime, progress)
  * @param duration - Total animation duration in milliseconds
+ * @param signal - Optional AbortSignal for cancellation
  * @returns Promise that resolves when animation completes
  */
 export function createRAFAnimation(
   frameFn: (currentTime: number, progress: number) => void,
   duration: number,
+  signal?: AbortSignal,
 ): Promise<void> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     let startTime: number | null = null;
 
+    // Check if abort was requested before starting
+    if (signal?.aborted) {
+      reject(new DOMException("Aborted", "AbortError"));
+      return;
+    }
+
+    // Listen for abort events
+    const handleAbort = () => {
+      reject(new DOMException("Aborted", "AbortError"));
+    };
+
+    signal?.addEventListener("abort", handleAbort);
+
     const animate = (currentTime: number) => {
+      // Check if abort was requested
+      if (signal?.aborted) {
+        signal?.removeEventListener("abort", handleAbort);
+        reject(new DOMException("Aborted", "AbortError"));
+        return;
+      }
+
       // Initialize startTime on first frame
       if (startTime === null) {
         startTime = currentTime;
@@ -89,13 +147,23 @@ export function createRAFAnimation(
       try {
         frameFn(currentTime, progress);
       } catch (error) {
-        console.error("Error during RAF animation:", error);
+        // Only log non-abort errors
+        if (!(error instanceof DOMException && error.name === "AbortError")) {
+          console.error("Error during RAF animation:", error);
+        }
+        signal?.removeEventListener("abort", handleAbort);
+        if (error instanceof Error) {
+          reject(error);
+        } else {
+          reject(new Error(String(error)));
+        }
         return;
       }
 
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
+        signal?.removeEventListener("abort", handleAbort);
         resolve();
       }
     };

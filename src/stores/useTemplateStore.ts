@@ -9,27 +9,21 @@ import type {
   VariableType,
 } from "@/types";
 
-type AnimationState = "playing" | "paused" | "stopped";
+type AnimationState = "playing" | "stopped";
 
 interface TemplateState {
-  animationPosition: number; // Current timestamp in ms
   animationState: AnimationState;
   initializeTemplate: () => void;
   overrides: OverrideType[];
-  pauseAnimation: () => void;
   playAnimation: () => void;
   preset: PresetType;
   presets: PresetType[];
-  replayAnimation: () => void;
   resetAnimation: () => void;
   setOverride: (override: { name: string; value: string }) => void;
   setPreset: (value: string) => void;
   setTemplate: (value: string) => void;
   setVariable: (variable: { name: string; value: string }) => void;
-  stopAndResetAnimation: () => void;
   template: TemplateType;
-  triggerReplay: () => void;
-  updateAnimationPosition: (position: number) => void;
   variables: VariableType[];
 }
 
@@ -60,8 +54,7 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
     templates[0]!.presets[0] || defaultPreset,
   ),
   overrides: getOverrides(templates[0]!),
-  animationState: "playing",
-  animationPosition: 0,
+  animationState: "stopped",
 
   // Actions
   setTemplate: (value) => {
@@ -78,6 +71,7 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
         preset,
         variables,
         overrides,
+        animationState: "stopped",
       });
     }
   },
@@ -145,43 +139,12 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
 
   // Animation control actions
   playAnimation: () => {
+    console.log("[useTemplateStore] playAnimation called");
     set({ animationState: "playing" });
   },
 
-  pauseAnimation: () => {
-    set({ animationState: "paused" });
-  },
-
-  replayAnimation: () => {
-    set({
-      animationState: "playing",
-      animationPosition: 0,
-    });
-  },
-
   resetAnimation: () => {
-    set({
-      animationState: "stopped",
-      animationPosition: 0,
-    });
-  },
-
-  updateAnimationPosition: (position: number) => {
-    set({ animationPosition: position });
-  },
-
-  // Legacy actions (keep for backwards compatibility during transition)
-  triggerReplay: () => {
-    set({
-      animationState: "playing",
-      animationPosition: 0,
-    });
-  },
-
-  stopAndResetAnimation: () => {
-    set({
-      animationState: "stopped",
-      animationPosition: 0,
-    });
+    console.log("[useTemplateStore] resetAnimation called");
+    set({ animationState: "stopped" });
   },
 }));

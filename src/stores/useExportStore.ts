@@ -93,7 +93,7 @@ export const useExportStore = create<ExportState>((set, get) => ({
 
     // Stop and reset animation before export (for MP4 exports)
     if (asset.type === "mp4") {
-      useTemplateStore.getState().stopAndResetAnimation();
+      useTemplateStore.getState().resetAnimation();
 
       // Wait for map to reset to initial state before starting export
       // This ensures the export captures from the beginning

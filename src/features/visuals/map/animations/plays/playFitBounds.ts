@@ -9,6 +9,7 @@ import type { FitBoundsOptions } from "../types";
  *
  * @param map - Mapbox GL map instance
  * @param fitBoundsOptions - FitBounds options (bounds, bearing, pitch, padding, duration, etc.)
+ * @param signal - Optional AbortSignal for cancellation
  * @returns Promise that resolves when animation completes
  *
  * @example
@@ -22,16 +23,32 @@ import type { FitBoundsOptions } from "../types";
 export async function playFitBounds(
   map: MapboxGLMap,
   fitBoundsOptions: FitBoundsOptions,
+  signal?: AbortSignal,
 ): Promise<void> {
+  // Check if abort was requested before starting
+  if (signal?.aborted) {
+    throw new DOMException("Aborted", "AbortError");
+  }
+
   const { bounds, duration: customDuration, ...restOptions } = fitBoundsOptions;
   const duration = customDuration ?? 1000; // Default Mapbox duration
 
-  return createMapboxAnimationPromise(duration, (onComplete) => {
-    const optionsWithCallback = {
-      ...restOptions,
-      duration: customDuration,
-      complete: onComplete,
-    } as Parameters<MapboxGLMap["fitBounds"]>[1] & { complete: () => void };
-    map.fitBounds(bounds, optionsWithCallback);
-  });
+  return createMapboxAnimationPromise(
+    map,
+    duration,
+    (onComplete) => {
+      const optionsWithCallback = {
+        ...restOptions,
+        duration: customDuration,
+        complete: () => {
+          // Check abort before calling complete
+          if (!signal?.aborted) {
+            onComplete();
+          }
+        },
+      } as Parameters<MapboxGLMap["fitBounds"]>[1] & { complete: () => void };
+      map.fitBounds(bounds, optionsWithCallback);
+    },
+    signal,
+  );
 }

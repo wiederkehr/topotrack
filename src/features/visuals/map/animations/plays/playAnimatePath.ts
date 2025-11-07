@@ -11,6 +11,7 @@ import type { AnimatePathOptions } from "../types";
  *
  * @param map - Mapbox GL map instance
  * @param options - AnimatePath options (route, duration, lineSourceId)
+ * @param signal - Optional AbortSignal for cancellation
  * @returns Promise that resolves when animation completes
  *
  * @example
@@ -23,17 +24,29 @@ import type { AnimatePathOptions } from "../types";
 export async function playAnimatePath(
   map: MapboxGLMap,
   options: AnimatePathOptions,
+  signal?: AbortSignal,
 ): Promise<void> {
+  // Check if abort was requested before starting
+  if (signal?.aborted) {
+    throw new DOMException("Aborted", "AbortError");
+  }
+
   const { route, duration, lineSourceId } = options;
   const normalizedRoute = normalizedRoutePoints(route, duration / 16);
   const normalizedRouteLength = normalizedRoute.length;
   const pathCoordinates: Array<[number, number]> = normalizedRoute.slice(0, 2);
   const pathGeoJSON = turfLineString(pathCoordinates);
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     let startTime: number | null = null;
 
     const animate = (currentTime: number) => {
+      // Check if abort was requested during animation
+      if (signal?.aborted) {
+        reject(new DOMException("Aborted", "AbortError"));
+        return;
+      }
+
       // Initialize startTime on first frame
       if (startTime === null) {
         startTime = currentTime;

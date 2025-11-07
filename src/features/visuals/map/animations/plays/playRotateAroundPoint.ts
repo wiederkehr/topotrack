@@ -9,6 +9,7 @@ import type { RotateAroundPointOptions } from "../types";
  *
  * @param map - Mapbox GL map instance
  * @param options - RotateAroundPoint options (degrees, duration, bearing)
+ * @param signal - Optional AbortSignal for cancellation
  * @returns Promise that resolves when animation completes
  *
  * @example
@@ -21,25 +22,46 @@ import type { RotateAroundPointOptions } from "../types";
 export async function playRotateAroundPoint(
   map: MapboxGLMap,
   options: RotateAroundPointOptions,
+  signal?: AbortSignal,
 ): Promise<void> {
+  // Check if abort was requested before starting
+  if (signal?.aborted) {
+    throw new DOMException("Aborted", "AbortError");
+  }
+
   const startBearing = options.bearing ?? map.getBearing();
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const timeoutId = setTimeout(resolve, options.duration + 100); // Fallback timeout
 
-    createRAFAnimation((currentTime, progress) => {
-      // Calculate current bearing based on progress
-      const currentBearing = startBearing + options.degrees * progress;
+    createRAFAnimation(
+      (currentTime, progress) => {
+        // Check if abort was requested during animation
+        if (signal?.aborted) {
+          clearTimeout(timeoutId);
+          reject(new DOMException("Aborted", "AbortError"));
+          return;
+        }
 
-      // Update map bearing
-      map.rotateTo(currentBearing, { duration: 0 });
-    }, options.duration)
+        // Calculate current bearing based on progress
+        const currentBearing = startBearing + options.degrees * progress;
+
+        // Update map bearing
+        map.rotateTo(currentBearing, { duration: 0 });
+      },
+      options.duration,
+      signal,
+    )
       .then(() => {
         clearTimeout(timeoutId);
         resolve();
       })
-      .catch(() => {
+      .catch((error) => {
         clearTimeout(timeoutId);
+        // Re-throw abort errors, swallow others
+        if (error instanceof DOMException && error.name === "AbortError") {
+          reject(error);
+        }
       });
   });
 }

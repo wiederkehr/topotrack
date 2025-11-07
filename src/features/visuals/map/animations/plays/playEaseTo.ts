@@ -8,6 +8,7 @@ import { createMapboxAnimationPromise } from "../helpers";
  *
  * @param map - Mapbox GL map instance
  * @param options - Mapbox easeTo options (center, zoom, bearing, pitch, duration, etc.)
+ * @param signal - Optional AbortSignal for cancellation
  * @returns Promise that resolves when animation completes
  *
  * @example
@@ -20,14 +21,30 @@ import { createMapboxAnimationPromise } from "../helpers";
 export async function playEaseTo(
   map: MapboxGLMap,
   options: Parameters<MapboxGLMap["easeTo"]>[0],
+  signal?: AbortSignal,
 ): Promise<void> {
+  // Check if abort was requested before starting
+  if (signal?.aborted) {
+    throw new DOMException("Aborted", "AbortError");
+  }
+
   const duration = options.duration ?? 500; // Default Mapbox duration
 
-  return createMapboxAnimationPromise(duration, (onComplete) => {
-    const optionsWithCallback = {
-      ...options,
-      complete: onComplete,
-    } as Parameters<MapboxGLMap["easeTo"]>[0] & { complete: () => void };
-    map.easeTo(optionsWithCallback);
-  });
+  return createMapboxAnimationPromise(
+    map,
+    duration,
+    (onComplete) => {
+      const optionsWithCallback = {
+        ...options,
+        complete: () => {
+          // Check abort before calling complete
+          if (!signal?.aborted) {
+            onComplete();
+          }
+        },
+      } as Parameters<MapboxGLMap["easeTo"]>[0] & { complete: () => void };
+      map.easeTo(optionsWithCallback);
+    },
+    signal,
+  );
 }
