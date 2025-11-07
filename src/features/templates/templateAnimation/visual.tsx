@@ -10,6 +10,7 @@ import {
   calculateFollowBearing,
   mapAnimations,
 } from "@/features/visuals/map/animations";
+import { useAnimationController } from "@/features/visuals/map/animations";
 import { Route } from "@/features/visuals/map/elements";
 import { getContourColor } from "@/features/visuals/map/styles/getContourColor";
 import { mapStyle } from "@/features/visuals/map/styles/terrain";
@@ -19,7 +20,6 @@ import {
   destructureActivityData,
   destructureVariables,
 } from "@/functions/destructure";
-import { useAnimationController } from "@/hooks/useAnimationController";
 import { colors } from "@/styles/constants";
 import { VisualType } from "@/types";
 

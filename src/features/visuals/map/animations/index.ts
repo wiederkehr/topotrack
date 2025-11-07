@@ -7,6 +7,7 @@ export {
 } from "./routeCalculations";
 export { mapAnimations } from "./library";
 export { playAnimation } from "./player";
+export { useAnimationController } from "./useAnimationController";
 
 export type {
   AnimatePathOptions,
